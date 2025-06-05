@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+/* импортируем шрифты из google fonts, копируем эту строку из google fonts,там выбираем get embed code и во вкладке @import копируем это,чтобы подключился нужный шрифт */
+
+*,
+*::after,
+*::before{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent; /* указываем это свойство,чтобы при нажатии кнопок на телефоне задний фон кнопок не изменялся на секунду на синий*/
+}
+
+body {
+    font-size: 16px;
+    font-weight: 400;
+    font-family: 'Inter',sans-serif;
+    color: #3C4242;
+    overflow-x: hidden; /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
+}
+
+.container{
+    max-width: 1260px;
+    padding: 0 10px;
+    margin:0 auto;
+}
+
+ul {
+    list-style: none; /* убираем стили списков ul, чтобы они были без точек сбоку и тд */
+}
+
+a {
+    color: inherit; /* указываем,что цвет ссылок будет таким же,как его родительский элемент */
+    text-decoration: none; /* убираем подчеркивание ссылок */
+}
+
+/* здесь еще нужно будет указать стили для враппера и тд,чтобы прижать хедер и футер */
+
+.header{
+    padding: 30px 0;
+    border-bottom: 1px solid #BEBCBD;
+}
+
+.header__inner{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header__logoLink:hover{
+    cursor: pointer;
+}
+
+.header__menuList{
+    display: flex;
+    align-items: center;
+    gap:40px;
+}
+
+.header__menuList-itemBoxes{
+    display: flex;
+    align-items: center;    
+    gap:20px;
+}
+
+.header__menuList-link{
+    font-size: 18px;
+    font-weight: 500;
+    color: #807D7E;
+    transition:all .5s ease;
+    opacity: 1;
+}
+
+.header__menuList-linkBox{
+    padding: 12px;
+    background-color: #F6F6F6;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header__menuList-linkBox:hover{
+    background-color: rgba(0, 0, 0,0.9);
+}
+
+.header__menuList-linkCart{
+    position: relative;
+}
+
+.header__linkCart-span{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background-color: #3c4242;
+    font-size: 10px;
+    color: #fff;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 17px;  /* указываем line-height с таким же значением как и height этого спана,чтобы текст внутри него стал ровно по центру */ 
+}
+
+.header__menuList-link:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.header__menuList-link--active{
+    color: #3c4242;
+    font-weight: 600;
+}
