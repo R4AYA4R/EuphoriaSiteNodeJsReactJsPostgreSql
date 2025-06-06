@@ -1,9 +1,10 @@
 
 import { render, screen } from '@testing-library/react';
-import HomePage from './pages/HomePage';
+
+import Catalog from './pages/Catalog';
 
 test('render text', () => {
-  render(<HomePage />);
-  const linkElement = screen.getByText(/Home/i);
+  render(<Catalog />);
+  const linkElement = screen.getByText(/catalog/i);
   expect(linkElement).toBeInTheDocument();
 });
