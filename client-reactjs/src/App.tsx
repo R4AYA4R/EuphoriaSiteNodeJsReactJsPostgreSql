@@ -13,6 +13,7 @@ import ProductItemPage from "./pages/ProductItemPage";
 import AboutUs from "./pages/AboutUs";
 import UserPage from "./pages/UserPage";
 import Cart from "./pages/Cart";
+import ScrollToTop from "./utils/ScrollToTop";
 
 
 function App() {
@@ -21,7 +22,9 @@ function App() {
       {/* оборачиваем все в BrowserRouter для роутинга страниц(маршрутов страниц),а также чтобы работал наш компонент <ScrollToTop/>,позже будем указывать конкретные маршруты с помощью <Routes> */}
       <BrowserRouter>
 
-        {/* здесь еще надо будет сделать ScrollToTop и враппер,чтобы прижать хедер и футер */}
+        <ScrollToTop/>
+
+        {/* здесь еще надо будет сделать враппер,чтобы прижать хедер и футер */}
         <Header/>
 
         <Routes>

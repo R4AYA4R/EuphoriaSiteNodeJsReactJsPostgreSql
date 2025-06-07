@@ -1,3 +1,4 @@
+import SectionCategories from "../components/SectionCategories";
 import SectionPresents from "../components/SectionPresents";
 import SectionTop from "../components/SectionTop";
 
@@ -6,6 +7,7 @@ const HomePage = () => {
         <main className="main">
             <SectionTop/>
             <SectionPresents/>
+            <SectionCategories/>
         </main>
     )
 }

@@ -8,6 +8,7 @@ export const useIsOnScreen = (ref:RefObject<HTMLElement>) => {
     const [isIntersectingNow,setIsIntersectingNow] = useState({
         sectionTopIntersecting:false,
         sectionPresentsIntersecting:false,
+        sectionCategoriesIntersecting:false,
     })
 
     // создаем функцию для intersectionObserver,принимает в параметре все элементы,за которыми следит(entries),и сам observer,указываем тип параметру entries как IntersectionObserverEntry и указываем ему,что это массив,указываем параметру observer тип как IntersectionObserver,так как это и есть сам IntersectionObserver
@@ -29,6 +30,12 @@ export const useIsOnScreen = (ref:RefObject<HTMLElement>) => {
                 } else if(entry.target.id === 'sectionPresents'){
 
                     setIsIntersectingNow((prev)=> ({...prev, sectionPresentsIntersecting:true}));
+
+                    observer.unobserve(entry.target); 
+
+                } else if(entry.target.id === 'sectionCategories'){
+
+                    setIsIntersectingNow((prev)=> ({...prev, sectionCategoriesIntersecting:true}));
 
                     observer.unobserve(entry.target); 
 
