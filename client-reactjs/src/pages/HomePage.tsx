@@ -1,5 +1,6 @@
 import SectionCategories from "../components/SectionCategories";
 import SectionPresents from "../components/SectionPresents";
+import SectionSavingZone from "../components/SectionSavingZone";
 import SectionTop from "../components/SectionTop";
 
 const HomePage = () => {
@@ -8,6 +9,7 @@ const HomePage = () => {
             <SectionTop/>
             <SectionPresents/>
             <SectionCategories/>
+            <SectionSavingZone/>
         </main>
     )
 }
