@@ -512,3 +512,224 @@ a {
     max-width: 163px;
 }
 
+.sectionFashion{
+    margin-bottom: 100px;
+}
+
+.sectionFashion__inner{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    border-radius: 12px;
+}
+
+.sectionFashion__itemInfo{
+    padding: 183px 0 0 74px;
+    background-image: url('/public/images/sectionFashion/backImg.png');background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.sectionFashion__itemInfo-title{
+    font-size: 34px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 30px;
+    line-height: 50px;
+    letter-spacing: 0.21px;
+}
+
+.sectionFashion__itemInfo-text{
+    max-width: 451px;
+    font-size: 20px;
+    font-weight: 100;
+    color: #fff;
+    margin-bottom: 50px;
+    letter-spacing: 1px;
+}
+
+.sectionFashion__link{
+    max-width: 168px;
+    padding: 12px;
+}
+
+.sectionFashion__link .sectionTop__link-text{
+    font-size: 18px;
+}
+
+.sectionTopBrands{
+    margin-bottom: 100px;
+}
+
+.sectionTopBrands__inner{
+    padding: 44px 123px 60px;
+    background-color: #3C4242;
+    border-radius: 12px;
+}
+
+.sectionTopBrands__title{
+    font-size: 50px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.sectionTopBrands__text{
+    font-size: 22px;
+    color: #fff;
+    margin-bottom: 67px;
+    text-align: center;
+}
+
+.sectionTopBrands__text-span{
+    color: #FBD103;
+    font-weight: 500;
+}
+
+.sectionTopBrands__items{
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap:25px;
+}
+
+.sectionTopBrands__img{
+    border-radius: 12px;
+}
+
+.sectionNewArrivals{
+    margin-bottom: 100px;
+}
+
+.sectionNewArrivals__items{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap:35px;
+}
+
+.sectionNewArrivals__item-img{
+    border-radius: 12px;
+    margin-bottom: 30px;
+    transition:all .5s ease;
+}
+
+.sectionNewArrivals__item-img:hover{
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.sectionNewArrivals__item-title{
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    transition:all .5s ease;
+}
+
+.sectionNewArrivals__item-title:hover{
+    cursor: pointer;
+    color: #8A33FD;
+}
+
+.sectionNewArrivals__item-starsBlock{
+    display: flex;
+    align-items: center;
+    gap:7px;
+    margin-bottom: 5px;
+}
+
+.sectionNewArrivals__item-starsAmount{
+    font-size: 12px;
+    font-weight: 400;
+    color: #6B7280;
+}
+
+.sectionNewArrivals__item-starsImg{
+    max-width: 16px;
+}
+
+.sectionNewArrivals__item-priceBlock{
+    display: flex;
+    align-items: center;    
+    gap: 7px;
+}
+
+.item__priceBlock-priceSale{
+    font-size: 22px;
+    font-weight: 700;
+    color: #DC2626;
+}
+
+.item__priceBlock-priceUsual{
+    font-size: 16px;
+    font-weight: 500;
+    position: relative;
+}
+
+.item__priceBlock-priceUsual::after{
+    content:"";
+    height: 1px;
+    width: 100%;
+    background-color: #3C4242;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
+
+.item__priceBlock-priceUsualDefault{
+    font-size: 22px;
+    font-weight: 500;
+    color: #3C4242;
+}
+
+.sectionNewArrivals__cartBlock-btn{
+    font-family: 'Inter',sans-serif;
+    padding: 9px 15px;
+    background-color: #fff;
+    border:1px solid #8a33fd;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    transition:all .5s ease;
+    margin-top: 14px;
+}
+
+.sectionNewArrivals__cartBlock-btn:hover{
+    cursor: pointer;
+    border:1px solid #fff;
+    background-color: rgba(138, 51, 253,0.3);
+}
+
+.sectionNewArrivals__cartBlock-btn:hover .cartBlock__btn-img{
+    animation: cartBlockBtnImg 1s ease infinite;
+}
+
+@keyframes cartBlockBtnImg {
+
+    0%{
+        transform: translateX(0);
+    }
+
+    50%{
+        transform: translateX(-60%);
+    }
+
+    70%{
+        transform: translateX(30%);
+    }
+
+    90%{
+        transform: translateX(-30%);
+    }
+
+    100%{
+        transform: translateX(0);
+    }
+
+}
+
+.cartBlock__btn-text{
+    font-size: 14px;
+    font-weight: 500;
+    color: #8a33fd;
+}
