@@ -36,7 +36,17 @@ a {
     text-decoration: none; /* убираем подчеркивание ссылок */
 }
 
-/* здесь еще нужно будет указать стили для враппера и тд,чтобы прижать хедер и футер */
+/* указываем такие стили для .wrapper(блока div,который оборачивает header,main и footer),чтобы прибить header и footer,то есть чтобы header был всегда вверху,а footer всегда внизу,вне зависимости от контента на странице */
+.wrapper{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* указываем,чтобы минимальная высота была 100vh(viewport height,то есть максимальной высоты экрана) */
+}
+
+/* указываем такие стили для .main,чтобы прибить header и footer,то есть чтобы header был всегда вверху,а footer всегда внизу,вне зависимости от контента на странице */
+.main{
+    flex-grow:1; /* указываем этот стиль,чтобы main растянулся и занял полную середину экрана */
+}
 
 .header{
     padding: 30px 0;
@@ -122,7 +132,7 @@ a {
     padding: 130px 0 130px 93px;
     background-image: url('/public/images/sectionTop/sectionTopImage.jpg');
     background-size: cover;
-    background-position: center;
+    background-position: center top;
     background-repeat: no-repeat;
     transform: translateX(-50%);
     opacity: 0;
@@ -732,4 +742,81 @@ a {
     font-size: 14px;
     font-weight: 500;
     color: #8a33fd;
+}
+
+.footer{
+    padding: 59px 0;
+    background-color: #3C4242;
+}
+
+.footer__topBlock{
+    display:grid;
+    grid-template-columns: repeat(4,1fr);
+    gap:70px;
+}
+
+.footer__item-title{
+    font-size: 28px;
+    font-weight: 700;
+    color: #F6F6F6;
+    margin-bottom: 30px;
+}
+
+.footer__list-item{
+    margin-bottom: 20px;
+}
+
+.footer__item-link{
+    font-size: 16px;
+    font-weight: 400;
+    color: #F6F6F6;
+    transition:all .5s ease;
+}
+
+.footer__item-link:hover{
+    cursor: pointer;
+    color: #EA580C;
+}
+
+.footer__item-text{
+    font-size: 16px;
+    font-weight: 400;
+    color: #F6F6F6;
+}
+
+.footer__bottomBlock{
+    border-top:1px solid #BEBCBD;
+    margin-top: 35px;
+}
+
+.footer__bottomBlock-text{
+    font-size: 16px;
+    font-weight: 400;
+    color: #fff;
+    text-align: center;
+    margin-top: 35px;
+}
+
+.sectionUnderTop{
+    padding: 30px 0;
+    border-bottom: 1px solid #BEBCBD;
+    margin-bottom: 0;
+}
+
+.sectionUnderTop__inner{
+    display: flex;
+    align-items: center;
+    gap:15px;
+}
+
+.sectionUnderTop__text{
+    font-size: 18px;
+    font-weight: 400;
+    color: #807D7E;
+}
+
+.sectionUnderTop__subtext{
+    font-size: 18px;
+    font-weight: 500;
+    color: #3C4242;
 }
