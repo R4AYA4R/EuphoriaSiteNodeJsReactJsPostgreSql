@@ -846,6 +846,11 @@ a {
 
 .filterBar__filterItem-title{
     padding: 20px 30px;
+    border-top:1px solid #E5E7EB;
+}
+
+.filterBar__filterItem-title--categories{
+    border-top:none;
 }
 
 .filterBar__filterItem-labels{
@@ -945,3 +950,52 @@ a {
 .categoriesLabel__amountDisable{
     opacity: 0;
 }
+
+.filterItem__inputRangeSlider{
+    width: 100%;
+    height: 3px;
+    margin-bottom: 20px;
+}
+
+/* стили для всей полоски инпута range у ReactSlider */
+.filterItem__inputRangeSlider .inputRangeSlider__track{
+    height: 3px;
+}
+
+.filterItem__inputRangeSlider .inputRangeSlider__track:hover{
+    cursor: pointer;
+}
+
+/* стили для полоски до первого ползунка */
+.inputRangeSlider__track.inputRangeSlider__track-0{
+    background-color: #807D7E;
+    border-radius: 10px;
+}
+
+/* стили для полоски между ползунками */
+.inputRangeSlider__track.inputRangeSlider__track-1{
+    background-color: #8A33FD;
+}
+
+/* стили для полоски после второго ползунка  */
+.inputRangeSlider__track.inputRangeSlider__track-2{
+    background-color: #807D7E;
+    border-radius: 10px;
+}
+
+/* стили для 1 ползунка инпута(слайдера) */
+.filterItem__inputRangeSlider .inputRangeSlider__thumb{
+    top: -6px;
+    width: 16px;
+    height: 16px;
+    color: transparent; /* указываем это свойство,чтобы цифры(они по дефолту в этом react slider) внутри этого ползунка были прозрачного цвета,чтобы их не было видно */
+    outline:none;
+    background-color: #8A33FD;
+    border-radius: 50%;
+    overflow: hidden; /* указываем это свойство,чтобы не были видны цифры внутри кнопки ползунка,которые по дефолту есть в ReactSlider */
+}
+
+.filterItem__inputRangeSlider .inputRangeSlider__thumb:hover{
+    cursor: pointer;
+}
+
