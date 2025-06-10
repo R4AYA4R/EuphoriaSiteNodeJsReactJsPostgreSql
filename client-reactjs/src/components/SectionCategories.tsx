@@ -59,7 +59,7 @@ const SectionCategories = () => {
                         <div className="sectionCategories__item">
                             <img src="/images/sectionCategories/Rectangle 28.jpg" alt="" className="sectionCategoires__item-img" onClick={setLongSleeveCategory} />
                             <div className="sectionCategories__item-bottomBlock">
-                                <p className="sectionCategories__item-text" onClick={setLongSleeveCategory}>Long Sleeve</p>
+                                <p className="sectionCategories__item-text" onClick={setLongSleeveCategory}>Long Sleeves</p>
                                 <button className="sectionCategories__item-linkBtn" onClick={setLongSleeveCategory}>
                                     <img src="/images/sectionTop/arrow.png" alt="" className="sectionCategories__item-linkBtnImg" />
                                 </button>

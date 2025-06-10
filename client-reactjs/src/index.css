@@ -820,3 +820,128 @@ a {
     font-weight: 500;
     color: #3C4242;
 }
+
+.sectionCatalog{
+    padding: 30px 0;
+    opacity: 0;
+    transform:translateX(-50%);
+    transition:all 1s ease;
+}
+
+.sectionCatalog__active{
+    opacity: 1;
+    transform:translateX(0);
+}
+
+.sectionCatalog__inner{
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap:50px;
+}
+
+.sectionCatalog__filterBar{
+    border-radius: 12px;
+    border:1px solid #E5E7EB;
+}
+
+.filterBar__filterItem-title{
+    padding: 20px 30px;
+}
+
+.filterBar__filterItem-labels{
+    border-top: 1px solid #E5E7EB;
+    padding: 40px 30px;
+}
+
+.filterBar__filterItem-title{
+    color: #807D7E;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.filterBar__filterItem-categoriesLabel{
+    display: flex;
+    align-items: center;
+    gap:10px;
+    margin-bottom: 18px;
+}
+
+.filterBar__filterItem-categoriesLabel:hover{
+    cursor: pointer;
+}
+
+.categoriesLabel__input{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip:rect(0 0 0 0); /* указываем это свойство,чтобы обрезать видимость элемента и указываем значения в скобках rect() top right bottom left,эти значения указывают расстояние от соответсвующего края элемента,все,что не помещается в эту область будет обрезано и не видно   */
+}
+
+.categoriesLabel-radioStyle{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border:1px solid #D1D5DB;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1);
+    border-radius: 50%;
+    transition:all .5s ease;
+}
+
+.categoriesLabel-radioStyle--active{
+    border:1px solid #8A33FD;
+}
+
+.categoriesLabel__radioStyle-before{
+    opacity: 0;
+    transition:opacity .5s ease;
+}
+
+.categoriesLabel__radioStyle-before--active{
+    opacity: 1;
+    display: block;
+    width: 11px;
+    height: 11px;
+    background-color: #8A33FD;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform:translate(-50%,-50%);
+    border-radius: 50%;
+}
+
+.filterBar__filterItem-categoriesLabel:hover .categoriesLabel-radioStyle{
+    border:1px solid #8a33fd;
+}
+
+.filterBar__filterItem-categoriesLabel:hover .categoriesLabel__text{
+    color: rgba(138, 51, 253,0.8);
+}
+
+.filterBar__filterItem-categoriesLabel:hover .categoriesLabel__text--active{
+    color: rgba(138, 51, 253,1);
+}
+
+.categoriesLabel__text{
+    font-size: 16px;
+    font-weight: 500;
+    color: #8A8989;
+    transition:all .5s ease;
+    margin-left: 28px;
+}
+
+.categoriesLabel__text--active{
+    color: #8A33FD;
+}
+
+.categoriesLabel__amount{
+    font-size: 14px;
+    font-weight: 400;
+    color: #808080;
+    opacity: 1;
+    transition:all .5s ease;
+}
+
+.categoriesLabel__amountDisable{
+    opacity: 0;
+}
