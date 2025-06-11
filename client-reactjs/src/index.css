@@ -999,3 +999,161 @@ a {
     cursor: pointer;
 }
 
+
+.filterItem__labels-sizes{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:15px;
+}
+
+
+.filterBar__filterItem-sizeBtn{
+    padding: 8px 18px;
+    color: #3C4242;
+    background-color: #fff;
+    border:1px solid #BEBCBD;
+    text-transform: uppercase;
+    font-family: 'Inter',sans-serif;
+    transition:all .5s ease;
+    border-radius: 8px;
+    min-width: 54px;
+}
+
+.filterBar__filterItem-sizeBtn:hover{
+    cursor: pointer;
+    background-color: rgba(60, 66, 66,0.3);
+    color: #fff;
+}
+
+.filterBar__filterItem-sizeBtn:hover.filterBar__filterItem-sizeBtn--active{
+    background-color: #3C4242;
+    color: #fff;
+}
+
+.filterBar__filterItem-sizeBtn--active{
+    background-color: #3C4242;
+    color: #fff;
+}
+
+.sectionCatalog__productsBlock-searchBlock{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sectionCatalog__searchBlock-inputBlock{
+    position: relative;
+}
+
+.searchBlock__inputBlock-input{
+    padding: 12px 20px 12px 52px;
+    border-radius: 8px;
+    background-color: #F6F6F6;
+    color: #807D7E;
+    font-family: 'Inter',sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    outline: none;
+    border:none;
+}
+
+.searchBlock__inputBlock-input::placeholder{
+    color: #807D7E;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: 'Inter',sans-serif;
+}
+
+.searchBlock__inputBlock-img{
+    top: 14px;
+    left: 22px;
+    position: absolute;
+}
+
+.searchBlock__sortBlock{
+    display: flex;
+    align-items: center;
+    gap:15px;
+}
+
+.sortBlock__text{
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.sortBlock__inner{
+    position: relative;
+}
+
+.sortBlock__topBlock{
+    padding: 14px 18px;
+    background-color: #F6F6F6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap:50px;
+    border-radius: 8px;
+    min-width: 220px;
+    min-height: 48px; /* указываем минимальную высоту,чтобы когда там появлялся текст выбранного фильтра сортировки(типа по рейтингу и тд),то высота этого блока не изменялась,иначе она меняется */
+}
+
+.sortBlock__topBlock-text{
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0;
+    transition:all .5s ease;
+    color: #807D7E;
+}
+
+.sortBlock__topBlock-text--active{
+    opacity: 1;
+}
+
+.sortBlock__topBlock-img{
+    transform: rotate(0deg);
+    transition:all .5s ease;
+}
+
+.sortBlock__topBlock-img--active{
+    transform: rotate(180deg);
+}
+
+.sortBlock__topBlock:hover{
+    cursor: pointer;
+}
+
+.sortBlock__optionsBlock{
+    max-height: 0;
+    position: absolute;
+    top: 53px;
+    left: 0;
+    opacity: 0;
+    background-color: #fff;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.15);
+    transition:all 1s ease;
+    z-index: -2;
+    overflow: hidden; /* указываем это свойство,чтобы все,что заходит за границы этого блока скрывалось(то есть все элементы,которые в html есть у этого блока), в данном случае,для анимации,когда уменьшаем высоту этого блока,чтобы текст не показывался ниже этого блока */
+}
+
+.sortBlock__optionsBlock--active{
+    max-height: 100px;
+    opacity: 1;
+    z-index: 4;
+}
+
+.sortBlock__optionsBlock-item{
+    padding: 12px 10px 10px 18px;
+    transition:all .5s ease;
+}
+
+.sortBlock__optionsBlock-item:hover{
+    cursor: pointer;
+    background-color: rgba(0,0,0,0.1);
+}
+
+.optionsBlock__item-text{
+    font-size: 16px;
+    font-weight: 400;
+}

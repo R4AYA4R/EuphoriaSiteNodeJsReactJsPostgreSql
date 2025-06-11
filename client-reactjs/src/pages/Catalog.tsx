@@ -13,6 +13,24 @@ const Catalog = () => {
 
     const [filterPrice,setFilterPrice] = useState([0,200]); // массив для значений нашего инпута range(ReactSlider),первым значением указываем значение для первого ползунка у этого инпута,а вторым для второго, ставим изначальное значение для второго ползунка инпута как priceFilterMax(максимальная цена товарв из всех,которую посчитали на бэкэнде),чтобы сразу показывалось,что это максимальное значение цены,не указываем здесь конкретно data?.maxPriceAllProducts,так как тогда выдает ошибки,что для ReactSlider нельзя назначить значение с типом undefined и тд
 
+    const [sizes,setSizes] = useState({
+        sizeS:false,
+        sizeM:false,
+        sizeL:false,
+        sizeXL:false,
+    })
+
+    const [activeSortBlock,setActiveSortBlock] = useState(false);
+
+    const [sortBlockValue,setSortBlockValue] = useState(''); // состояние для значения селекта сортировки товаров по рейтингу и тд
+
+    const sortItemHandlerRating = () => {
+
+        setSortBlockValue('Rating'); // изменяем состояние sortBlockValue на значение Rating
+
+        setActiveSortBlock(false); // изменяем состояние activeSortBlock на значение false,то есть убираем появившийся селект блок
+    }
+
     return (
         <main className="main">
             <SectionUnderTop subtext="Shop" /> {/* указываем пропс(параметр) subtext(в данном случае со значением Shop,чтобы отобразить в этой секции текст Shop,так как это для страницы каталога),чтобы использовать этот компонент на разных страницах,а отличаться он будет только этим параметром subtext */}
@@ -105,8 +123,46 @@ const Catalog = () => {
 
                                 </div>
                             </div>
+                            <div className="sectionCatalog__filterBar-filterItem">
+                                <h2 className="filterBar__filterItem-title">Size</h2>
+                                <div className="filterBar__filterItem-labels">
+                                    
+                                    <div className="filterItem__labels-sizes">
+                                        {/* в onClick этой кнопке изменяем состояние sizes,возвращая новый объект,в который разворачиваем все поля предыдущего(текущего(prev)) объекта и изменяем только поле sizeS на true,чтобы добавить фильтр по размеру,и для класса делаем проверку,если поле sizeS у состояния sizes true,то показываем активный класс кнопке,в другом случае обычный */}
+                                        <button className={sizes.sizeS ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={()=>setSizes((prev)=>({...prev, sizeS:!prev.sizeS}))}>S</button>
+
+                                        <button className={sizes.sizeM ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={()=>setSizes((prev)=>({...prev, sizeM:!prev.sizeM}))}>M</button>
+
+                                        <button className={sizes.sizeL ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={()=>setSizes((prev)=>({...prev, sizeL:!prev.sizeL}))}>L</button>
+
+                                        <button className={sizes.sizeXL ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={()=>setSizes((prev)=>({...prev, sizeXL:!prev.sizeXL}))}>XL</button>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
                         <div className="sectionCatalog__productsBlock">
+                            <div className="sectionCatalog__productsBlock-searchBlock">
+                                <div className="sectionCatalog__searchBlock-inputBlock">
+                                    <input type="text" className="searchBlock__inputBlock-input" placeholder="Search"/>
+                                    <img src="/images/sectionCatalog/Icon (1).png" alt="" className="searchBlock__inputBlock-img" />
+                                </div>
+                                <div className="searchBlock__sortBlock">
+                                    <p className="sortBlock__text">Sort By:</p>
+                                    <div className="sortBlock__inner">
+                                        <div className="sortBlock__topBlock" onClick={()=>setActiveSortBlock((prev)=>!prev)}>
+                                            {/* если sortBlockValue true,то есть если в sortBlockValue есть какое-то значение,то указываем такие классы,в другом случае другие,в данном случае делаем это для анимации появления текста */}
+                                            <p className={sortBlockValue ? "sortBlock__topBlock-text sortBlock__topBlock-text--active" : "sortBlock__topBlock-text"}>{sortBlockValue}</p>
+                                            <img src="/images/sectionCatalog/Icon.png" alt="" className={activeSortBlock ? "sortBlock__topBlock-img sortBlock__topBlock-img--active" : "sortBlock__topBlock-img"} />
+                                        </div>
+                                        <div className={activeSortBlock ? "sortBlock__optionsBlock sortBlock__optionsBlock--active" : "sortBlock__optionsBlock"}>
+                                            <div className="sortBlock__optionsBlock-item" onClick={sortItemHandlerRating}>
+                                                <p className="optionsBlock__item-text">Rating</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             catalog
                         </div>
                     </div>
