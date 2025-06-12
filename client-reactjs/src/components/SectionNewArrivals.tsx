@@ -17,6 +17,11 @@ const SectionNewArrivals = () => {
                     </div>
                     <div className="sectionNewArrivals__items">
                         <div className="sectionNewArrivals__item">
+
+                            <div className="sectionNewArrivals__item-saleBlock">30%</div>
+
+                            <div className="sectionNewArrivals__item-saleBlockHot">HOT</div>
+
                             <img src="/images/sectionNewArrivals/Rectangle 25.jpg" alt="" className="sectionNewArrivals__item-img" />
                             <h2 className="sectionNewArrivals__item-title">Black Sweatshirt with...</h2>
                             <div className="sectionNewArrivals__item-starsBlock">
@@ -41,7 +46,13 @@ const SectionNewArrivals = () => {
                                 </button>
                             </div>
                         </div>
+
                         <div className="sectionNewArrivals__item">
+
+                            <div className="sectionNewArrivals__item-saleBlock">30%</div>
+
+                            <div className="sectionNewArrivals__item-saleBlockHot">HOT</div>
+
                             <img src="/images/sectionNewArrivals/Rectangle 26.jpg" alt="" className="sectionNewArrivals__item-img" />
                             <h2 className="sectionNewArrivals__item-title">Line Pattern Black H...</h2>
                             <div className="sectionNewArrivals__item-starsBlock">
