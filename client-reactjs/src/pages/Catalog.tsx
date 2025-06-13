@@ -11,6 +11,8 @@ const Catalog = () => {
 
     const [filterCategories, setFilterCategories] = useState('');
 
+    const [typeFilter,setTypeFilter] = useState(''); // состояние для фильтра типа(в данном случае для женской и мужской одежды)
+
     const [priceFilterMax, setPriceFilterMax] = useState(200); // состояние для максимальной цены товара,которое посчитали на бэкэнде и поместили в состояние priceFilterMax,указываем дефолтное значение 0,иначе не работает,так как выдает ошибки,что для ReactSlider нельзя назначить значение с типом undefined и тд
 
     const [filterPrice, setFilterPrice] = useState([0, priceFilterMax]); // массив для значений нашего инпута range(ReactSlider),первым значением указываем значение для первого ползунка у этого инпута,а вторым для второго, ставим изначальное значение для второго ползунка инпута как priceFilterMax(максимальная цена товарв из всех,которую посчитали на бэкэнде),чтобы сразу показывалось,что это максимальное значение цены,не указываем здесь конкретно data?.maxPriceAllProducts,так как тогда выдает ошибки,что для ReactSlider нельзя назначить значение с типом undefined и тд
@@ -136,8 +138,33 @@ const Catalog = () => {
                 <div className="container">
                     <div className="sectionCatalog__inner">
                         <div className="sectionCatalog__filterBar">
+
                             <div className="sectionCatalog__filterBar-filterItem">
-                                <h2 className="filterBar__filterItem-title filterBar__filterItem-title--categories">Categories</h2>
+                                <h2 className="filterBar__filterItem-title filterBar__filterItem-title--categories">Type</h2>
+                                <div className="filterBar__filterItem-labels">
+                                    <label className="filterBar__filterItem-categoriesLabel" onClick={() => setTypeFilter('Men')}>
+                                        <input type="radio" name="radio" className="categoriesLabel__input" />
+                                        <span className={typeFilter === 'Men' ? "categoriesLabel-radioStyle categoriesLabel-radioStyle--active" : "categoriesLabel-radioStyle"}>
+                                            <span className={typeFilter === 'Men' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={typeFilter === 'Men' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Men</p>
+
+                                        {/* если typeFilter !== '',то есть какая-либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определнной категории показывалось только если никакие фильтры не выбраны,кроме поиска и цены),указываем значение этому тексту для количества товаров категории, в данном случае как filteredCategoryFruitsAndVegetables?.length(массив объектов товаров,отфильтрованный по полю category и значению 'Long Sleeves',то есть категория Long Sleeves),лучше фильтровать массивы товаров для показа количества товаров в категориях запросами на сервер,добавляя туда параметры фильтров,если они выбраны,но сейчас уже сделали так */}
+                                        <p className={typeFilter !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>(0)</p>
+                                    </label>
+                                    <label className="filterBar__filterItem-categoriesLabel" onClick={() => setTypeFilter('Women')}>
+                                        <input type="radio" name="radio" className="categoriesLabel__input" />
+                                        <span className={typeFilter === 'Women' ? "categoriesLabel-radioStyle categoriesLabel-radioStyle--active" : "categoriesLabel-radioStyle"}>
+                                            <span className={typeFilter === 'Women' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={typeFilter === 'Women' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Women</p>
+                                        <p className={typeFilter !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>(0)</p>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="sectionCatalog__filterBar-filterItem">
+                                <h2 className="filterBar__filterItem-title">Categories</h2>
                                 <div className="filterBar__filterItem-labels">
                                     <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('Long Sleeves')}>
                                         <input type="radio" name="radio" className="categoriesLabel__input" />
@@ -157,12 +184,12 @@ const Catalog = () => {
                                         <p className={filterCategories === 'Joggers' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Joggers</p>
                                         <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>(0)</p>
                                     </label>
-                                    <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('Tshirts')}>
+                                    <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('T-Shirts')}>
                                         <input type="radio" name="radio" className="categoriesLabel__input" />
-                                        <span className={filterCategories === 'Tshirts' ? "categoriesLabel-radioStyle categoriesLabel-radioStyle--active" : "categoriesLabel-radioStyle"}>
-                                            <span className={filterCategories === 'Tshirts' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
+                                        <span className={filterCategories === 'T-Shirts' ? "categoriesLabel-radioStyle categoriesLabel-radioStyle--active" : "categoriesLabel-radioStyle"}>
+                                            <span className={filterCategories === 'T-Shirts' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
                                         </span>
-                                        <p className={filterCategories === 'Tshirts' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>T-Shirts</p>
+                                        <p className={filterCategories === 'T-Shirts' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>T-Shirts</p>
                                         <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>(0)</p>
                                     </label>
                                     <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('Shorts')}>
@@ -265,6 +292,26 @@ const Catalog = () => {
                                 <div className="productsBlock__filtersBlock-leftBlock">
                                     <p className="filtersBlock__text">Active Filters:</p>
 
+                                    {/* если typeFilter не равно пустой строке,то показываем фильтр с текстом typeFilter,то есть выбран фильтр сортировки по типам для женской или мужской одежды */}
+                                    {typeFilter !== '' &&
+
+                                        <div className="filtersBlock__leftBlock-item">
+
+                                            {typeFilter === 'Men' &&
+                                                <p className="filtersBlock__item-text">Men</p>
+                                            }
+
+                                            {typeFilter === 'Women' &&
+                                                <p className="filtersBlock__item-text">Women</p>
+                                            }
+
+                                            <button className="filtersBlock__item-btn" onClick={() => setTypeFilter('')}>
+                                                <img src="/images/sectionCatalog/CrossImg.png" alt="" className="filtersBlock__item-btnImg" />
+                                            </button>
+                                        </div>
+
+                                    }
+
                                     {/* если filterCategories не равно пустой строке,то показываем фильтр с текстом filterCategories,то есть выбран фильтр сортировки по категориям */}
                                     {filterCategories !== '' &&
 
@@ -278,7 +325,7 @@ const Catalog = () => {
                                                 <p className="filtersBlock__item-text">Joggers</p>
                                             }
 
-                                            {filterCategories === 'Tshirts' &&
+                                            {filterCategories === 'T-Shirts' &&
                                                 <p className="filtersBlock__item-text">T-Shirts</p>
                                             }
 

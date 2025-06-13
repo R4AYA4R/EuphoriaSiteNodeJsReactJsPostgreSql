@@ -11,14 +11,37 @@
 
 import express from 'express'; // импортируем express(express типа для node js express,в данном случае импортируем это вручную,потому что автоматически не импортируется)
 
+import cors from 'cors'; // импортируем cors,чтобы можно было отправлять запросы на сервер из браузера(в данном случае импортируем это вручную,потому что автоматически не импортируется)
+
 import dotenv from 'dotenv';  // импортируем dotenv(в данном случае импортируем это вручную,потому что автоматически не импортируется)
 import db from './db.js';
+import cookieParser from 'cookie-parser'; // импортируем cookieParser для использования cookie
+import errorMiddleware from './middlewares/errorMiddleware.js';
+import router from './router/router.js';
+import models from './models/models.js';
 
 dotenv.config(); // используем config() у dotenv,чтобы работал dotenv и можно было использовать переменные окружения
 
 const PORT = process.env.PORT || 5000; // указываем переменную PORT и даем ей значение как у переменной PORT из файла .env,если такой переменной нет,то указываем значение 5000
 
 const app = express(); // создаем экземпляр нашего приложения с помощью express()
+
+
+app.use(express.static('static')); // делаем возможность отдавать изображение,то есть показывать изображение из папки static в браузере,когда,например, используем картинку,чтобы в src картинки можно было вставить путь до этой картинки на нашем node js сервере,и она показывалась
+
+app.use(cookieParser()); // подключаем cookieParser,чтобы работали cookie
+
+// подключаем cors,чтобы взаимодействовать с сервером(отправлять запросы) через браузер,указываем,с каким доменом нужно этому серверу обмениваться куками(cookies),для этого передаем объект в cors(),указываем поле credentials true(разрешаем использовать cookies) и указываем в origin url нашего фронтенда(в данном случае это http://localhost:3000),указываем этот url через переменную окружения CLIENT_URL(мы вынесли туда этот url)
+app.use(cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL
+}))
+
+app.use(express.json()); // подключаем express.json(),чтобы наш сервер мог парсить json формат данных,то есть обмениваться с браузером json форматом данных
+
+app.use('/api',router); // подключаем роутер к нашему серверу,первым параметром указываем url по которому будет отрабатывать этот роутер,а вторым параметром указываем сам роутер 
+
+app.use(errorMiddleware); // подключаем наш middleware для обработки ошибок,middleware для обработки ошибок нужно подключать в самом конце всех подключений use()
 
 // делаем эту функцию start асинхронной,так как все операции с базой данных являются асинхронными
 const start = async () => {
@@ -31,6 +54,27 @@ const start = async () => {
         await db.sync(); // используем функцию sync(),чтобы эта функция сверяла состояние базы данных со схемой данных которую мы опишем
 
         app.listen(PORT,() => console.log(`Server started on PORT = ${PORT}`)); // запускаем сервер,говоря ему прослушивать порт 5000(указываем первым параметром у listen() нашу переменную PORT) с помощью listen(),и вторым параметром указываем функцию,которая выполнится при успешном запуске сервера
+
+
+        // это делаем 1 раз,чтобы создать объекты в таблицах базы данных PostgreSql и потом их использовать,указываем categoryId в соответствии с нужными категориями,в categoryId указываем id объекта из таблицы category с нужной нам категорией,так мы будем знать,какие товары с какой категорией(с полем typeId для типов мужской или женской одежды также),и потом будем фильтровать объекты товаров по полю categoryId со значением определенного id категории(со значением id объекта из таблицы Category,так мы будем знать,что это за категория),чтобы удалить запись из таблицы в pgAdmin,надо ее всю выделить,нажать на кнопку корзины и потом на кнопку save changes
+
+        // await models.Category.create({category:"Long Sleeves"});
+        // await models.Category.create({category:"Joggers"});
+        // await models.Category.create({category:"T-Shirts"});
+        // await models.Category.create({category:"Shorts"});
+
+        // await models.Type.create({type:"Men"});
+        // await models.Type.create({type:"Women"});
+
+
+        // await models.Product.create({name:"Raven Hoodie With Black colored Design",descText:"100% Bio-washed Cotton – makes the fabric extra soft & silky. Flexible ribbed crew neck. Precisely stitched with no pilling & no fading. Provide  all-time comfort. Anytime, anywhere. Infinite range of matte-finish HD prints.",price:12,priceDiscount:10,amount:1,totalPrice:10,sizes:["L","XL"],rating:0,mainImage:"Product Image.jpg",descImages:["Product Image.jpg","Product Image.jpg"],categoryId:1,typeId:2});
+
+        // await models.Product.create({name:"White T-shirt",descText:"100% Bio-washed Cotton – makes the fabric extra soft & silky. Flexible ribbed crew neck. Precisely stitched with no pilling & no fading. Provide  all-time comfort. Anytime, anywhere. Infinite range of matte-finish HD prints.",price:8,amount:1,totalPrice:8,sizes:["S","M"],rating:0,mainImage:"Rectangle 25.png",descImages:["Product Image.jpg","Product Image.jpg"],categoryId:3,typeId:2});
+
+        // await models.Product.create({name:"Black Shorts",descText:"100% Bio-washed Cotton – makes the fabric extra soft & silky. Flexible ribbed crew neck. Precisely stitched with no pilling & no fading. Provide  all-time comfort. Anytime, anywhere. Infinite range of matte-finish HD prints.",price:45,priceDiscount:37,amount:1,totalPrice:37,sizes:["S","M","L"],rating:0,mainImage:"Rectangle 25 (1).png",descImages:["Product Image.jpg","Product Image.jpg"],categoryId:4,typeId:2});
+
+        // await models.Product.create({name:"Dark Joggers",descText:"100% Bio-washed Cotton – makes the fabric extra soft & silky. Flexible ribbed crew neck. Precisely stitched with no pilling & no fading. Provide  all-time comfort. Anytime, anywhere. Infinite range of matte-finish HD prints.",price:110,priceDiscount:95.99,amount:1,totalPrice:95.99,sizes:["S","M","L","XL"],rating:0,mainImage:"Rectangle 22.png",descImages:["Product Image.jpg","Product Image.jpg"],categoryId:2,typeId:1});
+
 
     }catch(e){
 
