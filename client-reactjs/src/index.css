@@ -655,6 +655,7 @@ a {
     margin-bottom: 30px;
     transition:all .5s ease;
     width: 100%;
+    max-height: 367px;
 }
 
 .sectionNewArrivals__item-img:hover{
@@ -667,6 +668,8 @@ a {
     font-weight: 600;
     margin-bottom: 5px;
     transition:all .5s ease;
+    max-height: 21px;
+    overflow: hidden; /* указываем в данном случае это свойство,чтобы если текст названия не влезает по высоте,то его было видно */
 }
 
 .sectionNewArrivals__item-title:hover{
@@ -723,6 +726,12 @@ a {
     font-size: 22px;
     font-weight: 500;
     color: #3C4242;
+}
+
+.textAlreadyInCart{
+    font-size: 18px;
+    font-weight: 700;
+    color: #808080;
 }
 
 .sectionNewArrivals__cartBlock-btn{

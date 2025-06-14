@@ -75,6 +75,8 @@ const start = async () => {
 
         // await models.Product.create({name:"Dark Joggers",descText:"100% Bio-washed Cotton – makes the fabric extra soft & silky. Flexible ribbed crew neck. Precisely stitched with no pilling & no fading. Provide  all-time comfort. Anytime, anywhere. Infinite range of matte-finish HD prints.",price:110,priceDiscount:95.99,amount:1,totalPrice:95.99,sizes:["S","M","L","XL"],rating:0,mainImage:"Rectangle 22.png",descImages:["Product Image.jpg","Product Image.jpg"],categoryId:2,typeId:1});
 
+        // await models.Product.create({name:"Dark Green Sweatshirt",descText:"100% Bio-washed Cotton – makes the fabric extra soft & silky. Flexible ribbed crew neck. Precisely stitched with no pilling & no fading. Provide  all-time comfort. Anytime, anywhere. Infinite range of matte-finish HD prints.",price:127,amount:1,totalPrice:127,sizes:["M","L","XL"],rating:0,mainImage:"Rectangle 25 (2).png",descImages:["Product Image.jpg","Product Image.jpg"],categoryId:1,typeId:1});
+
 
     }catch(e){
 

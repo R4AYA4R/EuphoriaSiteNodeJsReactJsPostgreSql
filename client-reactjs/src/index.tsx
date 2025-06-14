@@ -3,13 +3,29 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+// устанавливаем react query с помощью команды в терминале npm i @tanstack/react-query, устанавливаем npm i @reduxjs/toolkit react-redux для redux toolkit,все эти команды нужно будет указывать с параметром --force,так как устанавливали библиотеку react-slider,которая по версии не совместима с последней версией react js,но код работает
+
+// указываем наш queryClient и указываем у него настройки
+const queryClient = new QueryClient({
+  defaultOptions:{
+    queries:{
+      refetchOnWindowFocus:false // refetchOnWindowFocus:false-убирает повторный запрос на сервер с помощью react query при смене фокуса окна браузера
+    }
+  }
+})
+
 root.render(
   <React.StrictMode>
-    <App />
+    {/* оборачиваем наше приложение в QueryClientProvider,чтобы работал react query,в client указываем наш queryClient,который мы создали выше и указали в нем настройки */}
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

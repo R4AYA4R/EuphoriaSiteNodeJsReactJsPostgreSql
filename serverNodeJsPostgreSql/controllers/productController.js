@@ -1,20 +1,24 @@
+import productService from "../service/productService.js"; // указываем тут расширение файла как .js вручную,иначе не находит файл
 
 
 // создаем класс для ProductController,где будем описывать функции для эндпоинтов
 class ProductController {
 
     // первым параметром эти функции принимают req(запрос),а вторым параметром res(ответ),третьим параметром передаем функцию next(следующий по цепочке middleware,в данном случае это наш errorMiddleware)
-    async getProductsArrivals (req,res,next) {
+    async getProductsArrivals(req, res, next) {
 
         // отличие req.params от req.query заключается в том,что в req.params указываются параметры в самом url до эндпоинта на бэкэнде(в node js в данном случае,типа /api/getProducts) через :(типа /:id,динамический параметр id),а req.query - это параметры,которые берутся из url(которые дополнительно добавили с фронтенда к url) через знак ?(типа ?name=bob)
 
-        
+        const { limit } = req.query; // берем из параметров запроса поле limit
 
         // оборачиваем в try catch для обработки ошибок
-        try{
+        try {
 
+            const productsData = await productService.getProductsArrivals(limit);  // вызываем нашу функцию login из userService,передаем туда email и password,эта функция возвращает refreshToken и userDto(объект пользователя с полями id,email,userName,role) и помещаем эти данные в переменную userData
 
-        }catch(e){
+            return res.json(productsData); // возвращаем массив товаров(products) на клиент
+
+        } catch (e) {
 
             next(e);  // вызываем функцию next()(параметр этой функции getProductsArrivals) и туда передаем ошибку,в этот next() попадает ошибка,и если ошибка будет от нашего класса ApiError(наш класс обработки ошибок,то есть когда мы будем вызывать функцию из нашего класса ApiError для обработки определенной ошибки,то эта функция будет возвращать объект с полями message и тд,и этот объект будет попадать в эту функцию next(в наш errorMiddleware) у этой нашей функции getProductsArrivals,и будет там обрабатываться),то она будет там обработана с конкретным сообщением,которое мы описывали,если эта ошибка будет не от нашего класса ApiError(мы обрабатывали какие-то конкретные ошибки,типа UnauthorizedError,ошибки при авторизации и тд),а какая-то другая,то она будет обработана как обычная ошибка(просто выведена в логи,мы это там прописали),вызывая эту функцию next(),мы попадаем в наш middleware error-middleware(который подключили в файле index.js)
 
