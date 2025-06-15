@@ -2,6 +2,10 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import SectionUnderTop from "../components/SectionUnderTop";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import ReactSlider from "react-slider"; // импортируем ReactSlider из 'react-slider' вручную,так как автоматически не импортируется(в данном случае автоматически импортировалось),перед этим устанавливаем(npm install --save-dev @types/react-slider --force( указываем --force,чтобы установить эту библиотеку через силу,так как для версии react 19,выдает ошибку при установке этой библиотеки) типы для react-slider,иначе выдает ошибку,если ошибка сохраняется,что typescript не может найти типы для ReactSlider,после того,как установили для него типы,то надо закрыть запущенный локальный хост для нашего сайта в терминале и заново его запустить с помощью npm start
+import { useQuery } from "@tanstack/react-query";
+import axios, { AxiosResponse } from "axios";
+import { IProductsCatalogResponse } from "../types/types";
+import ProductItemCatalog from "../components/ProductItemCatalog";
 
 const Catalog = () => {
 
@@ -9,11 +13,33 @@ const Catalog = () => {
 
     const onScreen = useIsOnScreen(sectionCatalog as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
+    // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер,берем isFetching у useQuery,чтобы отслеживать,загружается ли сейчас запрос на сервер,разница isFetching и isLoading в том,что isFetching всегда будет проверять загрузку запроса на сервер при каждом запросе,а isLoading будет проверять только первый запрос на сервер,в данном случае нужен isFetching,так как идут повторные запросы на сервер
+    const { data, refetch, isFetching } = useQuery({
+        queryKey: ['getProductsCatalog'], // указываем название
+        queryFn: async () => {
+
+            // выносим url на получение товаров в отдельную переменную,чтобы ее потом изменять,вынесли основной url до бэкэнда в переменную REACT_APP_BACKEND_URL(REACT_APP_ обязательная приставка для переменных в .env файле для react js,иначе не находит эти переменные,и после изменения этих переменных в файле .env,нужно заново запустить сайт,то есть закрыть терминал(консоль) с текущим открытым сайтом(если это на localhost запускается,то есть на локальном компьютере),и заново в новом терминале запустить его командой npm start) в файле .env,чтобы было более удобно ее указывать и было более безопасно,так как обычно git не отслеживает этот файл и не будет его пушить в репозиторий,также после этого url указываем конкретный путь до нашего роутера на бэкэнде(/api в данном случае),а потом уже конкретный url до эндпоинта
+            let url = `${process.env.REACT_APP_BACKEND_URL}/api/getProductsCatalog?name=${searchValue}`;
+
+            // здесь надо будет делать проверки дли изменения url на получения объектов товаров
+
+            // указываем тип данных,который придет от сервера как тип на основе нашего интерфейса IProductsCatalogResponse,у этого объекта будут поля count(количество объектов товаров всего,которые пришли от сервера) и rows(сами объекты товаров,но на конкретной странице пагинации),также поле maxPriceAllProducts(максимальная цена товара из всех),чтобы взять потом количество этих всех объектов товаров и использовать для пагинации),вместо url будет подставлено значение,которое есть у нашей переменной url
+            const response = await axios.get<IProductsCatalogResponse>(url); // делаем запрос на сервер для получения товаров каталога,указываем в типе в generic наш тип на основе интерфейса IProductsCatalogResponse
+
+            console.log(response);
+
+            return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля products(внутри него есть поле count и rows) и maxPriceAllProducts
+
+        }
+    })
+
+    const [searchValue, setSearchValue] = useState(''); // состояние для инпута поиска
+
     const [filterCategories, setFilterCategories] = useState('');
 
-    const [typeFilter,setTypeFilter] = useState(''); // состояние для фильтра типа(в данном случае для женской и мужской одежды)
+    const [typeFilter, setTypeFilter] = useState(''); // состояние для фильтра типа(в данном случае для женской и мужской одежды)
 
-    const [priceFilterMax, setPriceFilterMax] = useState(200); // состояние для максимальной цены товара,которое посчитали на бэкэнде и поместили в состояние priceFilterMax,указываем дефолтное значение 0,иначе не работает,так как выдает ошибки,что для ReactSlider нельзя назначить значение с типом undefined и тд
+    const [priceFilterMax, setPriceFilterMax] = useState(0); // состояние для максимальной цены товара,которое посчитали на бэкэнде и поместили в состояние priceFilterMax,указываем дефолтное значение 0,иначе не работает,так как выдает ошибки,что для ReactSlider нельзя назначить значение с типом undefined и тд
 
     const [filterPrice, setFilterPrice] = useState([0, priceFilterMax]); // массив для значений нашего инпута range(ReactSlider),первым значением указываем значение для первого ползунка у этого инпута,а вторым для второго, ставим изначальное значение для второго ползунка инпута как priceFilterMax(максимальная цена товарв из всех,которую посчитали на бэкэнде),чтобы сразу показывалось,что это максимальное значение цены,не указываем здесь конкретно data?.maxPriceAllProducts,так как тогда выдает ошибки,что для ReactSlider нельзя назначить значение с типом undefined и тд
 
@@ -40,11 +66,18 @@ const Catalog = () => {
     // функция для кнопки удаления фильтра цены
     const removeFilterPrice = () => {
 
+        if (data?.maxPriceAllProducts) {
 
+            setFilterPrice([0, data?.maxPriceAllProducts]); // изменяем состояние фильтра цены на дефолтные значение(0 и data?.maxPriceAllProducts(максимальное значение цены товара,которое посчитали на бэкэнде))
 
-        setFilterPrice([0, priceFilterMax]);
+        }
 
-        // здесь еще надо будет делать refetch массива товаров и тд
+        // используем setTimeout,чтобы сделать повторный запрос на сервер через некоторое время,чтобы успело переобновиться состояние filterPrice,иначе состояние не успевает переобновиться и повторный запрос идет с предыдущими данными filterPrice,в данном случае ставим задержку(то есть через какое время выполниться повторный запрос) 200 миллисекунд(0.2 секунды)
+        setTimeout(() => {
+
+            refetch(); // делаем повторный запрос на сервер,чтобы переобновить данные товаров уже без фильтров цены,делаем так,потому что отдельно отслеживаем события кликов и ползунков у инпута React Slider,поэтому нужно отдельно переобновлять дополнительно данные в функциях изменения фильтра цены
+
+        }, 200)
 
     }
 
@@ -130,6 +163,65 @@ const Catalog = () => {
         })
 
     }
+
+    // при изменении data?.products.rows изменяем значение priceFilterMax на data?.maxPriceAllProducts(максимальное значение цены товара,которое посчитали на бэкэнде)
+    useEffect(() => {
+
+        // если data?.maxPriceAllProducts true,то есть data?.maxPriceAllProducts есть и в нем есть какое-то значение,делаем эту проверку,иначе выдает ошибку,что data?.maxPriceAllProducts может быть undefined
+        if (data?.maxPriceAllProducts) {
+
+            setPriceFilterMax(data?.maxPriceAllProducts);
+
+        }
+
+        console.log(data?.maxPriceAllProducts);
+
+    }, [data?.products.rows])
+
+    // при изменении priceFilterMax изменяем значение filterPrice,возвращаем массив,первым элементом указываем предыдущее значение по индексу 0(то есть минимальное значение фильтра цены) и второй элемент указываем со значением как priceFilterMax(делаем эти манипуляции с priceFilterMax,иначе выдает ошибку,что для ReacSlider нельзя указать значение с типом undefined и тд)
+    useEffect(() => {
+
+        setFilterPrice((prev) => [prev[0], priceFilterMax]);
+
+        console.log(filterPrice);
+
+    }, [priceFilterMax])
+
+    // указываем в массиве зависимостей этого useEffect data?.products(массив объектов товаров для отдельной страницы пагинации),чтобы делать повторный запрос на получения объектов товаров при изменении data?.products,в данном случае это для пагинации,если не указать data?.products,то пагинация при запуске страницы не будет работать, также делаем повторный запрос на сервер уже с измененным значение searchValue(чтобы поисковое число(число товаров,которое изменяется при поиске) показывалось правильно,когда вводят что-то в поиск)
+    useEffect(() => {
+
+        refetch(); // делаем повторный запрос на получение товаров при изменении data?.products, searchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния текущей страницы пагинации 
+
+    }, [searchValue])
+
+    // при изменении searchValue,то есть когда пользователь что-то вводит в инпут поиска,то изменяем filterCategory на пустую строку и остальные фильтры тоже,соответственно будет сразу идти поиск по всем товарам,а не в конкретной категории или определенных фильтрах,но после поиска можно будет результат товаров по поиску уже отфильтровать по категориям и тд
+    useEffect(() => {
+
+        setFilterCategories('');
+
+        setTypeFilter('');
+
+        setFilterPrice([0, priceFilterMax]);  // убираем фильтр цены,изменяем состояние filterPrice для фильтра цены,первым элементом массива указываем значение 0(дефолтное значение фильтра цены),вторым элементом указываем priceFilterMax(максимальное значение цены товара,которое посчитали на бэкэнде и поместили в состояние priceFilterMax)
+
+        // изменяем каждое поле в состоянии sizes(объект состояний в данном случае) на значение false,то есть убираем фильтр размеров
+        setSizes({
+            sizeS: false,
+            sizeM: false,
+            sizeL: false,
+            sizeXL: false,
+        });
+
+        setSizesMass([]); // изменяем состояние sizesMass на пустой массив
+
+        // используем setTimeout,чтобы сделать повторный запрос на сервер через некоторое время,чтобы успело переобновиться состояние filterPrice,иначе состояние не успевает переобновиться и повторный запрос идет с предыдущими данными filterPrice,в данном случае ставим задержку(то есть через какое время выполниться повторный запрос) 100 миллисекунд(0.1 секунда)
+        setTimeout(() => {
+
+            refetch(); // делаем повторный запрос на сервер,чтобы переобновить данные товаров уже без фильтров цены,делаем так,потому что отдельно отслеживаем события кликов и ползунков у инпута React Slider,поэтому нужно отдельно переобновлять дополнительно данные в функциях изменения фильтра цены
+
+        }, 100);
+
+
+    }, [searchValue])
 
     return (
         <main className="main">
@@ -217,7 +309,7 @@ const Catalog = () => {
 
                                         defaultValue={filterPrice}  // поле для дефолтного значения минимального(первый элемент массива) и максимального(второй элемент массива),указываем этому полю значение как наш массив filterPrice(массив чисел для минимального(первый элемент массива) и максимального(второй элемент массива) значения)
 
-                                        max={200} // поле для максимального значения
+                                        max={data?.maxPriceAllProducts} // поле для максимального значения
 
                                         min={0} // поле для минимального значения
 
@@ -238,7 +330,19 @@ const Catalog = () => {
 
                                         onChange={(value, index) => setFilterPrice(value)} // при изменении изменяем значение состояния массива filterPrice(в параметрах функция callback принимает value(массив текущих значений этого инпута) и index(индекс кнопки элемента массива,то есть за какую кнопку сейчас дергали))
 
-                                    // здесь еще надо будет делать refetch(повторный запрос на сервер для обновления данных массива товаров) в onAfterChange и onSliderClick
+                                        // onAfterChange срабатывает,когда отпустили ползунок у инпута React Slider,в данном случае делаем повторный запрос на сервер(refetch()),когда отпустили ползунок у инпута,чтобы переобновить данные товаров уже с новым фильтром цены
+                                        onAfterChange={() => {
+
+                                            refetch();
+
+                                        }}
+
+                                        // onSliderClick срабатывает,когда нажали на инпут React Slider,в данном случае делаем повторный запрос на сервер(refetch()),когда нажимаем на React Slider,чтобы переобновить данные товаров уже с новым фильтром цены(если не указать это,то при клике на инпут React Slider значение будет изменяться правильно,а при запросе на сервер будут неправильные значения)
+                                        onSliderClick={() => {
+
+                                            refetch();
+
+                                        }}
 
 
                                     />
@@ -269,7 +373,7 @@ const Catalog = () => {
                         <div className="sectionCatalog__productsBlock">
                             <div className="sectionCatalog__productsBlock-searchBlock">
                                 <div className="sectionCatalog__searchBlock-inputBlock">
-                                    <input type="text" className="searchBlock__inputBlock-input" placeholder="Search" />
+                                    <input type="text" className="searchBlock__inputBlock-input" placeholder="Search" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
                                     <img src="/images/sectionCatalog/Icon (1).png" alt="" className="searchBlock__inputBlock-img" />
                                 </div>
                                 <div className="searchBlock__sortBlock">
@@ -346,7 +450,7 @@ const Catalog = () => {
 
                                         <div className="filtersBlock__leftBlock-item">
 
-                                            <p className="filtersBlock__item-text">Price: {filterPrice[0]} - {filterPrice[1].toFixed(0)}</p>
+                                            <p className="filtersBlock__item-text">Price: ${filterPrice[0]} - ${filterPrice[1].toFixed(0)}</p>
 
 
                                             {/* в onClick(при нажатии на кнопку) указываем нашу функцию removeFilterPrice,там убираем фильтр цены и тд */}
@@ -412,45 +516,35 @@ const Catalog = () => {
 
                                 </div>
                                 <div className="productsBlock__filtersBlock-amountBlock">
-                                    <p className="filtersBlock__amountBlock-amount">0</p>
+                                    {/* указываем значение этому тексту как data?.products.count,то есть количество объектов всех товаров без пагинации,который приходит от сервера */}
+                                    <p className="filtersBlock__amountBlock-amount">{data?.products.count}</p>
                                     <p className="filtersBlock__amountBlock-text">Results found.</p>
                                 </div>
                             </div>
 
-                            <div className="sectionCatalog__productsBlock-productsItems">
+                            {/*  указываем если data?.rows.length true(то есть количество всех объектов товаров на определенной странице пагинации true,то есть они есть) и isFetching false(то есть загрузка запроса на сервер закончена,делаем эту проверку,чтобы когда грузится запрос на сервер показывать лоадер(загрузку) или текст типа Loading... ), то показываем объекты товаров,в другом случае если isFetching true,то показываем лоадер,или текст типа Loading..., и уже в другом случае,если эти условия не верны,то показываем текст,что не найдены объекты товаров,проходимся по массиву объектов товаров data?.rows,указываем data?.rows,так как от сервера в поле data приходит объект с полями products(внутри поля count и rows) и maxPriceAllProducts(максимальное значение цены товара из всех) */}
+                            {!isFetching && data?.products.rows.length ?
 
-                                <div className="sectionNewArrivals__item">
+                                <div className="sectionCatalog__productsBlock-productsItems">
 
-                                    <div className="sectionNewArrivals__item-saleBlock">30%</div>
+                                    {data?.products.rows.map((product) =>
 
-                                    <div className="sectionNewArrivals__item-saleBlockHot">HOT</div>
+                                        <ProductItemCatalog key={product.id} product={product} />
 
-                                    <img src="/images/sectionNewArrivals/Rectangle 25.jpg" alt="" className="sectionNewArrivals__item-img" />
-                                    <h2 className="sectionNewArrivals__item-title">Black Sweatshirt with...</h2>
-                                    <div className="sectionNewArrivals__item-starsBlock">
-                                        <div className="sectionNewArrivals__item-stars">
-                                            {/* будем здесь делать проверку типа если рейтинг больше 0.5,то картинка половины здезы,если больше 1,то целая звезда,в другом случае пустая звезда */}
-                                            <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
-                                            <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
-                                            <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
-                                            <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
-                                            <img src="/images/sectionNewArrivals/Vector (2).png" alt="" className="sectionNewArrivals__item-starsImg" />
-                                        </div>
-                                        <p className="sectionNewArrivals__item-starsAmount">(0)</p>
-                                    </div>
-                                    <div className="sectionNewArrivals__item-priceBlock">
-                                        <p className="item__priceBlock-priceSale">$10</p>
-                                        <p className="item__priceBlock-priceUsual">$12</p>
-                                    </div>
-                                    <div className="sectionNewArrivals__item-cartBlock">
-                                        <button className="sectionNewArrivals__cartBlock-btn">
-                                            <p className="cartBlock__btn-text">Add to Cart</p>
-                                            <img src="/images/sectionNewArrivals/shopping cart.png" alt="" className="cartBlock__btn-img" />
-                                        </button>
-                                    </div>
+                                    )}
+
                                 </div>
 
-                            </div>
+                                : isFetching ?
+
+                                    <div className="innerForLoader">
+                                        <div className="loader"></div>
+                                    </div>
+
+                                    : <h2 className="productsBlock__notFoundText">Not Found</h2>
+
+                            }
+
 
                         </div>
                     </div>

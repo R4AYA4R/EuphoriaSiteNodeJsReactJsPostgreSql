@@ -5,4 +5,6 @@ const router = new Router(); // создаем объект на основе э
  
 router.get('/getProductsArrivals',productController.getProductsArrivals); // описываем get запрос на сервере,первым параметром указываем url,по которому этот эндпоинт будет отрабатывать,а вторым передаем функцию,которая будет срабатывать на этом эндпоинте(по этому url)
 
+router.get('/getProductsCatalog',productController.getProductsCatalog); // описываем get запрос на сервере для получения товаров для каталога
+
 export default router; // экспортируем наш router

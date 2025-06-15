@@ -1292,3 +1292,38 @@ a {
     grid-template-columns: repeat(3,1fr);
     gap:24px;
 }
+
+.innerForLoader{
+    margin-top: 30px;
+    display: flex;
+    align-items: center;    
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+.loader{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border:3px dashed #3589c2;
+    animation: rotateLoader 1s ease infinite;
+}
+
+@keyframes rotateLoader {
+    
+    0%{
+        transform: rotate(0deg) scale(1);
+    }
+
+    100%{
+        transform: rotate(360deg) scale(1.2);
+    } 
+
+}
+
+.productsBlock__notFoundText{
+    margin: 10px;
+    font-size: 16px;
+    font-weight: 600;
+}
