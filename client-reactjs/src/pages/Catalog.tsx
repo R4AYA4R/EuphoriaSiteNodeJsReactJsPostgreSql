@@ -4,7 +4,7 @@ import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import ReactSlider from "react-slider"; // импортируем ReactSlider из 'react-slider' вручную,так как автоматически не импортируется(в данном случае автоматически импортировалось),перед этим устанавливаем(npm install --save-dev @types/react-slider --force( указываем --force,чтобы установить эту библиотеку через силу,так как для версии react 19,выдает ошибку при установке этой библиотеки) типы для react-slider,иначе выдает ошибку,если ошибка сохраняется,что typescript не может найти типы для ReactSlider,после того,как установили для него типы,то надо закрыть запущенный локальный хост для нашего сайта в терминале и заново его запустить с помощью npm start
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
-import { IProductsCatalogResponse } from "../types/types";
+import { IProduct, IProductsCatalogResponse } from "../types/types";
 import ProductItemCatalog from "../components/ProductItemCatalog";
 
 const Catalog = () => {
@@ -12,6 +12,19 @@ const Catalog = () => {
     const sectionCatalog = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
     const onScreen = useIsOnScreen(sectionCatalog as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
+    
+    const [filteredLongSleeves,setFilteredLongSleeves] = useState<IProduct[]>([]); // состояние для отфильтрованного массива по категориям,чтобы показывать количество товаров в определенной категории,указываем в generic тип IProduct[] | undefined,иначе выдает ошибку
+    
+    const [filteredJoggers,setFilteredJoggers] = useState<IProduct[]>([]);
+
+    const [filteredTShirts,setFilteredTShirts] = useState<IProduct[]>([]);
+
+    const [filteredShorts,setFilteredShorts] = useState<IProduct[]>([]);
+
+    const [filteredTypeMen,setFilteredTypeMen] = useState<IProduct[]>([]);
+
+    const [filteredTypeWomen,setFilteredTypeWomen] = useState<IProduct[]>([]);
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер,берем isFetching у useQuery,чтобы отслеживать,загружается ли сейчас запрос на сервер,разница isFetching и isLoading в том,что isFetching всегда будет проверять загрузку запроса на сервер при каждом запросе,а isLoading будет проверять только первый запрос на сервер,в данном случае нужен isFetching,так как идут повторные запросы на сервер
     const { data, refetch, isFetching } = useQuery({
@@ -63,9 +76,16 @@ const Catalog = () => {
                 // проходимся по массиву sizesMass и на каждой итерации(для каждого элемента массива) добавляем к url до бэкэнда параметр &sizes со значением itemSize,то есть будет в url подставлено типа &sizes=S&sizes=M и тд
                 sizesMass.forEach((itemSize)=>{
 
-                    url += `&sizes=${itemSize}`
+                    url += `&sizes=${itemSize}`;
 
                 })
+
+            }
+
+            // если sortBlockValue(состояние для сортировки товаров) не равно пустой строке,то добавляем к url еще параметры sortBy и order в которые передаем значение состояния sortBlockValue и порядок сортировки(DESC(от большего к меньшему) или ASC(от меньшего к большему) в данном случае для базы данных postgreSql),в нем хранится название поля,и это значение мы приводим к нижнему регистру букв с помощью toLowerCase(),чтобы в названии поля были все маленькие буквы,мы это обрабатываем на бэкэнде в node js)
+            if(sortBlockValue !== ''){
+
+                url += `&sortBy=${sortBlockValue.toLowerCase()}&order=DESC`;
 
             }
 
@@ -73,6 +93,18 @@ const Catalog = () => {
             const response = await axios.get<IProductsCatalogResponse>(url); // делаем запрос на сервер для получения товаров каталога,указываем в типе в generic наш тип на основе интерфейса IProductsCatalogResponse
 
             console.log(response);
+
+            setFilteredLongSleeves(response.data.allProductsForCount.filter(product => product.categoryId === 1)); // помещаем в состояние filteredLongSleeves массив allProductsForCount(массив всех товаров без пагинации,который пришел от сервера),отфильтрованный с помощью filter(),фильтруем его(то есть оставляем все объекты в этом массиве,те для которых это условие в filter() будет true) по полю categoryId со значением,в данном случае 1(так как сделали в базе данных postgreSql так,что поле categoryId со значением 1 будет значить,что у этого товара категория 'Long Sleeves'),то есть получаем массив объектов товаров с категорией 'Long Sleeves',чтобы отобразить количество товаров в этой категории, фильтровать отдельно для цены и размеров(в данном случае sizes) не надо,так как и так на бэкэнде это проверяем,если эти фильтры указаны,и массив уже приходит отфильтрованный по этим фильтрам цены и размера,остается только отфильтровать его для каждой категории и типа(type)
+
+            setFilteredJoggers(response.data.allProductsForCount.filter(product => product.categoryId === 2));
+
+            setFilteredTShirts(response.data.allProductsForCount.filter(product => product.categoryId === 3));
+
+            setFilteredShorts(response.data.allProductsForCount.filter(product => product.categoryId === 4));
+
+            setFilteredTypeMen(response.data.allProductsForCount.filter(product => product.typeId === 1)); // это фильтруем уже для категории типа type(типа для мужской или женской одежды)
+
+            setFilteredTypeWomen(response.data.allProductsForCount.filter(product => product.typeId === 2));
 
             return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля products(внутри него есть поле count и rows) и maxPriceAllProducts
 
@@ -238,7 +270,7 @@ const Catalog = () => {
 
         refetch(); // делаем повторный запрос на получение товаров при изменении data?.products, searchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния текущей страницы пагинации 
 
-    }, [searchValue, typeFilter, filterCategories, sizes])
+    }, [searchValue, typeFilter, filterCategories, sizes, sortBlockValue])
 
     // при изменении searchValue,то есть когда пользователь что-то вводит в инпут поиска,то изменяем filterCategory на пустую строку и остальные фильтры тоже,соответственно будет сразу идти поиск по всем товарам,а не в конкретной категории или определенных фильтрах,но после поиска можно будет результат товаров по поиску уже отфильтровать по категориям и тд
     useEffect(() => {
@@ -287,8 +319,8 @@ const Catalog = () => {
                                         </span>
                                         <p className={typeFilter === 'Men' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Men</p>
 
-                                        {/* если typeFilter !== '',то есть какая-либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определнной категории показывалось только если никакие фильтры не выбраны,кроме поиска и цены),указываем значение этому тексту для количества товаров категории, в данном случае как filteredCategoryFruitsAndVegetables?.length(массив объектов товаров,отфильтрованный по полю category и значению 'Long Sleeves',то есть категория Long Sleeves),лучше фильтровать массивы товаров для показа количества товаров в категориях запросами на сервер,добавляя туда параметры фильтров,если они выбраны,но сейчас уже сделали так */}
-                                        <p className={typeFilter !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>(0)</p>
+                                        {/* если typeFilter !== '',то есть какая-либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определенном типе(type) показывалось только если никакой другой тип(type) не выбран),указываем значение этому тексту для количества товаров категории, в данном случае как filteredTypeMen.length(массив объектов товаров,отфильтрованный по полю typeId и значению 1(то есть в данном случае для типа 'Men'),лучше фильтровать массивы товаров для показа количества товаров в категориях запросами на сервер,добавляя туда параметры фильтров,если они выбраны,но тогда может много запросов идти на сервер и сейчас уже сделали так */}
+                                        <p className={typeFilter !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredTypeMen.length})</p>
                                     </label>
                                     <label className="filterBar__filterItem-categoriesLabel" onClick={() => setTypeFilter('Women')}>
                                         <input type="radio" name="radio" className="categoriesLabel__input" />
@@ -296,7 +328,7 @@ const Catalog = () => {
                                             <span className={typeFilter === 'Women' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
                                         </span>
                                         <p className={typeFilter === 'Women' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Women</p>
-                                        <p className={typeFilter !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>(0)</p>
+                                        <p className={typeFilter !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredTypeWomen.length})</p>
                                     </label>
                                 </div>
                             </div>
@@ -312,7 +344,7 @@ const Catalog = () => {
                                         <p className={filterCategories === 'Long Sleeves' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Long Sleeves</p>
 
                                         {/* если filterCategories !== '',то есть какая-либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определнной категории показывалось только если никакие фильтры не выбраны,кроме поиска и цены),указываем значение этому тексту для количества товаров категории, в данном случае как filteredCategoryFruitsAndVegetables?.length(массив объектов товаров,отфильтрованный по полю category и значению 'Long Sleeves',то есть категория Long Sleeves),лучше фильтровать массивы товаров для показа количества товаров в категориях запросами на сервер,добавляя туда параметры фильтров,если они выбраны,но сейчас уже сделали так */}
-                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>(0)</p>
+                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredLongSleeves.length})</p>
                                     </label>
                                     <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('Joggers')}>
                                         <input type="radio" name="radio" className="categoriesLabel__input" />
@@ -320,7 +352,7 @@ const Catalog = () => {
                                             <span className={filterCategories === 'Joggers' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
                                         </span>
                                         <p className={filterCategories === 'Joggers' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Joggers</p>
-                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>(0)</p>
+                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredJoggers.length})</p>
                                     </label>
                                     <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('T-Shirts')}>
                                         <input type="radio" name="radio" className="categoriesLabel__input" />
@@ -328,7 +360,7 @@ const Catalog = () => {
                                             <span className={filterCategories === 'T-Shirts' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
                                         </span>
                                         <p className={filterCategories === 'T-Shirts' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>T-Shirts</p>
-                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>(0)</p>
+                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredTShirts.length})</p>
                                     </label>
                                     <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('Shorts')}>
                                         <input type="radio" name="radio" className="categoriesLabel__input" />
@@ -336,7 +368,7 @@ const Catalog = () => {
                                             <span className={filterCategories === 'Shorts' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
                                         </span>
                                         <p className={filterCategories === 'Shorts' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Shorts</p>
-                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>(0)</p>
+                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredShorts.length})</p>
                                     </label>
                                 </div>
                             </div>
