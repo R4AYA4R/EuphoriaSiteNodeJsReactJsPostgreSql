@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import { IProduct, IProductsCatalogResponse } from "../types/types";
 import ProductItemCatalog from "../components/ProductItemCatalog";
+import { getPagesArray } from "../utils/getPagesArray";
 
 const Catalog = () => {
 
@@ -13,18 +14,24 @@ const Catalog = () => {
 
     const onScreen = useIsOnScreen(sectionCatalog as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
-    
-    const [filteredLongSleeves,setFilteredLongSleeves] = useState<IProduct[]>([]); // состояние для отфильтрованного массива по категориям,чтобы показывать количество товаров в определенной категории,указываем в generic тип IProduct[] | undefined,иначе выдает ошибку
-    
-    const [filteredJoggers,setFilteredJoggers] = useState<IProduct[]>([]);
+    const [limit, setLimit] = useState(1); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
 
-    const [filteredTShirts,setFilteredTShirts] = useState<IProduct[]>([]);
+    const [page, setPage] = useState(1); // указываем состояние текущей страницы
 
-    const [filteredShorts,setFilteredShorts] = useState<IProduct[]>([]);
+    const [totalPages, setTotalPages] = useState(0); // указываем состояние totalPages в данном случае для общего количества страниц
 
-    const [filteredTypeMen,setFilteredTypeMen] = useState<IProduct[]>([]);
 
-    const [filteredTypeWomen,setFilteredTypeWomen] = useState<IProduct[]>([]);
+    const [filteredLongSleeves, setFilteredLongSleeves] = useState<IProduct[]>([]); // состояние для отфильтрованного массива по категориям,чтобы показывать количество товаров в определенной категории,указываем в generic тип IProduct[] | undefined,иначе выдает ошибку
+
+    const [filteredJoggers, setFilteredJoggers] = useState<IProduct[]>([]);
+
+    const [filteredTShirts, setFilteredTShirts] = useState<IProduct[]>([]);
+
+    const [filteredShorts, setFilteredShorts] = useState<IProduct[]>([]);
+
+    const [filteredTypeMen, setFilteredTypeMen] = useState<IProduct[]>([]);
+
+    const [filteredTypeWomen, setFilteredTypeWomen] = useState<IProduct[]>([]);
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер,берем isFetching у useQuery,чтобы отслеживать,загружается ли сейчас запрос на сервер,разница isFetching и isLoading в том,что isFetching всегда будет проверять загрузку запроса на сервер при каждом запросе,а isLoading будет проверять только первый запрос на сервер,в данном случае нужен isFetching,так как идут повторные запросы на сервер
     const { data, refetch, isFetching } = useQuery({
@@ -39,42 +46,42 @@ const Catalog = () => {
 
                 url += '&typeId=1';
 
-            } else if(typeFilter === 'Women'){
+            } else if (typeFilter === 'Women') {
 
                 url += '&typeId=2';
 
             }
 
-            if(filterCategories === 'Long Sleeves'){
+            if (filterCategories === 'Long Sleeves') {
 
                 url += '&categoryId=1';
 
-            } else if(filterCategories === 'Joggers'){
+            } else if (filterCategories === 'Joggers') {
 
                 url += '&categoryId=2';
 
-            } else if(filterCategories === 'T-Shirts'){
+            } else if (filterCategories === 'T-Shirts') {
 
                 url += '&categoryId=3';
 
-            } else if(filterCategories === 'Shorts'){
+            } else if (filterCategories === 'Shorts') {
 
                 url += '&categoryId=4';
 
             }
 
             // filterPrice[0] > 0 (то есть указан фильтр минимальной цены) или если data?.maxPriceAllProducts(максимальное значение цены товара,которое мы посчитали на бэкэнде и поместили в поле maxPriceAllProducts) true,то есть поле maxPriceAllProducts есть и в нем есть какое-то значение(делаем эту проверку,так как выдает ошибку,что data?.maxPriceAllProducts может быть undefined,но мы и так будем изменять фильтр цены когда объекты товаров загрузятся,и это уже будет повторный запрос на сервер,поэтому значение data?.maxPriceAllProducts уже будет и поэтому это подходит) и filterPrice[1] меньше data?.maxPriceAllProducts(максимальное значение цены товара,которое мы посчитали на бэкэнде и поместили в поле maxPriceAllProducts),то добавляем query параметр minPrice со значением filterPrice[0](минимальное значение фильтра цены) и maxPrice к url со значением этого максимального значения фильтра цены(filterPrice[1])
-            if(filterPrice[0] > 0 || data?.maxPriceAllProducts && filterPrice[1] < data?.maxPriceAllProducts){
+            if (filterPrice[0] > 0 || data?.maxPriceAllProducts && filterPrice[1] < data?.maxPriceAllProducts) {
 
                 url += `&minPrice=${filterPrice[0]}&maxPrice=${filterPrice[1]}`;
 
             }
 
             // если sizesMass true,то есть массив фильтров для размеров есть и он не пустой
-            if(sizesMass){
+            if (sizesMass) {
 
                 // проходимся по массиву sizesMass и на каждой итерации(для каждого элемента массива) добавляем к url до бэкэнда параметр &sizes со значением itemSize,то есть будет в url подставлено типа &sizes=S&sizes=M и тд
-                sizesMass.forEach((itemSize)=>{
+                sizesMass.forEach((itemSize) => {
 
                     url += `&sizes=${itemSize}`;
 
@@ -83,14 +90,22 @@ const Catalog = () => {
             }
 
             // если sortBlockValue(состояние для сортировки товаров) не равно пустой строке,то добавляем к url еще параметры sortBy и order в которые передаем значение состояния sortBlockValue и порядок сортировки(DESC(от большего к меньшему) или ASC(от меньшего к большему) в данном случае для базы данных postgreSql),в нем хранится название поля,и это значение мы приводим к нижнему регистру букв с помощью toLowerCase(),чтобы в названии поля были все маленькие буквы,мы это обрабатываем на бэкэнде в node js)
-            if(sortBlockValue !== ''){
+            if (sortBlockValue !== '') {
 
                 url += `&sortBy=${sortBlockValue.toLowerCase()}&order=DESC`;
 
             }
 
             // указываем тип данных,который придет от сервера как тип на основе нашего интерфейса IProductsCatalogResponse,у этого объекта будут поля count(количество объектов товаров всего,которые пришли от сервера) и rows(сами объекты товаров,но на конкретной странице пагинации),также поле maxPriceAllProducts(максимальная цена товара из всех),чтобы взять потом количество этих всех объектов товаров и использовать для пагинации),вместо url будет подставлено значение,которое есть у нашей переменной url
-            const response = await axios.get<IProductsCatalogResponse>(url); // делаем запрос на сервер для получения товаров каталога,указываем в типе в generic наш тип на основе интерфейса IProductsCatalogResponse
+            const response = await axios.get<IProductsCatalogResponse>(url, {
+                params: {
+
+                    page: page,  // указываем параметр page(параметр текущей страницы,для пагинации)
+
+                    limit: limit // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params,также можно было не указывать limit:limit,а просто указать один раз limit(для page также),так как название ключа(поля объекта) и состояния limit(в данном случае) одинаковые,но указали уже так
+
+                }
+            }); // делаем запрос на сервер для получения товаров каталога,указываем в типе в generic наш тип на основе интерфейса IProductsCatalogResponse
 
             console.log(response);
 
@@ -105,6 +120,10 @@ const Catalog = () => {
             setFilteredTypeMen(response.data.allProductsForCount.filter(product => product.typeId === 1)); // это фильтруем уже для категории типа type(типа для мужской или женской одежды)
 
             setFilteredTypeWomen(response.data.allProductsForCount.filter(product => product.typeId === 2));
+
+            const totalCount = response.data.allProductsForCount.length; // записываем общее количество объектов товаров с помощью .length,которые пришли от сервера в переменную totalCount(берем это у поля length у поля allProductsForCount(массив всех объектов товаров без лимитов и состояния текущей страницы,то есть без пагинации) у поля data у response(общий объект ответа от сервера))
+
+            setTotalPages(Math.ceil(totalCount / limit)); // изменяем состояние totalPages на значение деления totalCount на limit,используем Math.ceil() - она округляет получившееся значение в большую сторону к целому числу(например,5.3 округлит к 6),чтобы правильно посчитать общее количество страниц
 
             return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля products(внутри него есть поле count и rows) и maxPriceAllProducts
 
@@ -173,7 +192,6 @@ const Catalog = () => {
             setSizesMass((prev) => prev.filter(item => item !== 'S'));
 
         }
-
 
     }
 
@@ -270,7 +288,7 @@ const Catalog = () => {
 
         refetch(); // делаем повторный запрос на получение товаров при изменении data?.products, searchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния текущей страницы пагинации 
 
-    }, [searchValue, typeFilter, filterCategories, sizes, sortBlockValue])
+    }, [searchValue, typeFilter, filterCategories, sizes, sortBlockValue, page])
 
     // при изменении searchValue,то есть когда пользователь что-то вводит в инпут поиска,то изменяем filterCategory на пустую строку и остальные фильтры тоже,соответственно будет сразу идти поиск по всем товарам,а не в конкретной категории или определенных фильтрах,но после поиска можно будет результат товаров по поиску уже отфильтровать по категориям и тд
     useEffect(() => {
@@ -300,6 +318,37 @@ const Catalog = () => {
 
 
     }, [searchValue])
+
+    // при изменении фильтров и состояния сортировки(sortBlockValue в данном случае) изменяем состояние текущей страницы пагинации на первую
+    useEffect(() => {
+
+        setPage(1);
+
+    }, [filterPrice, filterCategories, sortBlockValue, typeFilter, sizes])
+
+    let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
+
+    const prevPage = () => {
+
+        // если текущая страница больше или равна 2,делаем эту проверку,чтобы если текущая страница 1,то не отнимало минус 1
+        if (page >= 2) {
+
+            setPage((prev) => prev - 1); // изменяем состояние текущей страницы на - 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и отнимаем 1)
+
+        }
+
+    }
+
+    const nextPage = () => {
+
+        // если текущая страница меньше или равна общему количеству страниц - 1(чтобы после последней страницы не переключалось дальше)
+        if (page <= totalPages - 1) {
+
+            setPage((prev) => prev + 1); // изменяем состояние текущей страницы на + 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и прибавляем 1)
+
+        }
+
+    }
 
     return (
         <main className="main">
@@ -390,6 +439,8 @@ const Catalog = () => {
                                         max={data?.maxPriceAllProducts} // поле для максимального значения
 
                                         min={0} // поле для минимального значения
+
+                                        minDistance={5} // минимальная дистанция между ползунками этого слайдера(input range),указывается типа в пикселях,лучше ее указать,иначе,если они потом будут друг на друге стоять и пытаться переместить их нажатием на другую сторону,то сможет переместиться только в одну сторону,прежде чем сможет нормально работать,а также при этих многочисленных попыток может показать ошибку,поэтому указываем эту минимальную дистанцию(в 5 пикселей в данном случае)
 
                                         value={filterPrice}  // указываем поле value как наше состояние filterPrice(массив из 2 элементов для минимального и максимального значения фильтра цены),указываем это,чтобы при изменении состояния filterPrice, менялось и значение этого инпута range,то есть этого react slider(его ползунки и значения их),в данном случае это для того,чтобы при удалении фильтра цены,менялись значения ползунков этого react slider(инпут range)
 
@@ -622,6 +673,47 @@ const Catalog = () => {
                                     : <h2 className="productsBlock__notFoundText">Not Found</h2>
 
                             }
+
+                            {/* если длина массива всех объектов товаров для определенной страницы пагинация(data?.products.rows.length) true(то есть товары есть) и isFetching false(то есть запрос на сервер сейчас не грузится,делаем проверку на isFetching,чтобы пагинация не показывалась,когда грузится запрос на сервер и показывается лоадер),то показывать пагинацию,в другом случае пустая строка(то есть ничего не показывать) */}
+                            {!isFetching && data?.products.rows.length ?
+
+                                <div className="productsBlock__pagination">
+
+                                    <button className="productsBlock__pagination-btnArrowLeft" onClick={prevPage}>
+                                        <img src="/images/sectionCatalog/ArrowLeft.png" alt="" className="pagination__btnArrow-img" />
+                                    </button>
+
+                                    {pagesArray.map(p =>
+
+                                        <button
+                                            className={page === p ? "pagination__item pagination__item--active" : "pagination__item"} // если состояние номера текущей страницы page равно значению элемента массива pagesArray,то отображаем такие классы(то есть делаем эту кнопку страницы активной),в другом случае другие
+
+                                            key={p}
+
+                                            onClick={() => setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
+
+                                        >{p}</button>
+
+                                    )}
+
+
+                                    {/* если общее количество страниц больше 4 и текущая страница меньше общего количества страниц - 2,то отображаем три точки */}
+                                    {totalPages > 4 && page < totalPages - 2 && <div className="pagination__dots">...</div>}
+
+
+                                    {/* если общее количество страниц больше 3 и текущая страница меньше общего количества страниц - 1,то отображаем кнопку последней страницы,при клике на кнопку изменяем состояние текущей страницы на totalPages(общее количество страниц,то есть на последнюю страницу) */}
+                                    {totalPages > 3 && page < totalPages - 1 && <button className="pagination__item" onClick={() => setPage(totalPages)}>{totalPages}</button>}
+
+
+                                    <button className="productsBlock__pagination-btnArrowRight" onClick={nextPage}>
+                                        <img src="/images/sectionCatalog/ArrowRight.png" alt="" className="pagination__btnArrow-img" />
+                                    </button>
+
+                                </div>
+                                : ''
+
+                            }
+
 
 
                         </div>

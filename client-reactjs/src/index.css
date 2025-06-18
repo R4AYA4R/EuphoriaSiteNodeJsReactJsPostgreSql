@@ -1327,3 +1327,62 @@ a {
     font-size: 16px;
     font-weight: 600;
 }
+
+.productsBlock__pagination{
+    margin: 30px 0 60px;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    gap: 5px;
+}
+
+.productsBlock__pagination-btnArrowLeft,
+.productsBlock__pagination-btnArrowRight{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border:1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 9px 12px;
+    transition:all .5s ease;
+}
+
+.productsBlock__pagination-btnArrowLeft:hover,
+.productsBlock__pagination-btnArrowRight:hover{
+    cursor: pointer;
+    background-color: rgba(138, 51, 253,0.3);
+}
+
+.productsBlock__pagination-btnArrowLeft{
+    margin-right: 5px;
+}
+
+.productsBlock__pagination-btnArrowRight{
+    margin-left: 5px;
+}
+
+.pagination__item{
+    background-color: #F3F4F6;
+    padding: 8px 12px;
+    border:none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition:all .5s ease;
+}
+
+.pagination__item--active{
+    background-color: #8A33FD;
+    color: #fff;
+}
+
+.pagination__item:hover.pagination__item--active{
+    background-color: #8A33FD;
+}
+
+.pagination__item:hover{
+    cursor: pointer;
+    background-color: rgba(138, 51, 253,0.5);
+    color: #fff;
+}
