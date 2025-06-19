@@ -1386,3 +1386,114 @@ a {
     background-color: rgba(138, 51, 253,0.5);
     color: #fff;
 }
+
+.sectionProductItemPage{
+    padding: 0;
+}
+
+.sectionProductItemPage__itemBlock-inner{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap:75px;
+    margin-bottom: 100px;
+}
+
+.sectionProductItemPage__leftBlock{
+    background-color: #F6F6F6;
+}
+
+.sectionProductItemPage__rightBlock-title{
+    font-size: 34px;
+    font-weight: 700;
+    margin-top: 35px;
+    margin-bottom: 15px;
+}
+
+.sectionProductItemPage__rightBlock-sizeBlock{
+    margin: 20px 0;
+}
+
+.sectionProductItemPage__sizeBlock-text{
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.sectionProductItemPage__sizeBlock-sizes{
+    display: flex;
+    align-items: center;
+    gap:20px;
+}
+
+.sizeBlock__sizes-item{
+    border: 1px solid #BEBCBD;
+    border-radius: 12px;
+    padding: 10px 9px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    transition:all .5s ease;
+}
+
+.sizeBlock__sizes-item:hover{
+    cursor: pointer;
+    background-color: #3C4242;
+    color: #fff;
+    border:1px solid transparent;
+}
+
+.sectionNewArrivals__item-cartBlock{
+    margin-top: 20px;
+}
+
+.sectionProductItemPage__rightBlock-btnCart{
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    gap:18px;
+    border-radius: 8px;
+    border:none;
+    background-color: #8A33FD;
+    font-family: 'Inter',sans-serif;
+    transition:all .5s ease;
+}
+
+.sectionProductItemPage__btnCart-text{
+    font-size: 16px;    
+    font-weight: 600;
+    color: #fff;
+}
+
+.sectionProductItemPage__rightBlock-btnCart:hover{
+    cursor: pointer;
+    background-color: rgba(138, 51, 253,0.8);
+}
+
+.sectionProductItemPage__rightBlock-btnCart:hover .sectionProductItemPage__btnCart-img{
+    animation: cartBlockBtnImg 1s ease infinite;
+}
+
+.sectionProductItemPage__rightBlock-bottomBlock{
+    margin-top: 35px;
+    padding-top: 35px;
+    border-top:1px solid #BEBCBD;
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    align-items: center;
+    column-gap: 100px;
+    row-gap: 20px;
+}
+
+.sectionProductItemPage__bottomBlock-item{
+    display: flex;
+    align-items: center;    
+    gap:15px;
+}
+
+.sectionProductItemPage__priceBlock{
+    margin-top: 20px;
+}
+
