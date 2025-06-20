@@ -1394,12 +1394,15 @@ a {
 .sectionProductItemPage__itemBlock-inner{
     display: grid;
     grid-template-columns: repeat(2,1fr);
-    gap:75px;
+    gap:50px;
     margin-bottom: 100px;
 }
 
 .sectionProductItemPage__leftBlock{
     background-color: #F6F6F6;
+    min-width: 100%;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 .sectionProductItemPage__rightBlock-title{
@@ -1496,4 +1499,112 @@ a {
 .sectionProductItemPage__priceBlock{
     margin-top: 20px;
 }
+
+/* стили для слайдера swiper,названия классов у него по дефолту одни и те же */
+.swiper{
+    max-height: 520px;
+    width: 100%;
+    position: relative;
+    max-width: 380px;
+}
+
+/* стили для кнопки навигации следующего слайда,в данном случае убираем ее видимость,так как делаем свои кастомные */
+.swiper .swiper-button-next{
+    display: none;
+}
+
+/* стили для кнопки навигации предыдущего слайда,в данном случае убираем ее видимость,так как делаем свои кастомные */
+.swiper .swiper-button-prev{
+    display: none;
+}
+
+.sectionProductItemPage__leftBlock-sliderBlock{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap:10px;
+    padding: 50px 50px 50px 70px;
+}
+
+
+.swiper-slide{
+    display: flex !important; /* указываем !important,чтобы перебить предыдущие стили(чтобы наши заработали),которые были применены до этого по дефолту к этому слайдеру */
+    align-items: center;
+    justify-content: center;
+    background-color: #F6F6F6;
+}
+
+.sectionProductItemPage__sliderBlock-sliderImg{
+    width: 100%;
+    mix-blend-mode: multiply;
+    border-radius: 12px;
+    object-fit: cover !important; /* указываем это свойство,чтобы картинка растягивалась нормально по размеру,указываем !important,чтобы перебить предыдущие стили(чтобы наши заработали),которые были применены до этого по дефолту к этому слайдеру */
+    max-height: 520px;
+}
+
+.sliderBlock__previewSliderBlock{
+    display: flex;
+    justify-content: center;
+    justify-self: end;
+    align-items: center;
+}
+
+.sliderBlock__previewSliderBlock-previewSlider .swiper-wrapper{
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    gap:22px;
+}
+
+.sliderBlock__previewSlider-slide{
+    max-width: 68px; 
+    min-width: 68px;
+    max-height: 77px; /* указываем в данном случае максимальную высоту на 9px больше,чем для картинки,чтобы было место на границу этого слайда */
+    padding: 3px;
+    background-color: transparent;
+    margin-right: 0 !important;
+    padding: 3px;
+    border-radius: 12px;
+}
+
+.sectionProductItemPage__previewSlider-sliderImg{
+    max-width: 68px;
+    object-fit: cover; /* указываем это свойство,чтобы картинка растягивалась нормально по размеру */
+    max-height: 68px;
+    border-radius: 8px;
+}
+
+.sliderBlock__previewSlider-slide:hover{
+    cursor: pointer;
+}
+
+
+.swiper-slide-thumb-active{
+    border: 1px solid #3c4242;
+}
+
+.previewSliderBlock__navigation{
+    display: flex;
+    flex-direction: column;
+    gap:12px;
+    align-items: center;
+    margin-top: 24px;
+}
+
+.previewSliderBlock__navigation-item{
+    max-width: 22px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 6px;
+    transition:all .5s ease;
+    border:none;
+}
+
+.previewSliderBlock__navigation-item:hover{
+    cursor: pointer;
+    background-color: rgba(60, 66, 66,0.3);
+}
+
 
