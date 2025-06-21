@@ -9,6 +9,7 @@ export interface IProduct{
     priceDiscount:number, // указываем это поле для цены со скидкой
     amount:number,
     totalPrice:number,
+    sizes:string[], // указываем поле для размеров,это будет массив значений string
     rating:number,
     mainImage:string,  // указываем это поле для главной картинки товара
     descImages:string[] // указываем это поле для массива названий картинок с типом string,это будут дополнительные картинки товара для страницы о товаре(ProductItemPage)

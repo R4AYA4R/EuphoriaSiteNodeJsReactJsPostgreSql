@@ -7,4 +7,6 @@ router.get('/getProductsArrivals',productController.getProductsArrivals); // о�
 
 router.get('/getProductsCatalog',productController.getProductsCatalog); // описываем get запрос на сервере для получения товаров для каталога
 
+router.get('/getProductsCatalog/:id',productController.getProductById); // описываем get запрос на сервере для получения объекта блюда по id,указываем этот динамический параметр id через : (двоеточие) в url к этому эндпоинту
+
 export default router; // экспортируем наш router

@@ -1413,7 +1413,11 @@ a {
 }
 
 .sectionProductItemPage__rightBlock-sizeBlock{
-    margin: 20px 0;
+    margin: 25px 0;
+}
+
+.sectionProductItemPage__item-priceBlock{
+    margin-top: 20px;
 }
 
 .sectionProductItemPage__sizeBlock-text{
@@ -1430,6 +1434,7 @@ a {
 
 .sizeBlock__sizes-item{
     border: 1px solid #BEBCBD;
+    background-color: #fff;
     border-radius: 12px;
     padding: 10px 9px;
     font-size: 14px;
@@ -1439,6 +1444,13 @@ a {
     justify-content: center;
     min-width: 38px;
     transition:all .5s ease;
+    font-family: 'Inter',sans-serif;
+}
+
+.sizeBlock__sizes-item--active{
+    background-color: #3C4242;
+    color: #fff;
+    border:1px solid transparent;
 }
 
 .sizeBlock__sizes-item:hover{
@@ -1497,7 +1509,7 @@ a {
 }
 
 .sectionProductItemPage__priceBlock{
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 /* стили для слайдера swiper,названия классов у него по дефолту одни и те же */
@@ -1538,7 +1550,7 @@ a {
     mix-blend-mode: multiply;
     border-radius: 12px;
     object-fit: cover !important; /* указываем это свойство,чтобы картинка растягивалась нормально по размеру,указываем !important,чтобы перебить предыдущие стили(чтобы наши заработали),которые были применены до этого по дефолту к этому слайдеру */
-    max-height: 520px;
+    height: 480px !important;
 }
 
 .sliderBlock__previewSliderBlock{
@@ -1569,7 +1581,7 @@ a {
 .sectionProductItemPage__previewSlider-sliderImg{
     max-width: 68px;
     object-fit: cover; /* указываем это свойство,чтобы картинка растягивалась нормально по размеру */
-    max-height: 68px;
+    max-height: 68px !important;
     border-radius: 8px;
 }
 
@@ -1607,4 +1619,50 @@ a {
     background-color: rgba(60, 66, 66,0.3);
 }
 
+.sectionProductItemPage__cartBlock{
+    display: flex;
+    align-items: center;   
+    gap:10px;
+}
 
+.sectionProductItemPage__cartBlock-inputBlock{
+    position: relative;
+}
+
+.cartBlock__inputBlock-input{
+    padding: 13.5px 38px;
+    border-radius: 8px;
+    border:1px solid #BEBCBD;
+    text-align: center;
+    max-width: 114px;
+    outline: none;
+}
+
+/* убираем стрелки вверх и вниз для инпута с типом number по умолчанию */
+.cartBlock__inputBlock-input::-webkit-outer-spin-button,
+.cartBlock__inputBlock-input::-webkit-inner-spin-button{
+    appearance: none;
+}
+
+.cartBlock__inputBlock-btn{
+    background-color: #fff;
+    border:none;
+    position: absolute;
+    transition:all .5s ease;
+}
+
+.cartBlock__inputBlock-btn:hover{
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.cartBlock__inputBlock-btn--plus{
+    top: 15.5px;
+    right: 12.5px;
+}
+
+.cartBlock__inputBlock-btn--minus{
+    top: 10.5px;
+    left: 12.5px;
+
+}
