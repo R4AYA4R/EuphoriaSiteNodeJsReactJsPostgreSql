@@ -20,6 +20,8 @@ const ProductItemPage = () => {
 
     const { pathname } = useLocation(); // берем pathname(url страницы) из useLocation()
 
+    const [tab, setTab] = useState('Desc');
+
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
     const { data, refetch, isFetching: isFetchingProductById } = useQuery({
@@ -36,17 +38,17 @@ const ProductItemPage = () => {
     })
 
     // при изменении pathname(url страницы),делаем запрос на обновление данных о товаре(иначе не меняются данные) и изменяем таб на Desc(описание товара),если вдруг был включен другой таб,то при изменении url страницы будет включен опять дефолтный таб,также изменяем значение количества товара,если было выбрано уже какое-то,чтобы поставить первоначальное, и убираем форму добавления комментария,если она была открыта,и изменяем значение состоянию activeStarsForm на 0,то есть убираем звезды в форме для коментария,если они были выбраны
-    useEffect(()=>{
+    useEffect(() => {
 
         refetch();
 
-    },[pathname])
+    }, [pathname])
 
-    useEffect(()=>{
+    useEffect(() => {
 
         refetch();
 
-    },[data?.data])
+    }, [data?.data])
 
 
     return (
@@ -55,7 +57,63 @@ const ProductItemPage = () => {
             <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionCatalog__active sectionProductItemPage" : "sectionCatalog sectionProductItemPage"} ref={sectionCatalog}>
 
                 {/* вынесли блок с информацией о товаре и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара),также передаем поле pathname(url страницы),чтобы потом при его изменении изменять значение количества товара,так как оно находится в этом компоненте ProductItemPageItemBlock,указываем именно таким образом pathname={pathname},иначе выдает ошибку типов,передаем функцию refetch для переобновления данных товара(повторный запрос на сервер для переобновления данных товара) и указываем ему название как refetchProduct(просто название этого пропса(параметра)) */}
-                <ProductItemPageItemBlock product={data?.data} pathname={pathname}/>
+                <ProductItemPageItemBlock product={data?.data} pathname={pathname} />
+
+                {/* указываем здесь контейнер,так как для блока ProductItemPageItemBlock нужен контейнер в отдельной его части по такому дизайну */}
+                <div className="container">
+
+                    <div className="sectionProductItemPage__descBlock">
+                        <div className="sectionCategories__topBlock sectionProductItemPage__descBlock-topBlock">
+                            <div className="sectionCategories__topBlock-leftBorderBlock"></div>
+                            <h1 className="sectionCategories__topBlock-title">Product Description</h1>
+                        </div>
+
+                        <div className="sectionProductItemPage__descBlock-tabs">
+                            <button className={tab === 'Desc' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={()=>setTab('Desc')}>Description</button>
+                            <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btnReviews descBlock__tabs-btn--active" : "descBlock__tabs-btn descBlock__tabs-btnReviews"} onClick={()=>setTab('Reviews')}>
+                                <p className="tabs__btnReviews-text">Reviews</p>
+                                <p className="tabs__btnReviews-text">(0)</p>
+                            </button>
+                        </div>
+
+                        <div className="sectionProductItemPage__descBlock-desc">
+
+                            {tab === 'Desc' &&
+                                <div className="descBlock__desc-inner">
+                                    <p className="descBlock__desc-text">{data?.data.descText}</p>
+                                    <p className="descBlock__desc-text">Our collection of clothes will make you the trendsetter with an iconic resemblance of choice in Styled Wear. It is quite evident to say that there are very few Styled Clothing online stores where you can buy Western Wear comprising the premium material and elegant design that you are always seeking for.</p>
+                                    <table className="descBlock__desc-table">
+                                        <tbody className="desc__table-body">
+                                            <tr className="desc__table-row">
+                                                <td className="desc__table-column">
+                                                    <th className="desc__table-headText">Fabric</th>
+                                                    <p className="desc__table-text">Bio-washed Cotton</p>
+                                                </td>
+                                                <td className="desc__table-column">
+                                                    <th className="desc__table-headText">Pattern</th>
+                                                    <p className="desc__table-text">Printed</p>
+                                                </td>
+                                                <td className="desc__table-column">
+                                                    <th className="desc__table-headText">Fit</th>
+                                                    <p className="desc__table-text">Regular-fit</p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+
+                            {tab === 'Reviews' &&
+                                <div className="descBlock__desc-innerReviews">
+                                    Reviews
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
 
             </section>
         </main>

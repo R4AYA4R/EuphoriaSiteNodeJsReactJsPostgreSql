@@ -1666,3 +1666,89 @@ a {
     left: 12.5px;
 
 }
+
+.sectionProductItemPage__descBlock{
+    margin-bottom: 100px;
+}
+
+.sectionProductItemPage__descBlock-topBlock{
+    margin-bottom: 30px;
+}
+
+.sectionProductItemPage__descBlock-tabs{
+    display: flex;
+    align-items: center;
+    gap:30px;
+    margin-bottom: 30px;
+}
+
+.descBlock__tabs-btn{
+    padding-bottom: 18px;
+    font-size: 18px;
+    font-weight: 500;
+    background-color: #fff;
+    color: #807D7E;
+    border:none;
+    transition:all .5s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.descBlock__tabs-btn:hover{
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.descBlock__tabs-btn:hover.descBlock__tabs-btn--active{
+    opacity: 1;
+}
+
+.descBlock__tabs-btn--active{
+    color: #3C4242;
+    border-bottom:2px solid #000;
+}
+
+.descBlock__tabs-btnReviews{
+    display: flex;
+    align-items: center;    
+    gap:5px;
+}
+
+.descBlock__desc-text{
+    font-size: 16px;
+    font-weight: 400;
+    color: #807D7E;
+    max-width: 610px;
+    margin-bottom: 30px;
+}
+
+.descBlock__desc-table{
+    border-radius: 12px;
+    background-color: #F6F6F6;
+}
+
+.desc__table-column{
+    padding: 24px 50px;
+    border-right: 1px solid #e4e4e4;
+}
+
+.desc__table-column:nth-child(3){
+    border-right: none;
+}
+
+.desc__table-headText{
+    color: #807D7E;
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 12px;
+    display: inline-block; /* указываем это свойство,чтобы применился отступ(margin),так как по дефолту у html тега th в таблице display со значением inline,и отступы не применяются тогда */
+}
+
+.desc__table-text{
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.descBlock__desc-inner,
+.descBlock__desc-innerReviews{
+    animation: appear 1s ease forwards;
+}
