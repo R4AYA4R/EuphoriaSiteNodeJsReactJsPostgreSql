@@ -111,9 +111,9 @@ const ProductItemPageItemBlock = ({ product, pathname }: IProductItemPageItemBlo
         if (!sizesMass.some(size => size === itemSize)) {
 
             // изменянем состояние sizesMass,возвращаем новый массив,куда разворачиваем предыдущий(текущий) массив(...prev) и добавляем в него новый элемент itemSize,не используем здесь типа sizesMass.push(),так как тогда обновление состояние sizesMass будет не сразу,а ставится в очередь на обновление и это будет не правильно работать,а когда мы используем prev(текущее состояние),то тогда мы работаем уже точно с текущим состоянием массива,и он будет обновлен сразу
-            setSizesMass((prev)=> [...prev,itemSize]);
-             
-            
+            setSizesMass((prev) => [...prev, itemSize]);
+
+
         } else {
 
             // в другом случае,если этот элемент(itemSize) уже есть,то оставляем все элементы в массиве sizes,которые не равны значению itemSize,то есть удаляем этот элемент itemSize из массива sizes
@@ -125,11 +125,11 @@ const ProductItemPageItemBlock = ({ product, pathname }: IProductItemPageItemBlo
     }
 
     // используем useEffect,чтобы вывести в консоль текущее состояние массива sizesMass при его изменении,иначе,если использовать console.log в нашей функции addSizes,то там будет отображаться предыдущее состояние массива sizesMass,так как это состояние sizesMass на тот момент еще не будет обновлено
-    useEffect(()=>{
+    useEffect(() => {
 
         console.log(sizesMass)
 
-    },[sizesMass])
+    }, [sizesMass])
 
     return (
         <div className="sectionProductItemPage__itemBlock-inner">
@@ -271,93 +271,96 @@ const ProductItemPageItemBlock = ({ product, pathname }: IProductItemPageItemBlo
 
             </div>
             <div className="sectionProductItemPage__rightBlock">
-                <h1 className="sectionProductItemPage__rightBlock-title">{product?.name}</h1>
-                <div className="sectionNewArrivals__item-starsBlock">
-                    <div className="sectionNewArrivals__item-stars">
+                {/* указываем дополнительный контейнер для sectionProductItemPage__rightBlock,так как по дизайну нужно так отделить и ограничить максимальную ширину блока sectionProductItemPage__rightBlock */}
+                <div className="sectionProductItemPage__rightBlock-container">
+                    <h1 className="sectionProductItemPage__rightBlock-title">{product?.name}</h1>
+                    <div className="sectionNewArrivals__item-starsBlock">
+                        <div className="sectionNewArrivals__item-stars">
 
-                        {/* если product true,то есть данные о товаре на текущей странице есть(делаем эту проверку,потому что без нее ошибка,типа product может быть undefined),и в src у элементов img(картинок) указываем условие,какую звезду рейтинга отображать в зависимости от значения рейтинга товара */}
-                        {product &&
+                            {/* если product true,то есть данные о товаре на текущей странице есть(делаем эту проверку,потому что без нее ошибка,типа product может быть undefined),и в src у элементов img(картинок) указываем условие,какую звезду рейтинга отображать в зависимости от значения рейтинга товара */}
+                            {product &&
 
-                            <>
-                                {/* если product.rating равно 0,то показываем пустую звезду,в другом случае если product.rating больше или равно 0.5 и меньше или равно 0.9,то показываем половину звезды,в другом случае показываем целую звезду */}
-                                < img src={product.rating === 0 ? "/images/sectionNewArrivals/Vector (2).png" : product.rating >= 0.5 && product.rating < 1 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                                <img src={product.rating >= 2 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 1.5 && product.rating < 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                                <img src={product.rating >= 3 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 2.5 && product.rating < 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                                <img src={product.rating >= 4 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 3.5 && product.rating < 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                                <img src={product.rating >= 5 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 4.5 && product.rating < 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                            </>
+                                <>
+                                    {/* если product.rating равно 0,то показываем пустую звезду,в другом случае если product.rating больше или равно 0.5 и меньше или равно 0.9,то показываем половину звезды,в другом случае показываем целую звезду */}
+                                    < img src={product.rating === 0 ? "/images/sectionNewArrivals/Vector (2).png" : product.rating >= 0.5 && product.rating < 1 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={product.rating >= 2 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 1.5 && product.rating < 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={product.rating >= 3 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 2.5 && product.rating < 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={product.rating >= 4 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 3.5 && product.rating < 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={product.rating >= 5 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 4.5 && product.rating < 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                </>
 
-                        }
-                    </div>
-                    <p className="sectionNewArrivals__item-starsAmount">(0)</p>
-                </div>
-
-                {/* если product?.priceDiscount true(указываем знак вопроса после product)так как product может быть undefined и выдает ошибку об этом),то есть поле priceDiscount у product есть и в нем есть какое-то не пустое значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
-                {product?.priceDiscount ?
-
-                    <div className="sectionNewArrivals__item-priceBlock sectionProductItemPage__item-priceBlock">
-                        <p className="item__priceBlock-priceSale">${product.priceDiscount}</p>
-                        <p className="item__priceBlock-priceUsual">${product.price}</p>
-                    </div>
-                    :
-                    <div className="sectionNewArrivals__item-priceBlock sectionProductItemPage__item-priceBlock">
-                        <p className="item__priceBlock-priceUsualDefault">${product?.price}</p>
+                            }
+                        </div>
+                        <p className="sectionNewArrivals__item-starsAmount">(0)</p>
                     </div>
 
-                }
+                    {/* если product?.priceDiscount true(указываем знак вопроса после product)так как product может быть undefined и выдает ошибку об этом),то есть поле priceDiscount у product есть и в нем есть какое-то не пустое значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
+                    {product?.priceDiscount ?
 
-                <div className="sectionProductItemPage__rightBlock-sizeBlock">
-                    <p className="sectionProductItemPage__sizeBlock-text">Select Size</p>
-                    <div className="sectionProductItemPage__sizeBlock-sizes">
+                        <div className="sectionNewArrivals__item-priceBlock sectionProductItemPage__item-priceBlock">
+                            <p className="item__priceBlock-priceSale">${product.priceDiscount}</p>
+                            <p className="item__priceBlock-priceUsual">${product.price}</p>
+                        </div>
+                        :
+                        <div className="sectionNewArrivals__item-priceBlock sectionProductItemPage__item-priceBlock">
+                            <p className="item__priceBlock-priceUsualDefault">${product?.price}</p>
+                        </div>
 
-                        {/* проходимся по массиву sizes и показываем кнопки для размера одежды,который доступен для этого товара */}
-                        {product?.sizes.map((sizeItem, index) =>
+                    }
 
-                            // в onClick указываем нашу функцию addSizes,в которую передаем параметр sizeItem(текущий итерируемый элемент массива sizes у product),в className проверяем,есть ли sizeItem(текущий итерируемый элемент массива sizes у product) в массиве sizesMass(то есть равен ли sizeItem значению какого-нибудь элемента в массиве sizesMass),если есть,то показываем активный класс кнопке,в другом случае обычный
-                            <button key={index} className={sizesMass.some(item => item === sizeItem) ? "sizeBlock__sizes-item sizeBlock__sizes-item--active" : "sizeBlock__sizes-item"} onClick={() => addSizes(sizeItem)}>{sizeItem}</button>
+                    <div className="sectionProductItemPage__rightBlock-sizeBlock">
+                        <p className="sectionProductItemPage__sizeBlock-text">Select Size</p>
+                        <div className="sectionProductItemPage__sizeBlock-sizes">
 
-                        )}
+                            {/* проходимся по массиву sizes и показываем кнопки для размера одежды,который доступен для этого товара */}
+                            {product?.sizes.map((sizeItem, index) =>
 
+                                // в onClick указываем нашу функцию addSizes,в которую передаем параметр sizeItem(текущий итерируемый элемент массива sizes у product),в className проверяем,есть ли sizeItem(текущий итерируемый элемент массива sizes у product) в массиве sizesMass(то есть равен ли sizeItem значению какого-нибудь элемента в массиве sizesMass),если есть,то показываем активный класс кнопке,в другом случае обычный
+                                <button key={index} className={sizesMass.some(item => item === sizeItem) ? "sizeBlock__sizes-item sizeBlock__sizes-item--active" : "sizeBlock__sizes-item"} onClick={() => addSizes(sizeItem)}>{sizeItem}</button>
+
+                            )}
+
+                        </div>
                     </div>
-                </div>
 
-                <div className="sectionNewArrivals__item-cartBlock sectionProductItemPage__cartBlock">
+                    <div className="sectionNewArrivals__item-cartBlock sectionProductItemPage__cartBlock">
 
-                    {/* потом будем проверять есть ли этот товар уже в корзине */}
-                    {/* <h3 className="textAlreadyInCart">In Cart</h3> */}
+                        {/* потом будем проверять есть ли этот товар уже в корзине */}
+                        {/* <h3 className="textAlreadyInCart">In Cart</h3> */}
 
-                    <div className="sectionProductItemPage__cartBlock-inputBlock">
-                        <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
-                            <img src="/images/sectionProductItemPage/Minus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                        <div className="sectionProductItemPage__cartBlock-inputBlock">
+                            <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
+                                <img src="/images/sectionProductItemPage/Minus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                            </button>
+                            <input type="number" className="cartBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
+                            <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
+                                <img src="/images/sectionProductItemPage/Plus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                            </button>
+                        </div>
+
+                        <button className="sectionProductItemPage__rightBlock-btnCart">
+                            <p className="sectionProductItemPage__btnCart-text">Add to Cart</p>
+                            <img src="/images/sectionProductItemPage/shopping cart.png" alt="" className="sectionProductItemPage__btnCart-img" />
                         </button>
-                        <input type="number" className="cartBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
-                        <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
-                            <img src="/images/sectionProductItemPage/Plus.png" alt="" className="cartBlock__inputBlock-btnImg" />
-                        </button>
                     </div>
 
-                    <button className="sectionProductItemPage__rightBlock-btnCart">
-                        <p className="sectionProductItemPage__btnCart-text">Add to Cart</p>
-                        <img src="/images/sectionProductItemPage/shopping cart.png" alt="" className="sectionProductItemPage__btnCart-img" />
-                    </button>
-                </div>
-
-                <div className="sectionProductItemPage__rightBlock-bottomBlock">
-                    <div className="sectionProductItemPage__bottomBlock-item">
-                        <img src="/images/sectionProductItemPage/Frame 24.png" alt="" className="sectionProductItemPage__bottomBlock-itemImg" />
-                        <p className="sectionProductItemPage__bottomBlock-itemText">Secure Payment</p>
-                    </div>
-                    <div className="sectionProductItemPage__bottomBlock-item">
-                        <img src="/images/sectionProductItemPage/Frame 25.png" alt="" className="sectionProductItemPage__bottomBlock-itemImg" />
-                        <p className="sectionProductItemPage__bottomBlock-itemText">Size & Fit</p>
-                    </div>
-                    <div className="sectionProductItemPage__bottomBlock-item">
-                        <img src="/images/sectionProductItemPage/Frame 26.png" alt="" className="sectionProductItemPage__bottomBlock-itemImg" />
-                        <p className="sectionProductItemPage__bottomBlock-itemText">Free Shipping</p>
-                    </div>
-                    <div className="sectionProductItemPage__bottomBlock-item">
-                        <img src="/images/sectionProductItemPage/Frame 27.png" alt="" className="sectionProductItemPage__bottomBlock-itemImg" />
-                        <p className="sectionProductItemPage__bottomBlock-itemText">Free Returns</p>
+                    <div className="sectionProductItemPage__rightBlock-bottomBlock">
+                        <div className="sectionProductItemPage__bottomBlock-item">
+                            <img src="/images/sectionProductItemPage/Frame 24.png" alt="" className="sectionProductItemPage__bottomBlock-itemImg" />
+                            <p className="sectionProductItemPage__bottomBlock-itemText">Secure Payment</p>
+                        </div>
+                        <div className="sectionProductItemPage__bottomBlock-item">
+                            <img src="/images/sectionProductItemPage/Frame 25.png" alt="" className="sectionProductItemPage__bottomBlock-itemImg" />
+                            <p className="sectionProductItemPage__bottomBlock-itemText">Size & Fit</p>
+                        </div>
+                        <div className="sectionProductItemPage__bottomBlock-item">
+                            <img src="/images/sectionProductItemPage/Frame 26.png" alt="" className="sectionProductItemPage__bottomBlock-itemImg" />
+                            <p className="sectionProductItemPage__bottomBlock-itemText">Free Shipping</p>
+                        </div>
+                        <div className="sectionProductItemPage__bottomBlock-item">
+                            <img src="/images/sectionProductItemPage/Frame 27.png" alt="" className="sectionProductItemPage__bottomBlock-itemImg" />
+                            <p className="sectionProductItemPage__bottomBlock-itemText">Free Returns</p>
+                        </div>
                     </div>
                 </div>
 

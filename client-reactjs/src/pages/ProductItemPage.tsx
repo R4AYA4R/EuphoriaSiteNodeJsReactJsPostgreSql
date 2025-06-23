@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import SectionUnderTopProductPage from "../components/SectionUnderTopProductPage";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
@@ -22,6 +22,13 @@ const ProductItemPage = () => {
 
     const [tab, setTab] = useState('Desc');
 
+    const [activeForm, setActiveForm] = useState(false);
+
+    const [activeStarsForm, setActiveStarsForm] = useState(0);
+
+    const [errorForm, setErrorForm] = useState('');
+
+    const [textAreaValue, setTextAreaValue] = useState('');
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
     const { data, refetch, isFetching: isFetchingProductById } = useQuery({
@@ -50,6 +57,27 @@ const ProductItemPage = () => {
 
     }, [data?.data])
 
+    // функция для формы для создания комментария,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)   
+    const submitFormHandler = (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault();  // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+
+
+    }
+
+    const cancelFormHandler = () => {
+
+        setActiveForm(false); // убираем форму,изменяя состояние activeForm на false
+
+        setTextAreaValue(''); // очищаем значение в textarea(изменяя состояние textAreaValue на пустую строку),которое пользователь мог ввести
+
+        setActiveStarsForm(0); // убираем выбранные пользователем звезды
+
+        setErrorForm(''); // убираем ошибку формы,если она была
+
+    }
+
 
     return (
         <main className="main">
@@ -69,8 +97,8 @@ const ProductItemPage = () => {
                         </div>
 
                         <div className="sectionProductItemPage__descBlock-tabs">
-                            <button className={tab === 'Desc' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={()=>setTab('Desc')}>Description</button>
-                            <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btnReviews descBlock__tabs-btn--active" : "descBlock__tabs-btn descBlock__tabs-btnReviews"} onClick={()=>setTab('Reviews')}>
+                            <button className={tab === 'Desc' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Desc')}>Description</button>
+                            <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btnReviews descBlock__tabs-btn--active" : "descBlock__tabs-btn descBlock__tabs-btnReviews"} onClick={() => setTab('Reviews')}>
                                 <p className="tabs__btnReviews-text">Reviews</p>
                                 <p className="tabs__btnReviews-text">(0)</p>
                             </button>
@@ -80,32 +108,116 @@ const ProductItemPage = () => {
 
                             {tab === 'Desc' &&
                                 <div className="descBlock__desc-inner">
-                                    <p className="descBlock__desc-text">{data?.data.descText}</p>
-                                    <p className="descBlock__desc-text">Our collection of clothes will make you the trendsetter with an iconic resemblance of choice in Styled Wear. It is quite evident to say that there are very few Styled Clothing online stores where you can buy Western Wear comprising the premium material and elegant design that you are always seeking for.</p>
-                                    <table className="descBlock__desc-table">
-                                        <tbody className="desc__table-body">
-                                            <tr className="desc__table-row">
-                                                <td className="desc__table-column">
-                                                    <th className="desc__table-headText">Fabric</th>
-                                                    <p className="desc__table-text">Bio-washed Cotton</p>
-                                                </td>
-                                                <td className="desc__table-column">
-                                                    <th className="desc__table-headText">Pattern</th>
-                                                    <p className="desc__table-text">Printed</p>
-                                                </td>
-                                                <td className="desc__table-column">
-                                                    <th className="desc__table-headText">Fit</th>
-                                                    <p className="desc__table-text">Regular-fit</p>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                    <div className="descBlock__desc-leftBlock">
+                                        <p className="descBlock__desc-text">{data?.data.descText}</p>
+                                        <p className="descBlock__desc-text">Our collection of clothes will make you the trendsetter with an iconic resemblance of choice in Styled Wear. It is quite evident to say that there are very few Styled Clothing online stores where you can buy Western Wear comprising the premium material and elegant design that you are always seeking for.</p>
+                                    </div>
+                                    <div className="descBlock__desc-rightBlock">
+                                        <table className="descBlock__desc-table">
+                                            <tbody className="desc__table-body">
+                                                <tr className="desc__table-row">
+                                                    <td className="desc__table-column">
+                                                        <th className="desc__table-headText">Fabric</th>
+                                                        <p className="desc__table-text">Bio-washed Cotton</p>
+                                                    </td>
+                                                    <td className="desc__table-column">
+                                                        <th className="desc__table-headText">Pattern</th>
+                                                        <p className="desc__table-text">Printed</p>
+                                                    </td>
+                                                    <td className="desc__table-column">
+                                                        <th className="desc__table-headText">Fit</th>
+                                                        <p className="desc__table-text">Regular-fit</p>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             }
 
                             {tab === 'Reviews' &&
                                 <div className="descBlock__desc-innerReviews">
-                                    Reviews
+                                    <div className="reviews__leftBlock">
+
+                                        {/* <h4 className="reviews__leftBlock-text">No reviews yet.</h4> */}
+
+                                        <div className="reviews__leftBlock-comments">
+
+                                            <div className="reviews__leftBlock-item">
+                                                <div className="reviews__item-topBlock">
+                                                    <div className="reviews__item-topBlockLeftInfo">
+                                                        <img src="/images/sectionProductItemPage/Profile.png" alt="" className="reviews__item-img" />
+                                                        <div className="reviews__item-topBlockLeftInfo--info">
+                                                            <p className="reviews__item-title">Bob</p>
+                                                            <div className="sectionNewArrivals__item-stars">
+
+                                                                {/* если product.rating равно 0,то показываем пустую звезду,в другом случае если product.rating больше или равно 0.5 и меньше или равно 0.9,то показываем половину звезды,в другом случае показываем целую звезду */}
+                                                                <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
+                                                                <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
+                                                                <img src="/images/sectionNewArrivals/Vector (1).png" alt="" className="sectionNewArrivals__item-starsImg" />
+                                                                <img src="/images/sectionNewArrivals/Vector.png" alt="" className="sectionNewArrivals__item-starsImg" />
+                                                                <img src="/images/sectionNewArrivals/Vector (2).png" alt="" className="sectionNewArrivals__item-starsImg" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <p className="reviews__item-topBlockTime">10.10.2000</p>
+                                                </div>
+                                                <p className="reviews__item-text">Desc</p>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                    <div className="reviews__rightBlock">
+
+                                        <div className={activeForm ? "reviews__rightBlock-btnBlock reviews__rightBlock-btnBlock--disabled" : "reviews__rightBlock-btnBlock"}>
+                                            <button className="reviews__btnBlock-btn" onClick={() => setActiveForm(true)}>Add Review</button>
+                                        </div>
+
+                                        <form className={activeForm ? "reviews__form reviews__form--active" : "reviews__form"} onSubmit={submitFormHandler}>
+                                            <div className="reviews__form-topBlock">
+                                                <div className="reviews__form-topBlockInfo">
+                                                    <img src="/images/sectionProductItemPage/Profile.png" alt="" className="form__topBlockInfo-img" />
+                                                    <p className="form__topBlockInfo-name">Name</p>
+                                                </div>
+                                                <div className="sectionNewArrivals__item-stars reviews__form-stars">
+                                                    {/* указываем этой кнопке тип button(то есть обычная кнопка),так как это кнопка находится в форме и чтобы при нажатии на нее форма не отправлялась(то есть не срабатывало событие onSubmit у формы), по клику на эту кнопку изменяем состояние activeStarsForm на 1,то есть на 1 звезду */}
+                                                    <button className="form__topBlockInfo-btnStar" type="button" onClick={() => setActiveStarsForm(1)}>
+                                                        {/* если activeStarsForm равно 0,то показываем серую картинку звездочки,в другом случае оранжевую */}
+                                                        <img src={activeStarsForm === 0 ? "/images/sectionNewArrivals/Vector (2).png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                                    </button>
+                                                    <button className="form__topBlockInfo-btnStar" type="button" onClick={() => setActiveStarsForm(2)}>
+                                                        <img src={activeStarsForm >= 2 ? "/images/sectionNewArrivals/Vector (1).png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                                    </button>
+                                                    <button className="form__topBlockInfo-btnStar" type="button" onClick={() => setActiveStarsForm(3)}>
+                                                        <img src={activeStarsForm >= 3 ? "/images/sectionNewArrivals/Vector (1).png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                                    </button>
+                                                    <button className="form__topBlockInfo-btnStar" type="button" onClick={() => setActiveStarsForm(4)}>
+                                                        <img src={activeStarsForm >= 4 ? "/images/sectionNewArrivals/Vector (1).png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                                    </button>
+                                                    <button className="form__topBlockInfo-btnStar" type="button" onClick={() => setActiveStarsForm(5)}>
+                                                        <img src={activeStarsForm >= 5 ? "/images/sectionNewArrivals/Vector (1).png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="reviews__form-mainBlock">
+                                                <textarea className="form__mainBlock-textArea" placeholder="Enter your comment" value={textAreaValue} onChange={(e) => setTextAreaValue(e.target.value)}></textarea>
+
+                                                {/* если errorForm не равно пустой строке,то есть есть ошибка формы,то показываем ее */}
+                                                {errorForm !== '' && <p className="formErrorText">{errorForm}</p>}
+
+
+                                                <div className="form__mainBlock-bottomBlock">
+                                                    {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
+                                                    <button className="reviews__btnBlock-btn" type="submit">Save Review</button>
+
+                                                    <button className="reviews__form-cancelBtn" type="button" onClick={cancelFormHandler}>Cancel</button>
+                                                </div>
+
+                                            </div>
+                                        </form>
+
+                                    </div>
                                 </div>
                             }
 
