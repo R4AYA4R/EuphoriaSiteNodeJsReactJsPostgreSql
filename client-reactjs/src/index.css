@@ -1436,7 +1436,7 @@ a {
 
 /* указываем дополнительный контейнер для sectionProductItemPage__rightBlock,так как по дизайну нужно так отделить и ограничить максимальную ширину блока sectionProductItemPage__rightBlock */
 .sectionProductItemPage__rightBlock-container {
-    max-width: 610px;
+    max-width: 600px;
     padding: 0 10px;
 }
 
@@ -1936,4 +1936,149 @@ a {
 .reviews__form-cancelBtn:hover{
     cursor: pointer;
     opacity: 0.5;
+}
+
+.reviews__item-adminCommentBlock{
+    margin-left: 30px;
+    margin-top: 15px;
+    position: relative;
+}
+
+.reviews__item-topBlockReplyText{
+    color: #828282;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.sectionSignUp__inner{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+}
+
+.sectionSignUp__leftImgBlock{
+    width: 100%;
+    background-image: url('/public/images/sectionUserPage/signUpPageImg.png');
+    background-repeat: no-repeat;
+    background-position: top;
+    background-size: cover;
+    min-height: 695px;
+    margin-bottom: 0;
+}
+
+.sectionSignUp__signUpBlock{
+    transition-delay: 0.5s; /* указываем задержку по времени перед анимацией */
+}
+
+.sectionSignUp__leftImgBlock{
+    transition-delay: 1s; /* указываем задержку по времени перед анимацией */
+}
+
+.sectionSignUp__signUpBlock-inner{
+    padding: 150px 75px 100px 75px;
+}
+
+
+.sectionSignUp__signUpBlock-container{
+    max-width: 635px;
+    padding: 0 10px;
+}
+
+.sectionSignUp__signUpBlock-tabs{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:25px;
+    margin-bottom: 30px;
+}
+
+.signUpBlock__tabs-btn{
+    background-color: #fff;
+    border:none;
+    font-family: 'Inter',sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    transition:all .5s ease;
+    color: #828282;
+}
+
+.signUpBlock__tabs-btn--active{
+    color: #3C4242;
+}
+
+.signUpBlock__tabs-btn:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.signUpBlock__tabs-btn:hover.signUpBlock__tabs-btn--active{
+    opacity: 1;
+}
+
+.signUpBlock__signInForm{
+    animation: appear 1s ease forwards;
+}
+
+.signInForm__inputEmailBlock{
+    margin-bottom: 30px;
+    position: relative;
+}
+
+
+.signInForm__inputEmailBlock-input{
+    padding: 12px 12px 12px 40px;
+    width: 100%;
+    border:1px solid #828282;
+    border-radius: 8px;
+    outline: none;
+    font-family: 'Inter',sans-serif;
+}
+
+.signInForm__inputEmailBlock-img{
+    position: absolute;
+    top: 9px;
+    left: 10px;
+}
+
+
+.signInForm__inputEmailBlock-inputPassword{
+    padding: 12px 36px 12px 40px;
+}
+
+.signInForm__inputEmailBlock-hideBtn{
+    background-color: #fff;
+    border:none;
+    transition:opacity .5s ease;
+    position: absolute;
+    top: 13px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.signInForm__inputEmailBlock-hideBtn:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.signInForm__inputPasswordBlock{
+    margin-bottom: 15px;
+}
+
+.signInForm__btn{
+    padding: 16px 57px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    background-color: #8A33FD;
+    border-radius: 8px;
+    border:none;
+    transition:all .5s ease;
+    width: 100%;
+}
+
+.signInForm__btn:hover{
+    cursor: pointer;
+    background-color: rgba(138, 51, 253, 0.8);
 }
