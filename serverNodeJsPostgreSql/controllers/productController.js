@@ -71,4 +71,4 @@ class ProductController {
 
 }
 
-export default new ProductController(); // экспортируем объект на основе класса ProductController,чтобы потом сразу можно было после импорта этого объекта из этого файла указывать через точку функции этого класса ProductController
+export default new ProductController(); // экспортируем объект на основе класса ProductController,чтобы потом сразу можно было после импорта этого объекта из этого файла указывать через точку функции этого класса ProductController(типа productController.getProductsCatalog()),если так не делать,то если у функций класса нету параметра static,то нельзя будет их вызвать,не создав перед этим объект на основе этого класса

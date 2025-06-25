@@ -48,4 +48,4 @@ class TokenService {
 
 }
 
-export default new TokenService(); // экспортируем уже объект на основе нашего класса TokenService
+export default new TokenService(); // экспортируем уже объект на основе нашего класса TokenService,чтобы можно было вызывать эти функции в этом классе через точку(типа tokenService.generateTokens()),просто импортировав файл tokenService,если так не делать,то если у функций класса нету параметра static,то нельзя будет их вызвать,не создав перед этим объект на основе этого класса
