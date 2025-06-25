@@ -78,6 +78,10 @@ const start = async () => {
 
         // await models.Product.create({name:"Dark Green Sweatshirt",descText:"100% Bio-washed Cotton – makes the fabric extra soft & silky. Flexible ribbed crew neck. Precisely stitched with no pilling & no fading. Provide  all-time comfort. Anytime, anywhere. Infinite range of matte-finish HD prints.",price:127,amount:1,totalPrice:127,sizes:["M","L","XL"],rating:0,mainImage:"Rectangle 25 (2).png",descImages:["Product Image.jpg","Product Image.jpg"],categoryId:1,typeId:1});
 
+        // это делаем один раз для создания ролей в базе данных у таблицы Role,потом этот код закомментируем
+        // await models.Role.create({role:"USER"});
+        // await models.Role.create({role:"ADMIN"});
+
 
     }catch(e){
 

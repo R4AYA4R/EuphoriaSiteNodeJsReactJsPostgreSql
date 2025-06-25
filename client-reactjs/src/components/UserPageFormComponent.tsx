@@ -20,6 +20,22 @@ const UserPageFormComponent = () => {
     const [inputSignInPassword, setInputSignInPassword] = useState('');
 
     const [hideInputSignInPassword, setHideInputSignInPassword] = useState(true);
+    
+
+    const [inputSignUpEmail, setInputSignUpEmail] = useState('');
+
+    const [inputSignUpName, setInputSignUpName] = useState('');
+
+    const [inputSignUpPassword, setInputSignUpPassword] = useState('');
+
+    const [inputSignUpConfirmPassword, setInputSignUpConfirmPassword] = useState('');
+
+    const [hideInputSignUpPassword, setHideInputSignUpPassword] = useState(true);
+
+    const [hideInputSignUpConfirmPassword, setHideInputSignUpConfirmPassword] = useState(true);
+
+    const [errorSignUpForm, setErrorSignUpForm] = useState('');
+
 
     // функция для формы логина,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
     const submitSignInFormHandler = (e: FormEvent<HTMLFormElement>) => {
@@ -27,6 +43,47 @@ const UserPageFormComponent = () => {
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
 
+
+    }
+
+    // функция для формы регистрации,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const submitSignUpFormHandler = (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+        // если состояние инпута пароля не равно состоянию инпута подтверждения пароля,то показываем ошибку,что пароли не совпадают
+        if(inputSignUpPassword !== inputSignUpConfirmPassword){
+
+            setErrorSignUpForm('Passwords don`t match'); // показываем ошибку формы
+
+        } else if(inputSignUpEmail.trim() === '' || inputSignUpName.trim() === '' || inputSignUpPassword.trim() === ''){
+            // если состояние инпута почты,отфильтрованное без пробелов(с помощью trim(),то есть из этой строки убираются пробелы) равно пустой строке или инпут пароля равен пустой строке,или инпут имени равен пустой строке (все эти инпуты проверяем уже отфильтрованные по пробелу с помощью trim() ),то показываем ошибку
+
+            setErrorSignUpForm('Fill in all fields'); // показываем ошибку формы
+
+        } else if(inputSignUpPassword.length < 3 || inputSignUpPassword.length > 32){
+            // если значение инпута пароля по длине символов меньше 3 или больше 32,то показываем ошибку
+
+            setErrorSignUpForm('Password must be 3 - 32 characters'); // показываем ошибку формы
+
+        } else if(!inputSignUpEmail.includes('.') || inputSignUpEmail.trim().length < 4){
+            // если инпут почты includes('.') false(то есть инпут почты не включает в себя точку) или значение инпута почты,отфильтрованное по пробелам( trim() ), по количеству символов меньше 4,то показываем ошибку
+
+            setErrorSignUpForm('Enter email correctly'); // показываем ошибку формы
+            
+        } else if(inputSignUpName.trim().length < 3 || inputSignUpName.trim().length > 32){
+            // если инпут имени,отфильтрованный по пробелам(trim()),по количеству символов меньше 3 или больше 32
+
+            setErrorSignUpForm('Name must be 3 - 32 characters');  // показываем ошибку формы
+
+        } else {
+
+            setErrorSignUpForm('');  // указываем значение состоянию ошибки пустую строку,то есть убираем ошибку,если она была
+
+
+
+
+        }
 
     }
 
@@ -77,9 +134,43 @@ const UserPageFormComponent = () => {
 
                             {tab === 'signUp' &&
 
-                                <form className="signUpBlock__signInForm">
+                                <form className="signUpBlock__signInForm" onSubmit={submitSignUpFormHandler}>
 
-                                    signUp
+                                    <div className="signInForm__inputEmailBlock">
+                                        <img src="/images/sectionUserPage/User.png" alt="" className="signInForm__inputEmailBlock-img" />
+                                        <input type="text" className="signInForm__inputEmailBlock-input" placeholder="Name" value={inputSignUpName} onChange={(e) => setInputSignUpName(e.target.value)} />
+                                    </div>
+
+                                    <div className="signInForm__inputEmailBlock">
+                                        <img src="/images/sectionUserPage/EnvelopeSimple.png" alt="" className="signInForm__inputEmailBlock-img" />
+                                        <input type="text" className="signInForm__inputEmailBlock-input" placeholder="Email" value={inputSignUpEmail} onChange={(e) => setInputSignUpEmail(e.target.value)} />
+                                    </div>
+
+                                    <div className="signInForm__inputEmailBlock">
+                                        <img src="/images/sectionUserPage/Lock.png" alt="" className="signInForm__inputEmailBlock-img" />
+
+                                        {/* если состояние hideInputSignInPassword true,то делаем этому инпуту тип как password,в другом случае делаем тип как text,и потом по кнопке показать или скрыть пароль в инпуте для пароля таким образом его скрываем или показываем */}
+                                        <input type={hideInputSignUpPassword ? "password" : "text"} className="signInForm__inputEmailBlock-input signInForm__inputEmailBlock-inputPassword" placeholder="Password" value={inputSignUpPassword} onChange={(e) => setInputSignUpPassword(e.target.value)} />
+                                        <button className="signInForm__inputEmailBlock-hideBtn" type="button" onClick={() => setHideInputSignUpPassword((prev) => !prev)}>
+                                            <img src="/images/sectionUserPage/Icon.png" alt="" className="signInForm__inputEmailBlock-imgHide" />
+                                        </button>
+                                    </div>
+
+                                    <div className="signInForm__inputEmailBlock signInForm__inputPasswordBlock">
+                                        <img src="/images/sectionUserPage/Lock.png" alt="" className="signInForm__inputEmailBlock-img" />
+
+                                        {/* если состояние hideInputSignInPassword true,то делаем этому инпуту тип как password,в другом случае делаем тип как text,и потом по кнопке показать или скрыть пароль в инпуте для пароля таким образом его скрываем или показываем */}
+                                        <input type={hideInputSignUpConfirmPassword ? "password" : "text"} className="signInForm__inputEmailBlock-input signInForm__inputEmailBlock-inputPassword" placeholder="Confirm Password" value={inputSignUpConfirmPassword} onChange={(e) => setInputSignUpConfirmPassword(e.target.value)} />
+                                        <button className="signInForm__inputEmailBlock-hideBtn" type="button" onClick={() => setHideInputSignUpConfirmPassword((prev) => !prev)}>
+                                            <img src="/images/sectionUserPage/Icon.png" alt="" className="signInForm__inputEmailBlock-imgHide" />
+                                        </button>
+                                    </div>
+
+                                    {/* если errorSignUpForm не равно пустой строке,то есть есть ошибка формы,то показываем ее */}
+                                    {errorSignUpForm && <p className="formErrorText">{errorSignUpForm}</p>}
+
+                                    {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
+                                    <button className="signInForm__btn" type="submit">Sign Up</button>
 
                                 </form>
 
