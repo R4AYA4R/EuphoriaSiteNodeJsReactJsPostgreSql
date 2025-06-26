@@ -78,7 +78,7 @@ const Token = db.define('token', {
 
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 
-    token: { type: DataTypes.STRING, allowNull: false }
+    refreshToken: { type: DataTypes.STRING, allowNull: false }
 
 })
 

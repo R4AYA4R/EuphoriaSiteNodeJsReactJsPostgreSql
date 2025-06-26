@@ -25,3 +25,27 @@ export interface IProductsCatalogResponse{
     maxPriceAllProducts:number,
     allProductsForCount:IProduct[]
 }
+
+// создаем и экспортируем интерфейс для объекта пользователя,который приходит от сервера
+export interface IUser{
+    id:number,
+    email:string,
+    userName:string,
+    role:string
+}
+
+// создаем и экспортируем интерфейс для объекта состояния редьюсера для пользователя,указываем ему поле user на основе нашего интерфейса IUser,и остальные поля
+export interface IUserInitialState{
+    user:IUser,
+    isAuth:boolean,
+    isLoading:boolean
+}
+
+// создаем и экспортируем наш интерфейс для AuthResponse
+export interface AuthResponse{
+    // указываем здесь поля этого интерфейса(типа) для объекта
+    accessToken:string,
+    refreshToken:string,
+    user:IUser // указываем,что поле user - это объект на основе нашего интерфеса IUser(с теми полями, которые описаны в IUser)
+
+}
