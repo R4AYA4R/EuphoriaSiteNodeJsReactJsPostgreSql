@@ -10,7 +10,7 @@ const UserPageFormComponent = () => {
     const onScreen = useIsOnScreen(imgBlockSignUpRef as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
     const signUpBlockRef = useRef<HTMLDivElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную signUpBlockRef,указываем тип в generic этому useRef как HTMLDivElement(иначе выдает ошибку,так как эта ссылка уже будет для блока div),указываем в useRef null,так как используем typeScript,делаем еще одну ссылку на html элемент,чтобы сделать дополнительные анимации отдельные для каждого блока
-    
+
     const onScreenSignUpBlockRef = useIsOnScreen(signUpBlockRef as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
     const [tab, setTab] = useState('signIn');
@@ -22,7 +22,7 @@ const UserPageFormComponent = () => {
     const [inputSignInPassword, setInputSignInPassword] = useState('');
 
     const [hideInputSignInPassword, setHideInputSignInPassword] = useState(true);
-    
+
 
     const [inputSignUpEmail, setInputSignUpEmail] = useState('');
 
@@ -42,27 +42,50 @@ const UserPageFormComponent = () => {
 
 
     // функция для регистрации
-    const registration = async (email:string,password:string) => {
+    const registration = async (email: string, password: string) => {
 
         // оборачиваем в try catch,чтобы отлавливать ошибки
-        try{
+        try {
 
             let name = inputSignUpName; // помещаем в переменную name(указываем ей именно let,чтобы можно было изменять) значение инпута имени
 
-            name = name.trim().replace(name[0],name[0].toUpperCase());  // убираем пробелы из переменной имени и заменяем первую букву этой строки инпута имени(name[0] в данном случае) на первую букву этой строки инпута имени только в верхнем регистре(name[0].toUpperCase()),чтобы имя начиналось с большой буквы,даже если написали с маленькой
+            name = name.trim().replace(name[0], name[0].toUpperCase());  // убираем пробелы из переменной имени и заменяем первую букву этой строки инпута имени(name[0] в данном случае) на первую букву этой строки инпута имени только в верхнем регистре(name[0].toUpperCase()),чтобы имя начиналось с большой буквы,даже если написали с маленькой
 
-            const response = await AuthService.registration(email,password,name); // вызываем нашу функцию registration() у AuthService,передаем туда email,password и name(имя пользователя,его поместили в переменную name выше в коде),если запрос прошел успешно,то в ответе от сервера будут находиться токены, поле user с объектом пользователя(с полями email,id,userName,role),их и помещаем в переменную response
+            const response = await AuthService.registration(email, password, name); // вызываем нашу функцию registration() у AuthService,передаем туда email,password и name(имя пользователя,его поместили в переменную name выше в коде),если запрос прошел успешно,то в ответе от сервера будут находиться токены, поле user с объектом пользователя(с полями email,id,userName,role),их и помещаем в переменную response
 
             console.log(response);
 
             authorizationForUser(response.data);  // вызываем нашу функцию(action) для изменения состояния пользователя и передаем туда response.data(в данном случае это объект с полями accessToken,refreshToken и user,которые пришли от сервера)
 
 
-        }catch(e:any){
+        } catch (e: any) {
 
             console.log(e.reponse?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e 
 
             setErrorSignUpForm(e.response?.data?.message + '. Fill in all fields correctly'); // помещаем в состояние ошибки формы регистрации текст ошибки,которая пришла от сервера(в данном случае еще и допольнительный текст)
+
+        }
+
+    }
+
+    // функция для логина
+    const login = async (email: string, password: string) => {
+
+        // оборачиваем в try catch,чтобы отлавливать ошибки
+        try {
+
+            const response = await AuthService.login(email, password); // вызываем нашу функцию login() у AuthService,передаем туда email и password,если запрос прошел успешно,то в ответе от сервера будут находиться токены и поле user с объектом пользователя(с полями userName,email,id,role),их и помещаем в переменную response
+
+            console.log(response);
+
+            authorizationForUser(response.data);  // вызываем нашу функцию(action) для изменения состояния пользователя и передаем туда response.data(в данном случае это объект с полями accessToken,refreshToken и user,которые пришли от сервера)
+
+
+        } catch (e: any) {
+
+            console.log(e.reponse?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e 
+
+            setErrorSignInForm(e.response?.data?.message + '. Fill in all fields correctly'); // помещаем в состояние ошибки формы регистрации текст ошибки,которая пришла от сервера(в данном случае еще и допольнительный текст)
 
         }
 
@@ -74,7 +97,18 @@ const UserPageFormComponent = () => {
 
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
+        // если инпут почты includes('.') false(то есть инпут почты не включает в себя .(точку)) или значение инпута почты,отфильтрованное без пробелов(с помощью trim() убираются пробелы по бокам строки,то есть какое-то значение строки в центре,а пробелы по бокам убираются,если они были) по количеству символов меньше 4,то показываем ошибку
+        if (!inputSignInEmail.includes('.') || inputSignInEmail.trim().length < 4) {
 
+            setErrorSignInForm('Enter email correctly'); // показываем ошибку 
+
+        } else {
+
+            setErrorSignInForm(''); // указываем значение состоянию ошибки пустую строку,то есть убираем ошибку,если она была
+
+            login(inputSignInEmail, inputSignInPassword);  // вызываем нашу функцию авторизации и передаем туда состояния инпутов почты и пароля
+
+        }
 
     }
 
@@ -84,26 +118,26 @@ const UserPageFormComponent = () => {
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
         // если состояние инпута пароля не равно состоянию инпута подтверждения пароля,то показываем ошибку,что пароли не совпадают
-        if(inputSignUpPassword !== inputSignUpConfirmPassword){
+        if (inputSignUpPassword !== inputSignUpConfirmPassword) {
 
             setErrorSignUpForm('Passwords don`t match'); // показываем ошибку формы
 
-        } else if(inputSignUpEmail.trim() === '' || inputSignUpName.trim() === '' || inputSignUpPassword.trim() === ''){
+        } else if (inputSignUpEmail.trim() === '' || inputSignUpName.trim() === '' || inputSignUpPassword.trim() === '') {
             // если состояние инпута почты,отфильтрованное без пробелов(с помощью trim(),то есть из этой строки убираются пробелы) равно пустой строке или инпут пароля равен пустой строке,или инпут имени равен пустой строке (все эти инпуты проверяем уже отфильтрованные по пробелу с помощью trim() ),то показываем ошибку
 
             setErrorSignUpForm('Fill in all fields'); // показываем ошибку формы
 
-        } else if(inputSignUpPassword.length < 3 || inputSignUpPassword.length > 32){
+        } else if (inputSignUpPassword.length < 3 || inputSignUpPassword.length > 32) {
             // если значение инпута пароля по длине символов меньше 3 или больше 32,то показываем ошибку
 
             setErrorSignUpForm('Password must be 3 - 32 characters'); // показываем ошибку формы
 
-        } else if(!inputSignUpEmail.includes('.') || inputSignUpEmail.trim().length < 4){
+        } else if (!inputSignUpEmail.includes('.') || inputSignUpEmail.trim().length < 4) {
             // если инпут почты includes('.') false(то есть инпут почты не включает в себя точку) или значение инпута почты,отфильтрованное по пробелам( trim() ), по количеству символов меньше 4,то показываем ошибку
 
             setErrorSignUpForm('Enter email correctly'); // показываем ошибку формы
-            
-        } else if(inputSignUpName.trim().length < 3 || inputSignUpName.trim().length > 32){
+
+        } else if (inputSignUpName.trim().length < 3 || inputSignUpName.trim().length > 32) {
             // если инпут имени,отфильтрованный по пробелам(trim()),по количеству символов меньше 3 или больше 32
 
             setErrorSignUpForm('Name must be 3 - 32 characters');  // показываем ошибку формы
@@ -113,7 +147,7 @@ const UserPageFormComponent = () => {
             setErrorSignUpForm('');  // указываем значение состоянию ошибки пустую строку,то есть убираем ошибку,если она была
 
 
-            registration(inputSignUpEmail,inputSignUpPassword); // вызываем нашу функцию регистрации и передаем туда состояния инпутов почты и пароля
+            registration(inputSignUpEmail, inputSignUpPassword); // вызываем нашу функцию регистрации и передаем туда состояния инпутов почты и пароля
 
         }
 
