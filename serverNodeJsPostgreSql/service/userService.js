@@ -64,7 +64,7 @@ class UserService {
         const isPassEquals = await bcrypt.compare(password, user.password); // сравниваем пароль,который отправил пользователь с захешированным паролем в базе данных,используем функцию compare() у bcrypt,передаем туда первым параметром пароль,который пользователь отправил(параметр этой функции login),а вторым параметром передаем пароль из базы данных(то есть пароль,который есть у объекта user(мы его нашли в переменной user по email),в данном случае не надо указывать user.dataValues.password(это можно указать,но сильного отличия между user.password не будет,это будет и так работать,но если указать user.password,то тогда получим еще кроме самого поля password еще и дополнительные объекты sequelize,связанные с этим объектом user),а сразу можно указать user.password,так как и так находит поле password у user,но в userDto когда нужно развернуть объект user,нужно его указать ...user.dataValues,иначе не разворачивает поля конкретно объекта пользователя user,так как по дефолту при нахождении объекта в базе данных sequelize оборачивает объекты из базы данных в свою обертку,добавляя туда другие объекты,и предыдущее состояние конкретного объекта,а уже конкретные поля объекта хранит в dataValues)
 
         // если isPassEquals false(или null, или другое типа пустое или false значение(undefined,0,"",NaN)),то есть пароли не одинаковы
-        if(!isPassEquals){
+        if (!isPassEquals) {
 
             throw ApiError.BadRequest('Wrong password');  // вместо throw new Error указываем throw ApiError(наш класс для обработки ошибок),указываем у него функцию BadRequest,этот объект ошибки из функции BadRequest попадет в функцию next() (наш error middleware) у функции для эндпоинта,так как в ней мы отлавливали ошибки с помощью try catch и здесь указали throw,и эта ошибка там будет обработана,то есть показываем ошибку с сообщением
 
@@ -89,6 +89,46 @@ class UserService {
 
     }
 
+    async refresh(refreshToken) {
+
+        // если refreshToken false(или null, или другое типа пустое или false значение(undefined,0,"",NaN)),то есть его нету
+        if (!refreshToken) {
+
+            throw ApiError.UnauthorizedError();  // вместо throw new Error указываем throw ApiError(наш класс для обработки ошибок),указываем у него функцию UnauthorizedError,этот объект ошибки из функции UnauthorizedError попадет в функцию next() (наш error middleware) у функции для эндпоинта,так как в ней мы отлавливали ошибки с помощью try catch и здесь указали throw,и эта ошибка там будет обработана,то есть показываем ошибку с сообщением,если у пользователя токена нет,то он и не авторизован
+
+        }
+
+        const userData = tokenService.validateRefreshToken(refreshToken);  // вызываем нашу функцию validateRefreshToken(),передаем туда refreshToken,помещаем в переменную userData,payload данные(данные,которые мы помещали в токен,id пользователя и тд),которые верифицировали с помощью jwt.verify() в нашей фукнции validateRefreshToken(),если будет ошибка при верификации токена в нашей функции validateRefreshToken(),то будет возвращен null(это мы прописали в нашей функции validateRefreshToken())
+
+        const tokenFromDb = await tokenService.findToken(refreshToken); // ищем такой токен в базе данных,помещаем найденный токен в переменную tokenFromDb,используя нашу функцию findToken(),куда передаем в параметре refreshToken
+
+        // если userData false(или null) или tokenFromDb false(или null),то есть пользователь не авторизован
+        if (!userData || !tokenFromDb) {
+
+            throw ApiError.UnauthorizedError();  // вместо throw new Error указываем throw ApiError(наш класс для обработки ошибок),указываем у него функцию UnauthorizedError,этот объект ошибки из функции UnauthorizedError попадет в функцию next() (наш error middleware) у функции для эндпоинта,так как в ней мы отлавливали ошибки с помощью try catch и здесь указали throw,и эта ошибка там будет обработана,то есть показываем ошибку с сообщением,если у пользователя токена нет,то он и не авторизован
+
+        }
+
+        const user = await models.User.findOne({ where: { id: userData.id } }); // находим пользователя по id,который равен id у userData(то есть данные о пользователе,которые мы верефицировали из refresh токена выше в коде),который верифицировали из токена выше в коде с помощью нашей функции validateRefreshToken()
+
+        const userRole = await models.Role.findOne({ where: { role: "USER" } });  // находим объект роли в базе данных со значением USER и помещаем его в переменную userRole
+
+        const userDto = new UserDto({ ...user.dataValues, role: userRole.role }); // помещаем в переменную userDto объект,созданный на основе нашего класса UserDto и передаем в параметре конструктора модель(в данном случае объект, в который разворачиваем все поля user.dataValues(который мы создали в базе данных,в коде выше,разворачиваем именно так из dataValues,так как сам объект user(созданный в базе данных) имеет много разных полей и вложенных объектов,а сами конкретные поля для модели user(для пользователя,типа id,userName и тд) они хранятся в этом объекте user в поле dataValues,если разворачивать просто user(...user),то будет выдавать ошибку,что не может найти нужные поля для UserDto(типа id,userName,email и тд)) и добавляем поле role со значением userRole.role(то есть само значение поля role у объекта роли userRole,то есть "USER" или "ADMIN",делаем так,чтобы потом возвращать этот объект userDto на клиент и там было удобнее проверять роль у пользователя на значение типа "USER" или "ADMIN",а не на id у объекта userRole,так как в postgreSql сделали такие связи таблиц с id)),в итоге переменная userDto(объект) будет обладать полями id,email,userName,role,isActivated(в данном случае не делаем активацию аккаунта по почте,поэтому не будет тут у объекта пользователя поля isActivated),делаем это,чтобы убрать лишние(без пароля пользователя и тд) поля из объекта пользователя,который взяли из базы данных,которую можем передать как payload(данные,которые будут помещены в access и refresh токен) в access и refresh токен
+
+        console.log(userDto);
+
+        const tokens = tokenService.generateTokens({ ...userDto }); // помещаем в переменную tokens пару токенов,refresh и access токены,которые создались в нашей функции generateTokens(),передаем в параметре payload(данные,которые будут спрятаны в токен),в данном случае передаем в параметре объект,куда разворачиваем все поля объекта userDto(чтобы они отдельно развернулись в этот новый объект и добавились в токен)
+
+        await tokenService.saveToken(userDto.id, tokens.refreshToken);  // сохраняем refresh токен в базу данных,используя нашу функцию saveToken,передаем в параметрах userDto.id(id пользователя,который создали в базе данных) и refreshToken,который мы сгенерировали выше и поместили в объект tokens
+
+        // возвращаем все поля объекта tokens(то есть access и refresh токены),и в поле user указываем значение userDto
+        return {
+            ...tokens,
+            user: userDto
+        }
+
+
+    }
 
 }
 

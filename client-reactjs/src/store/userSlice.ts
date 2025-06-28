@@ -31,6 +31,13 @@ export const userSlice = createSlice({
  
             state.isAuth = true; // изменяем поле isAuth этого класса на true,так как уже авторизованы
 
+        },
+
+        // указываем тип данных для action payload как PayloadAction и в generic указываем тип boolean(так как мы будем передавать потом в этот action параметр типа true или false)
+        setLoadingUser:(state,action:PayloadAction<boolean>)=>{
+
+            state.isLoading = action.payload;  // изменяем поле isLoading у этого состояния на action.payload(данные,которые передадим этой функции потом при вызове,в данном случае будем передавать true или false,чтобы указать,что сейчас идет загрузка)
+
         }
 
     }
