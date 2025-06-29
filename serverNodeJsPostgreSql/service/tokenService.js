@@ -72,6 +72,14 @@ class TokenService {
 
     }
 
+    async removeToken(refreshToken) {
+
+        const tokenData = await models.Token.destroy({ where: { refreshToken } });  // вызываем функцию destroy() у таблицы Token в базе данных,передаем туда объект с полем refreshToken и условием,то есть будет найден объект с полем refreshToken и значением таким же,как и параметр этой функции removeToken, и этот объект будет удален из базы данных, в данном случае возвращается не сам удаленный объект токена из базы данных, а просто цифра 1,типа был удален объект) и эту цифру 1(в данном случае) помещаем в переменную tokenData
+
+        return tokenData; // возвращаем tokenData
+
+    }
+
 
 }
 

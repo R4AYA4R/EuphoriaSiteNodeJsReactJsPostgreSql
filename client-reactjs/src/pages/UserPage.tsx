@@ -4,14 +4,17 @@ import UserPageFormComponent from "../components/UserPageFormComponent";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse } from "../types/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import AuthService from "../service/AuthService";
 
 
 const UserPage = () => {
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
-    const { setLoadingUser, authorizationForUser } = useActions();  // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { setLoadingUser, authorizationForUser, logoutUser } = useActions();  // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+
+    const [tab, setTab] = useState('Dashboard');
 
     const checkAuth = async () => {
 
@@ -55,11 +58,34 @@ const UserPage = () => {
 
     }, [])
 
+    // функция для выхода из аккаунта
+    const logout = async () => {
+
+        // оборачиваем в try catch,чтобы отлавливать ошибки 
+        try {
+
+            await AuthService.logout(); // вызываем нашу функцию logout() у AuthService
+
+            logoutUser(); // вызываем нашу функцию(action) для изменения состояния пользователя для выхода из аккаунта и в данном случае не передаем туда ничего
+
+            setTab('Dashboard');  // изменяем состояние таба на dashboard то есть показываем секцию dashboard(в данном случае главный отдел пользователя),чтобы при выходе из аккаунта и входе обратно у пользователя был открыт главный отдел аккаунта,а не настройки или последний отдел,который пользователь открыл до выхода из аккаунта
+
+            // потом еще будем очищать поля формы настроек пользователя и поля формы создания нового товара для админа
+
+
+        } catch (e: any) {
+
+            console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e
+
+        }
+
+    }
+
     // если состояние загрузки true,то есть идет загрузка запроса на сервер для проверки,авторизован ли пользователь,то показываем лоадер(загрузку),если не отслеживать загрузку при функции checkAuth(для проверки на refresh токен при запуске страницы),то будет не правильно работать(только через некоторое время,когда запрос на /refresh будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на /refresh)
-    if(isLoading){
+    if (isLoading) {
 
         // возвращаем тег main с классом main,так как указали этому классу стили,чтобы был прижат header и footer
-        return(
+        return (
             <main className="main">
                 <div className="container">
                     <div className="innerForLoader">
@@ -90,7 +116,76 @@ const UserPage = () => {
     return (
         <main className="main">
 
-            userPage {user.userName}
+            <SectionUnderTop subtext="My Account" /> {/* указываем пропс(параметр) subtext(в данном случае со значением My Account,чтобы отобразить в этой секции текст My Account,так как это для страницы аккаунта пользователя),чтобы использовать этот компонент на разных страницах,а отличаться он будет только этим параметром subtext */}
+
+
+            <section className="sectionUserPage">
+                <div className="container">
+                    <div className="sectionUserPage__inner">
+                        <div className="sectionUserPage__leftBar">
+
+                            <div className="sectionCategories__topBlock sectionUserPage__leftBar-topBlock">
+                                <div className="sectionCategories__topBlock-leftBorderBlock"></div>
+                                <h1 className="sectionCategories__topBlock-title sectionUserPage__leftBar-title">Hello {user.userName}</h1>
+                            </div>
+
+                            <p className="sectionUserPage__leftBar-subtitle">Welcome to your Account</p>
+
+                            <ul className="sectionUserPage__leftBar-menu">
+                                <li className="sectionUserPage__menu-item">
+                                    <button className={tab === 'Dashboard' ? "sectionUserPage__menu-btn sectionUserPage__menu-btn--active" : "sectionUserPage__menu-btn"} onClick={() => setTab('Dashboard')}>
+                                        <img src="/images/sectionUserPage/dashboard 2.png" alt="" className="sectionUserPage__menu-btnImg" />
+                                        <p className="sectionUserPage__menu-btnText">Dashboard</p>
+                                    </button>
+                                </li>
+
+                                {/* если user.role === 'USER'(то есть если роль пользователя равна "USER"),то показываем таб с настройками профиля пользователя */}
+                                {user.role === 'USER' &&
+
+                                    <li className="sectionUserPage__menu-item">
+                                        <button className={tab === 'Account Settings' ? "sectionUserPage__menu-btn sectionUserPage__menu-btn--active" : "sectionUserPage__menu-btn"} onClick={() => setTab('Account Settings')}>
+                                            <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="sectionUserPage__menu-btnImg" />
+                                            <p className="sectionUserPage__menu-btnText">Account Settings</p>
+                                        </button>
+                                    </li>
+
+                                }
+
+                                {/* здесь еще надо будет добавить вкладку для админа для админ панели */}
+
+                            </ul>
+
+                            <div className="sectionUserPage__menu-item">
+                                <button className="sectionUserPage__menu-btn" onClick={logout}>
+                                    <img src="/images/sectionUserPage/dashboard 2 (2).png" alt="" className="sectionUserPage__menu-btnImg" />
+                                    <p className="sectionUserPage__menu-btnText">Logout</p>
+                                </button>
+                            </div>
+
+                        </div>
+                        <div className="sectionUserPage__mainBlock">
+
+                            {tab === 'Dashboard' &&
+                                <div className="sectionUserPage__mainBlock-inner">
+
+                                    dashboard {user.userName}
+
+                                </div>
+                            }
+
+                            {/* если user.role === 'USER'(то есть если роль пользователя равна "USER") и tab === 'Account Settings',то показываем таб с настройками профиля пользователя */}
+                            {user.role === 'USER' && tab === 'Account Settings' &&
+                                <div className="sectionUserPage__mainBlock-inner">
+
+                                    account settings {user.userName}
+
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </section>
 
         </main>
     )

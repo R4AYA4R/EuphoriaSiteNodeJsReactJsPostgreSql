@@ -38,7 +38,17 @@ export const userSlice = createSlice({
 
             state.isLoading = action.payload;  // изменяем поле isLoading у этого состояния на action.payload(данные,которые передадим этой функции потом при вызове,в данном случае будем передавать true или false,чтобы указать,что сейчас идет загрузка)
 
-        }
+        },
+
+        logoutUser:(state)=>{
+
+            localStorage.removeItem('token'); // удаляем accessToken из localStorage по ключу token
+
+            state.user = {} as IUser;  // изменяем поле user этого класса на пустой объект и указываем,что он нашего типа IUser,так как уже вышли из аккаунта
+ 
+            state.isAuth = false; // изменяем поле isAuth этого класса на false,так как уже вышли из аккаунта
+
+        },
 
     }
 

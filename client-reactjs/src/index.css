@@ -2082,3 +2082,67 @@ a {
     cursor: pointer;
     background-color: rgba(138, 51, 253, 0.8);
 }
+
+.sectionUserPage{
+    padding: 50px 0 100px;
+}
+
+.sectionUserPage__leftBar-topBlock{
+    margin-bottom: 10px;
+}
+
+.sectionUserPage__leftBar-title{
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.sectionUserPage__leftBar-subtitle{
+    font-size: 14px;
+    font-weight: 400;
+    color: #807D7E;
+    margin-bottom: 40px;
+}
+
+.sectionUserPage__inner{
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap: 40px;
+}
+
+
+.sectionUserPage__menu-btn{
+    display: flex;
+    align-items: center;    
+    gap:17px;
+    padding: 12px 0 12px 37px;
+    width: 100%;
+    background-color: #fff;
+    border:none;
+    border-left: 1px solid transparent;
+    transition:all .5s ease;
+    font-family: 'Inter',sans-serif;
+}
+
+.sectionUserPage__menu-btn:hover{
+    cursor: pointer;
+    background-color: #EAEAEA;
+}
+
+.sectionUserPage__menu-btn--active{
+    background-color: #F6F6F6;
+    border-left: 1px solid #3C4242;
+}
+
+.sectionUserPage__menu-btn:hover.sectionUserPage__menu-btn--active{
+    background-color: #F6F6F6;
+}
+
+.sectionUserPage__menu-btnText{
+    font-size: 16px;
+    font-weight: 600;
+    color: #807D7E;
+}
+
+.sectionUserPage__mainBlock-inner{
+    animation: appear 1s ease forwards;
+}
