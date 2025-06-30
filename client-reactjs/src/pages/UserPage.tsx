@@ -168,7 +168,18 @@ const UserPage = () => {
                             {tab === 'Dashboard' &&
                                 <div className="sectionUserPage__mainBlock-inner">
 
-                                    dashboard {user.userName}
+                                    <div className="sectionUserPage__mainBlock-dashboard">
+                                        <img src="/images/sectionUserPage/Ellipse 5.png" alt="" className="sectionUserPage__dashboard-img" />
+                                        <h3 className="sectionUserPage__dashboard-title">{user.userName}</h3>
+                                        <p className="sectionUserPage__dashboard-email">{user.email}</p>
+
+                                        {/* если user.role === 'USER'(то есть если роль пользователя равна "USER"),то показываем кнопку, по которой можно перейти в настройки аккаунта пользователя*/}
+                                        {user.role === 'USER' &&
+                                            <button className="sectionUserPage__dashboard-btn" onClick={()=>setTab('Account Settings')}>Edit Profile</button>
+                                        }
+
+
+                                    </div>
 
                                 </div>
                             }

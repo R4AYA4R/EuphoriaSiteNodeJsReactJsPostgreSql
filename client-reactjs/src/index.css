@@ -2146,3 +2146,40 @@ a {
 .sectionUserPage__mainBlock-inner{
     animation: appear 1s ease forwards;
 }
+
+.sectionUserPage__mainBlock-dashboard{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border:1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.sectionUserPage__dashboard-title{
+    font-size: 20px;
+    font-weight: 600;
+    margin:10px 0;
+}
+
+.sectionUserPage__dashboard-email{
+    font-size: 16px;
+    font-weight: 400;
+    color: #807D7E;
+    margin-bottom: 15px;
+}
+
+.sectionUserPage__dashboard-btn{
+    background-color: #fff;
+    border:none;
+    color: #35b901;
+    font-family: 'Inter',sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    transition:opacity .5s ease;
+}
+
+.sectionUserPage__dashboard-btn:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
