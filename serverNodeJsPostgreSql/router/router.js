@@ -2,6 +2,7 @@ import { Router } from "express";
 import productController from "../controllers/productController.js"; // указываем здесь вручную расширение файла .js,иначе выдает ошибку,что не может найти файл
 import { body } from "express-validator";
 import userController from "../controllers/userController.js";
+import commentController from "../controllers/commentController.js";
 
 const router = new Router(); // создаем объект на основе этого класса Router
 
@@ -10,6 +11,11 @@ router.get('/getProductsArrivals', productController.getProductsArrivals); // о
 router.get('/getProductsCatalog', productController.getProductsCatalog); // описываем get запрос на сервере для получения товаров для каталога
 
 router.get('/getProductsCatalog/:id', productController.getProductById); // описываем get запрос на сервере для получения объекта блюда по id,указываем этот динамический параметр id через : (двоеточие) в url к этому эндпоинту
+
+
+router.post('/createComment',commentController.createComment); // создаем post запрос на создание комментария в базе данных
+
+router.get('/getCommentsForProduct',commentController.getCommentsForProduct); // создаем get запрос на получение комментариев для определенного товара
 
 
 

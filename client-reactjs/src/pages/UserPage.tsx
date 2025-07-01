@@ -4,8 +4,9 @@ import UserPageFormComponent from "../components/UserPageFormComponent";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse } from "../types/types";
-import { useEffect, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 
 const UserPage = () => {
@@ -57,6 +58,11 @@ const UserPage = () => {
         console.log(isAuth);
 
     }, [])
+
+    // const sectionTopRef = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
+
+    // const onScreen = useIsOnScreen(sectionTopRef as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen,вторым параметром передаем в наш хук переменную isLoading,в данном случае она для отслеживания первоначальной загрузки данных пользователя,внутри хука отслеживаем этот параметр isLoading,и,если он равен false(или другое пустое значение),то только тогда начинаем следить за html элементом,чтобы показать анимацию,иначе,если не отслеживать эту загрузку,то intersectionObserver будет выдавать ошибку,что такого html элемента на странице не найдено,так как в это время будет показан только лоадер,для отслеживания загрузки данных пользователя,в данном случае
+
 
     // функция для выхода из аккаунта
     const logout = async () => {
@@ -116,8 +122,7 @@ const UserPage = () => {
     return (
         <main className="main">
 
-            <SectionUnderTop subtext="My Account" /> {/* указываем пропс(параметр) subtext(в данном случае со значением My Account,чтобы отобразить в этой секции текст My Account,так как это для страницы аккаунта пользователя),чтобы использовать этот компонент на разных страницах,а отличаться он будет только этим параметром subtext */}
-
+            <SectionUnderTop subtext="My Account"/> {/* указываем пропс(параметр) subtext(в данном случае со значением My Account,чтобы отобразить в этой секции текст My Account,так как это для страницы аккаунта пользователя),чтобы использовать этот компонент на разных страницах,а отличаться он будет только этим параметром subtext */}
 
             <section className="sectionUserPage">
                 <div className="container">
@@ -175,7 +180,7 @@ const UserPage = () => {
 
                                         {/* если user.role === 'USER'(то есть если роль пользователя равна "USER"),то показываем кнопку, по которой можно перейти в настройки аккаунта пользователя*/}
                                         {user.role === 'USER' &&
-                                            <button className="sectionUserPage__dashboard-btn" onClick={()=>setTab('Account Settings')}>Edit Profile</button>
+                                            <button className="sectionUserPage__dashboard-btn" onClick={() => setTab('Account Settings')}>Edit Profile</button>
                                         }
 
 

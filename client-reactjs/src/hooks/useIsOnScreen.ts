@@ -1,8 +1,8 @@
 import { RefObject, useEffect, useState } from "react";
 
 
-// указываем тип параметру ref(в эту функцию useIsOnScreen будем передавать ссылку на html элемент) как RefObject(тип для ссылок на html элемент) и указываем ему в generic HTMLElement(какой-либо html элемент)
-export const useIsOnScreen = (ref:RefObject<HTMLElement>) => {
+// указываем тип параметру ref(в эту функцию useIsOnScreen будем передавать ссылку на html элемент) как RefObject(тип для ссылок на html элемент) и указываем ему в generic HTMLElement(какой-либо html элемент),указываем вторым параметром переменную isLoading,в данном случае она для отслеживания первоначальной загрузки каких-то данных(типа загрузки комментариев и тд),внутри нашего этого хука отслеживаем этот параметр isLoading
+export const useIsOnScreen = (ref:RefObject<HTMLElement>,isLoading?:boolean) => {
 
     // создаем состояние для разных состояний для того,чтобы знать,попадает ли html элемент в область observer 
     const [isIntersectingNow,setIsIntersectingNow] = useState({
@@ -56,12 +56,18 @@ export const useIsOnScreen = (ref:RefObject<HTMLElement>) => {
 
     const observer = new IntersectionObserver(callback); // создаем intersectionObserver и передаем в параметре нашу функцию callback,которая будет обрабатывать этот observer
 
-    // создаем useEffect,чтобы запуск observer сработал при рендеринге компонента,в котором будет этот наш хук useIsOnScreeen (то есть типа при запуске сайта)
+    // создаем useEffect,чтобы запуск observer сработал при рендеринге компонента,в котором будет этот наш хук useIsOnScreeen (то есть типа при запуске сайта),а также при изменении параметра isLoading
     useEffect(()=>{
 
-        observer.observe(ref.current); // запускаем слежку нашего observer,и в observe() передаем ref.current,ссылку на html элемент(за которым нужно следить),который будем передавать потом при вызове этого всего хука,указываем тип этому параметру ref.current как HTMLElement,чтобы не было ошибки,то есть указываем,что параметр ref.current будет типа HTMLElement,иначе показывает ошибку,что ref.current не Element,в данном случае не указываем тип as HTMLElement,так как уже указали тип параметру этого хука ref как RefObject<HTMLElement>,поэтому это уже не нужно
+        // если isLoading false(или null,или другое пустое значение,типа undefined,0,"",NaN),то только тогда начинаем отслеживать элемент для intersectionObserver,чтобы показать анимацию,иначе,если не отслеживать эту загрузку,то intersectionObserver будет выдавать ошибку(для тех секций,где показываем лоадер и отслеживаем загрузку данных),что такого html элемента на странице не найдено,так как в это время будет показан только лоадер,для отслеживания загрузки комментариев,например
+        if(!isLoading){
 
-    },[])
+            observer.observe(ref.current); // запускаем слежку нашего observer,и в observe() передаем ref.current,ссылку на html элемент(за которым нужно следить),который будем передавать потом при вызове этого всего хука,указываем тип этому параметру ref.current как HTMLElement,чтобы не было ошибки,то есть указываем,что параметр ref.current будет типа HTMLElement,иначе показывает ошибку,что ref.current не Element,в данном случае не указываем тип as HTMLElement,так как уже указали тип параметру этого хука ref как RefObject<HTMLElement>,поэтому это уже не нужно
+
+        }
+        
+
+    },[isLoading])
 
     return isIntersectingNow; // возвращаем весь объект состояний,чтобы потом делать проверки,наблюдается ли сейчас элемент обзервером или нет
 

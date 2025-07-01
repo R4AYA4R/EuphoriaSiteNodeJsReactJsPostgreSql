@@ -3,7 +3,7 @@ import { RefObject, useRef } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 interface ISectionUnderTopProductPage{
-    productName:string
+    productName:string | undefined
 }
 
 

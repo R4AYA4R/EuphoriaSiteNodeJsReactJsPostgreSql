@@ -2,24 +2,44 @@ import { ChangeEvent, FormEvent, RefObject, useEffect, useRef, useState } from "
 import SectionUnderTopProductPage from "../components/SectionUnderTopProductPage";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { IProduct } from "../types/types";
+import { IComment, IProduct } from "../types/types";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ProductItemPageItemBlock from "../components/ProductItemPageItemBlock";
 import ProductItemPageReviewItem from "../components/ProductItemPageReviewItem";
 import SectionNewArrivals from "../components/SectionNewArrivals";
 import { useTypedSelector } from "../hooks/useTypedSelector";
+import SectionUnderTop from "../components/SectionUnderTop";
 
 
 
 const ProductItemPage = () => {
 
-    const sectionCatalog = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
-
-    const onScreen = useIsOnScreen(sectionCatalog as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+    
 
     const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
+
+    // функция для post запроса на сервер с помощью useMutation(react query(сейчас уже tanstack query)),создаем комментарий на сервере,берем mutate у useMutation,чтобы потом вызвать эту функцию запроса на сервер в нужный момент
+    const { mutate } = useMutation({
+        mutationKey: ['create comment'],
+        mutationFn: async (comment: IComment) => {
+
+            // делаем запрос на сервер и добавляем данные на сервер(указываем это вторым параметров в функции post у axios),указываем тип данных,которые нужно добавить на сервер(в данном случае IComment),но здесь не обязательно указывать тип,вынесли основной url до бэкэнда в переменную REACT_APP_BACKEND_URL
+            await axios.post<IComment>(`${process.env.REACT_APP_BACKEND_URL}/api/createComment`, comment);
+
+        },
+
+        // при успешной мутации переобновляем массив комментариев
+        onSuccess() {
+
+            // также еще будем переобновлять страницу пагинации комментариев на первую
+
+            refetchComments();  // указываем здесь отдельно повторный запрос на получение массива комментариев,так как если текущая страница пагинации и так 1,то повторный запрос автоматически идти не будет,который указали в useEffect,так как будет идти повторный запрос на сервер только после изменения page(состояние текущей страницы пагинации),а по дефолту page и так равен 1,поэтому page по факту изменен не будет и повторный запрос не сделается
+
+        }
+
+    })
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу
 
@@ -51,6 +71,24 @@ const ProductItemPage = () => {
         }
     })
 
+    // не указываем такой же queryKey как и в sectionNewArrivals для получения комментариев,чтобы при изменении комментариев у товара переобновлять массив комментариев отдельно для этой страницы productItemPage
+    const { data: dataComments, refetch: refetchComments, isFetching, isLoading } = useQuery({
+        queryKey: [`commentsForProductItemPage${params.id}`], // делаем отдельный queryKey для комментариев для каждого товара с помощью params.id,чтобы правильно отображалась пагинация комментариев при переходе на разные страницы товаров и правильно работало отслеживание заргузки запроса на сервер
+        queryFn: async () => {
+
+            const response = await axios.get<IComment[]>(`${process.env.REACT_APP_BACKEND_URL}/api/getCommentsForProduct?productId=${data?.data.id}`); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productId со значением id товара(data?.data.id) на этой странице,в данном случае не обязательно указывать параметр productId в объекте в params у этой функции запроса,так как и просто через знак вопроса в url тоже нормально работает 
+
+            console.log(response.data);
+
+            return response.data; // возвращаем объект ответа от сервера,в нем будет этот массив объектов товаров в поле data у data,которую мы берем из этого useQuery,а также другие поля в ответе от сервера
+
+        }
+    })
+
+    const sectionCatalog = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
+
+    const onScreen = useIsOnScreen(sectionCatalog as RefObject<HTMLElement>,isLoading); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen,вторым параметром передаем в наш хук переменную isLoading,в данном случае она для отслеживания первоначальной загрузки комментариев,внутри хука отслеживаем этот параметр isLoading,и,если он равен false(или другое пустое значение),то только тогда начинаем следить за html элементом,чтобы показать анимацию,иначе,если не отслеживать эту загрузку,то intersectionObserver будет выдавать ошибку,что такого html элемента на странице не найдено,так как в это время будет показан только лоадер,для отслеживания загрузки комментариев,в данном случае
+
     // при изменении pathname(url страницы),делаем запрос на обновление данных о товаре(иначе не меняются данные) и изменяем таб на Desc(описание товара),если вдруг был включен другой таб,то при изменении url страницы будет включен опять дефолтный таб,также изменяем значение количества товара,если было выбрано уже какое-то,чтобы поставить первоначальное, и убираем форму добавления комментария,если она была открыта,и изменяем значение состоянию activeStarsForm на 0,то есть убираем звезды в форме для коментария,если они были выбраны,также убираем ошибку формы,если она была
     useEffect(() => {
 
@@ -67,7 +105,7 @@ const ProductItemPage = () => {
         setTextAreaValue('');
 
         // здесь еще надо будет изменять состояние страницы пагинации комментариев на 1 и переобновлять массив комментариев
-
+        refetchComments();
 
     }, [pathname])
 
@@ -83,11 +121,11 @@ const ProductItemPage = () => {
         e.preventDefault();  // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
         // если значение textarea (.trim()-убирает из строки пробелы,чтобы нельзя было ввести только пробел) в форме комментария будет по количеству символов меньше или равно 10 или больше 300,то будем изменять состояние errorForm(то есть показывать ошибку и не отправлять комментарий),в другом случае очищаем поля textarea,activeStars(рейтинг,который пользователь указал в форме) и убираем форму
-        if(textAreaValue.trim().length <= 10 || textAreaValue.trim().length > 300){
+        if (textAreaValue.trim().length <= 10 || textAreaValue.trim().length > 300) {
 
             setErrorForm('Review must be 10 - 300 characters');
 
-        } else if(activeStarsForm === 0){
+        } else if (activeStarsForm === 0) {
 
             // если состояние рейтинга в форме равно 0,то есть пользователь не указал рейтинг,то показываем ошибку
             setErrorForm('Enter rating');
@@ -101,7 +139,7 @@ const ProductItemPage = () => {
             let dayDate = (date.getDate()).toString(); // помещаем в переменную текущее число месяца,указываем ей let,чтобы можно было изменять ей значение потом, date.getDate() - показывает текущее число календаря и потом приводим получившееся значение к формату строки с помощью toString(),чтобы проверить на количество символов 
 
             // если monthDate.length < 2(то есть monthDate по количеству символов меньше 2,то есть текущий месяц состоит из одного символа,то есть меньше 10,например,9 и тд),делаем эту проверку,чтобы добавить 0 перед месяцами меньше 10
-            if(monthDate.length < 2){
+            if (monthDate.length < 2) {
 
                 monthDate = '0' + monthDate; // изменяем значение monthDate на 0 + текущее значение monthDate,то есть добавляем ноль перед числом месяца,чтобы число месяца меньше 10,записывалось с 0 перед ним,типа 04 и тд
 
@@ -112,7 +150,7 @@ const ProductItemPage = () => {
             }
 
             // если dayDate.length < 2(то есть dayDate по количеству символов меньше 2,то есть текущее число месяца состоит из одного символа,то есть меньше 10,например,9 и тд),делаем эту проверку,чтобы добавить 0 перед месяцами меньше 10
-            if(dayDate.length < 2){
+            if (dayDate.length < 2) {
 
                 dayDate = '0' + dayDate; // изменяем значение dayDate на 0 + текущее значение dayDate,то есть добавляем ноль перед числом месяца,чтобы число месяца меньше 10,записывалось с 0 перед ним,типа 04 и тд
 
@@ -125,8 +163,7 @@ const ProductItemPage = () => {
             // помещаем в переменную showTime значение времени,когда создаем комментарий, date.getDate() - показывает текущее число календаря, getMonth() - считает месяцы с нуля(январь нулевой,февраль первый и тд),поэтому указываем date.getMonth() + 1(увеличиваем на 1 и получаем текущий месяц) и потом приводим получившееся значение к формату строки с помощью toString(), getFullYear() - показывает текущий год,потом эту переменную showTime будем сохранять в объект для создания комментария на сервере и потом показывать дату создания комментария уже на клиенте(в данном случае на этой странице у комментария),вынесли подсчет месяца в переменную monthDate и тут ее указываем,также и подсчет текущего числа месяца в переменную dayDate и тут ее указываем
             const showTime = dayDate + '.' + monthDate + '.' + date.getFullYear();
 
-
-            // здесь надо будет делать запрос на создание комментария
+            mutate({ name: user.userName, text: textAreaValue, rating: activeStarsForm, createdTime: showTime, productId: data?.data.id, adminReply: { text: 'adminReply asdfasdf2', createdTime: 'time2' } } as IComment); // вызываем функцию post запроса на сервер,создавая комментарий,разворачивая в объект нужные поля для комментария и давая этому объекту тип as IComment,чтобы не выдавало ошибку,что для productId нельзя назначить undefined значение,а также чтобы не указывало ошибку,что не указали поле id(вручную не указываем id,чтобы он автоматически создавался на сервере), указываем поле productId со значением как у id товара на этой странице(data?.data.id),чтобы в базе данных связать этот товар с комментарием
 
             setActiveForm(false); // убираем форму,изменяя состояние activeForm на false
 
@@ -153,10 +190,10 @@ const ProductItemPage = () => {
     }
 
     // указываем,что эта функция ничего не возвращает(то есть указываем ей тип возвращаемых данных как void),в данном случае это не обязательно делать,так как это и так понятно,но так как используем typescript и чтобы лучше попрактиковаться и больше его использовать,указываем это,также vs code автоматически подхватывает тип возвращаемых данных,если функция ничего не возвращает и в данном случае указывать это не обязательно
-    const addReviewsBtn = ():void => {
+    const addReviewsBtn = (): void => {
 
         // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то показываем форму,в другом случае перекидываем пользователя на страницу авторизации 
-        if(user.userName){
+        if (user.userName) {
 
             setActiveForm(true); // изменяем состояние активной формы,то есть показываем форму для создания комментария 
 
@@ -168,11 +205,26 @@ const ProductItemPage = () => {
 
     }
 
+    // если isLoading true,то есть идет первоначальная загрузка комментариев товара,то показывать лоадер,иначе,если это не отслеживать и не показывать,то комментарии,и число комментариев будет появляться через время
+    if (isLoading) {
+
+        return (
+            // возвращаем тег main с классом main,так как указали этому классу стили,чтобы был прижат header и footer
+            <main className="main">
+                <div className="container">
+                    <div className="innerForLoader">
+                        <div className="loader"></div>
+                    </div>
+                </div>
+            </main>
+        )
+
+    }
 
     return (
         <main className="main">
-            <SectionUnderTopProductPage productName="Product Name" />
-            <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionCatalog__active sectionProductItemPage" : "sectionCatalog sectionProductItemPage"} ref={sectionCatalog}>
+            <SectionUnderTopProductPage productName={data?.data.name} />
+            <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionProductItemPage sectionCatalog__active " : "sectionCatalog sectionProductItemPage"} ref={sectionCatalog}>
 
                 {/* вынесли блок с информацией о товаре и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара),также передаем поле pathname(url страницы),чтобы потом при его изменении изменять значение количества товара,так как оно находится в этом компоненте ProductItemPageItemBlock,указываем именно таким образом pathname={pathname},иначе выдает ошибку типов,передаем функцию refetch для переобновления данных товара(повторный запрос на сервер для переобновления данных товара) и указываем ему название как refetchProduct(просто название этого пропса(параметра)) */}
                 <ProductItemPageItemBlock product={data?.data} pathname={pathname} />
@@ -190,7 +242,7 @@ const ProductItemPage = () => {
                             <button className={tab === 'Desc' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Desc')}>Description</button>
                             <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btnReviews descBlock__tabs-btn--active" : "descBlock__tabs-btn descBlock__tabs-btnReviews"} onClick={() => setTab('Reviews')}>
                                 <p className="tabs__btnReviews-text">Reviews</p>
-                                <p className="tabs__btnReviews-text">(0)</p>
+                                <p className="tabs__btnReviews-text">({dataComments?.length})</p>
                             </button>
                         </div>
 
@@ -207,15 +259,15 @@ const ProductItemPage = () => {
                                             <tbody className="desc__table-body">
                                                 <tr className="desc__table-row">
                                                     <td className="desc__table-column">
-                                                        <th className="desc__table-headText">Fabric</th>
+                                                        <h2 className="desc__table-headText">Fabric</h2>
                                                         <p className="desc__table-text">Bio-washed Cotton</p>
                                                     </td>
                                                     <td className="desc__table-column">
-                                                        <th className="desc__table-headText">Pattern</th>
+                                                        <h2 className="desc__table-headText">Pattern</h2>
                                                         <p className="desc__table-text">Printed</p>
                                                     </td>
                                                     <td className="desc__table-column">
-                                                        <th className="desc__table-headText">Fit</th>
+                                                        <h2 className="desc__table-headText">Fit</h2>
                                                         <p className="desc__table-text">Regular-fit</p>
                                                     </td>
                                                 </tr>
@@ -229,13 +281,26 @@ const ProductItemPage = () => {
                                 <div className="descBlock__desc-innerReviews">
                                     <div className="reviews__leftBlock">
 
-                                        {/* <h4 className="reviews__leftBlock-text">No reviews yet.</h4> */}
+                                        {/*  */}
 
-                                        <div className="reviews__leftBlock-comments">
+                                        {!isFetching && dataComments?.length ?
+                                            <>
+                                                <div className="reviews__leftBlock-comments">
+                                                    {dataComments.map(comment =>
 
-                                            <ProductItemPageReviewItem/>
+                                                        <ProductItemPageReviewItem key={comment.id} comment={comment} user={user} refetchComments={refetchComments} />
 
-                                        </div>
+                                                    )}
+                                                </div>
+
+                                            </> : isFetching ?
+                                                <div className="innerForLoader">
+                                                    <div className="loader"></div>
+                                                </div>
+                                                : <h4 className="reviews__leftBlock-text">No reviews yet.</h4>
+                                        }
+
+
 
                                     </div>
                                     <div className="reviews__rightBlock">
@@ -299,7 +364,7 @@ const ProductItemPage = () => {
 
             </section>
 
-            <SectionNewArrivals/>
+            <SectionNewArrivals />
 
         </main>
     )

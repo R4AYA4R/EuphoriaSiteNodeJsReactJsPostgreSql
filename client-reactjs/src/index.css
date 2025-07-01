@@ -867,13 +867,13 @@ a {
 }
 
 .sectionUnderTop__text {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     color: #807D7E;
 }
 
 .sectionUnderTop__subtext {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
     color: #3C4242;
 }
@@ -1407,6 +1407,7 @@ a {
 
 .sectionProductItemPage {
     padding: 0;
+    padding-top: 50px;
 }
 
 .sectionProductItemPage__itemBlock-inner {
@@ -1531,6 +1532,7 @@ a {
     align-items: center;
     gap: 15px;
 }
+
 
 .sectionProductItemPage__priceBlock {
     margin-top: 25px;
@@ -1791,6 +1793,10 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.reviews__leftBlock-item{
+    margin-bottom: 30px;
 }
 
 .reviews__item-topBlockLeftInfo {

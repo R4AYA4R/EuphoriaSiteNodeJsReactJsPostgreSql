@@ -49,3 +49,19 @@ export interface AuthResponse{
     user:IUser // указываем,что поле user - это объект на основе нашего интерфеса IUser(с теми полями, которые описаны в IUser)
 
 }
+
+export interface IComment{
+    id:number,
+    name:string,
+    text:string,
+    rating:number,
+    createdTime:string,
+    productId:number,
+    // указываем поле для объекта для ответа от админа на этот комментарий,указываем знак вопроса после названия этого поля,чтобы указать,что это поле необязательное,то есть оно может быть не указано,то есть может быть с типом undefined
+    adminReply?:{
+        text:string,
+        createdTime:string
+    }
+
+
+}

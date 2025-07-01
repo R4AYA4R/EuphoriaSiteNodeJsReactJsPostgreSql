@@ -31,7 +31,7 @@ root.render(
         <App />
       </Provider>
     </QueryClientProvider>
-  </React.StrictMode>
+  </React.StrictMode> 
 );
 
 // If you want to start measuring performance in your app, pass a function
