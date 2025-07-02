@@ -2189,3 +2189,12 @@ a {
     cursor: pointer;
     opacity: 0.5;
 }
+
+.sectionProductItemPage__paginationComments{
+    margin: 30px 0 0;
+}
+
+.reviews__leftBlock-comments{
+    min-height: 270px;
+    max-width: 595px;
+}

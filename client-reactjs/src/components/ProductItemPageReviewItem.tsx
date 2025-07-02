@@ -1,11 +1,11 @@
 import { QueryObserverResult } from "@tanstack/react-query";
-import { IComment, IUser } from "../types/types";
+import { IComment, ICommentResponse, IUser } from "../types/types";
 import { AxiosResponse } from "axios";
 
 interface IProductItemPageReviewItem {
     user: IUser,
     comment: IComment,
-    refetchComments: () => Promise<QueryObserverResult<IComment[], Error>> // указываем этому полю,что это стрелочная функция и возвращает Promise<QueryObserverResult<ICommentResponse, Error>> (этот тип скопировали из файла ProductItemPage.tsx у этой функции refetchComments),то есть указываем,что эта функция возвращает Promise,внутри которого тип QueryObserverResult,внутри которого наш тип ICommentResponse и тип Error, если бы мы в функции запроса на получение комментариев возвращали бы response,а не response.data,то тип у этой функции запроса на сервер был бы Promise<QueryObserverResult<AxiosResponse<IComment[], any>, Error>>,но в данном случае возвращаем response.data,поэтому тип Promise<QueryObserverResult<ICommentResponse, Error>> 
+    refetchComments: () => Promise<QueryObserverResult<ICommentResponse, Error>> // указываем этому полю,что это стрелочная функция и возвращает Promise<QueryObserverResult<ICommentResponse, Error>> (этот тип скопировали из файла ProductItemPage.tsx у этой функции refetchComments),то есть указываем,что эта функция возвращает Promise,внутри которого тип QueryObserverResult,внутри которого наш тип ICommentResponse и тип Error, если бы мы в функции запроса на получение комментариев возвращали бы response,а не response.data,то тип у этой функции запроса на сервер был бы Promise<QueryObserverResult<AxiosResponse<ICommentResponse, any>, Error>>,но в данном случае возвращаем response.data,поэтому тип Promise<QueryObserverResult<ICommentResponse, Error>> 
 }
 
 const ProductItemPageReviewItem = ({ comment, user, refetchComments }: IProductItemPageReviewItem) => {

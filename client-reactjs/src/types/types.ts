@@ -62,6 +62,10 @@ export interface IComment{
         text:string,
         createdTime:string
     }
+}
 
-
+// создаем тип для данных,которые приходят от сервера для пагинации комментариев для товара(при пагинации от сервера приходит объект data с полями count(количество объектов товаров всего,которые пришли от сервера) и rows(сами объекты товаров,но на конкретной странице))
+export interface ICommentResponse{
+    count:number,
+    rows:IComment[]
 }

@@ -32,12 +32,12 @@ class CommentController {
 
         // отличие req.params от req.query заключается в том,что в req.params указываются параметры в самом url до эндпоинта на бэкэнде(в node js в данном случае,типа /api/getProducts) через :(типа /:id,динамический параметр id),а req.query - это параметры,которые берутся из url(которые дополнительно добавили с фронтенда к url) через знак ?(типа ?name=bob)
 
-        const { productId } = req.query; // берем из url(строки) запроса параметр productNameFor,чтобы получить все комментарии для конкретного товара, указываем здесь let,чтобы  можно было изменять значения этих параметров(переменных),в данном случае это надо для limit и page
+        const { productId, page, limit } = req.query; // берем из url(строки) запроса параметр productNameFor,чтобы получить все комментарии для конкретного товара, указываем здесь let,чтобы  можно было изменять значения этих параметров(переменных),в данном случае это надо для limit и page
 
         // оборачиваем в try catch для обработки ошибок
         try {
 
-            const commentsData = await commentService.getCommentsForProduct(productId);  // вызываем нашу функцию getCommentsForProduct из commentService,передаем туда productId(id товара из параметров запроса),эта функция возвращает найденный массив комментариев и помещаем его в переменную commentsData
+            const commentsData = await commentService.getCommentsForProduct(productId, page, limit);  // вызываем нашу функцию getCommentsForProduct из commentService,передаем туда productId(id товара из параметров запроса),эта функция возвращает найденный массив комментариев и помещаем его в переменную commentsData
 
             return res.json(commentsData); // возвращаем массив найденных комментариев на клиент
 

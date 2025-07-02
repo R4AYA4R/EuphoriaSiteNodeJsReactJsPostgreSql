@@ -4,19 +4,25 @@ import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { IComment, IProduct } from "../types/types";
+import { IComment, ICommentResponse, IProduct } from "../types/types";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ProductItemPageItemBlock from "../components/ProductItemPageItemBlock";
 import ProductItemPageReviewItem from "../components/ProductItemPageReviewItem";
 import SectionNewArrivals from "../components/SectionNewArrivals";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import SectionUnderTop from "../components/SectionUnderTop";
+import { getPagesArray } from "../utils/getPagesArray";
 
 
 
 const ProductItemPage = () => {
 
-    
+    const [limit, setLimit] = useState(3); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
+
+    const [page, setPage] = useState(1); // указываем состояние текущей страницы
+
+    const [totalPages, setTotalPages] = useState(0); // указываем состояние totalPages в данном случае для общего количества страниц
+
 
     const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
@@ -33,7 +39,7 @@ const ProductItemPage = () => {
         // при успешной мутации переобновляем массив комментариев
         onSuccess() {
 
-            // также еще будем переобновлять страницу пагинации комментариев на первую
+            setPage(1);
 
             refetchComments();  // указываем здесь отдельно повторный запрос на получение массива комментариев,так как если текущая страница пагинации и так 1,то повторный запрос автоматически идти не будет,который указали в useEffect,так как будет идти повторный запрос на сервер только после изменения page(состояние текущей страницы пагинации),а по дефолту page и так равен 1,поэтому page по факту изменен не будет и повторный запрос не сделается
 
@@ -76,9 +82,28 @@ const ProductItemPage = () => {
         queryKey: [`commentsForProductItemPage${params.id}`], // делаем отдельный queryKey для комментариев для каждого товара с помощью params.id,чтобы правильно отображалась пагинация комментариев при переходе на разные страницы товаров и правильно работало отслеживание заргузки запроса на сервер
         queryFn: async () => {
 
-            const response = await axios.get<IComment[]>(`${process.env.REACT_APP_BACKEND_URL}/api/getCommentsForProduct?productId=${data?.data.id}`); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productId со значением id товара(data?.data.id) на этой странице,в данном случае не обязательно указывать параметр productId в объекте в params у этой функции запроса,так как и просто через знак вопроса в url тоже нормально работает 
+            const response = await axios.get<ICommentResponse>(`${process.env.REACT_APP_BACKEND_URL}/api/getCommentsForProduct?productId=${params.id}`, {
+                params: {
+
+                    page: page, // указываем параметр page(параметр текущей страницы,для пагинации)
+
+                    limit: limit // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации),можно было указать эти параметры limit и page просто через знак вопроса в url,но можно и тут в отдельном объекте params,также можно было не указывать limit:limit,а просто указать один раз limit(для page также),так как название ключа(поля объекта) и состояния limit(в данном случае) одинаковые,но указали уже так
+
+
+                }
+            }); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productId со значением id товара(data?.data.id) на этой странице,но в данном случае указываем productId со значением params.id(id из url этой страницы,там тоже находится id этого товара),делаем это для того,чтобы при первоначальном запросе на сервер на получение комментариев для товара не было ошибки,что productId undefined,так как на тот момент data.data.id еще может быть undefined(то есть запрос на получение данных товара еще не загрузился), когда указываем params.id,то ошибки при первоначальном запросе нету,так как этот params.id доступен уже сразу при загрузке страницы,в данном случае не обязательно указывать параметр productId в объекте в params у этой функции запроса,так как и просто через знак вопроса в url тоже нормально работает 
+
+            // если dataComments?.count true,то есть в dataComments?.count есть какое-то значение,то изменяем общее количество страниц,делаем эту проверку, потому что dataComments?.count может быть undefined(выдает ошибку такую)
+            if (dataComments?.count) {
+
+                setTotalPages(Math.ceil(dataComments?.count / limit));  // изменяем состояние totalPages на значение деления dataComments?.count на limit,используем Math.ceil() - она округляет получившееся значение в большую сторону к целому числу(например,5.3 округлит к 6),чтобы правильно посчитать общее количество страниц
+
+            }
 
             console.log(response.data);
+
+            console.log(totalPages);
+            console.log(response)
 
             return response.data; // возвращаем объект ответа от сервера,в нем будет этот массив объектов товаров в поле data у data,которую мы берем из этого useQuery,а также другие поля в ответе от сервера
 
@@ -87,7 +112,7 @@ const ProductItemPage = () => {
 
     const sectionCatalog = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
-    const onScreen = useIsOnScreen(sectionCatalog as RefObject<HTMLElement>,isLoading); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen,вторым параметром передаем в наш хук переменную isLoading,в данном случае она для отслеживания первоначальной загрузки комментариев,внутри хука отслеживаем этот параметр isLoading,и,если он равен false(или другое пустое значение),то только тогда начинаем следить за html элементом,чтобы показать анимацию,иначе,если не отслеживать эту загрузку,то intersectionObserver будет выдавать ошибку,что такого html элемента на странице не найдено,так как в это время будет показан только лоадер,для отслеживания загрузки комментариев,в данном случае
+    const onScreen = useIsOnScreen(sectionCatalog as RefObject<HTMLElement>, isLoading); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen,вторым параметром передаем в наш хук переменную isLoading,в данном случае она для отслеживания первоначальной загрузки комментариев,внутри хука отслеживаем этот параметр isLoading,и,если он равен false(или другое пустое значение),то только тогда начинаем следить за html элементом,чтобы показать анимацию,иначе,если не отслеживать эту загрузку,то intersectionObserver будет выдавать ошибку,что такого html элемента на странице не найдено,так как в это время будет показан только лоадер,для отслеживания загрузки комментариев,в данном случае
 
     // при изменении pathname(url страницы),делаем запрос на обновление данных о товаре(иначе не меняются данные) и изменяем таб на Desc(описание товара),если вдруг был включен другой таб,то при изменении url страницы будет включен опять дефолтный таб,также изменяем значение количества товара,если было выбрано уже какое-то,чтобы поставить первоначальное, и убираем форму добавления комментария,если она была открыта,и изменяем значение состоянию activeStarsForm на 0,то есть убираем звезды в форме для коментария,если они были выбраны,также убираем ошибку формы,если она была
     useEffect(() => {
@@ -104,8 +129,9 @@ const ProductItemPage = () => {
 
         setTextAreaValue('');
 
-        // здесь еще надо будет изменять состояние страницы пагинации комментариев на 1 и переобновлять массив комментариев
-        refetchComments();
+        setPage(1);
+
+        refetchComments();  // также переобновляем массив комментариев
 
     }, [pathname])
 
@@ -114,6 +140,13 @@ const ProductItemPage = () => {
         refetch();
 
     }, [data?.data])
+
+    // обязательно указываем повторный запрос на обновление массива комментариев при изменении dataComments?.count(количество комментариев для товара),иначе,при загрузке страницы пагинация не показывается 
+    useEffect(() => {
+
+        refetchComments();
+
+    }, [dataComments?.count])
 
     // функция для формы для создания комментария,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)   
     const submitFormHandler = (e: FormEvent<HTMLFormElement>) => {
@@ -205,6 +238,37 @@ const ProductItemPage = () => {
 
     }
 
+    // при обновлении страницы переобновляем(делаем повторный запрос на сервер) массив комментариев
+    useEffect(() => {
+
+        refetchComments();
+
+    }, [page])
+
+    let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
+
+    const prevPage = () => {
+
+        // если текущая страница больше или равна 2,делаем эту проверку,чтобы если текущая страница 1,то не отнимало минус 1
+        if (page >= 2) {
+
+            setPage((prev) => prev - 1); // изменяем состояние текущей страницы на - 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и отнимаем 1)
+
+        }
+
+    }
+
+    const nextPage = () => {
+
+        // если текущая страница меньше или равна общему количеству страниц - 1(чтобы после последней страницы не переключалось дальше)
+        if (page <= totalPages - 1) {
+
+            setPage((prev) => prev + 1); // изменяем состояние текущей страницы на + 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и прибавляем 1)
+
+        }
+
+    }
+
     // если isLoading true,то есть идет первоначальная загрузка комментариев товара,то показывать лоадер,иначе,если это не отслеживать и не показывать,то комментарии,и число комментариев будет появляться через время
     if (isLoading) {
 
@@ -242,7 +306,7 @@ const ProductItemPage = () => {
                             <button className={tab === 'Desc' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Desc')}>Description</button>
                             <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btnReviews descBlock__tabs-btn--active" : "descBlock__tabs-btn descBlock__tabs-btnReviews"} onClick={() => setTab('Reviews')}>
                                 <p className="tabs__btnReviews-text">Reviews</p>
-                                <p className="tabs__btnReviews-text">({dataComments?.length})</p>
+                                <p className="tabs__btnReviews-text">({dataComments?.count})</p>
                             </button>
                         </div>
 
@@ -281,17 +345,58 @@ const ProductItemPage = () => {
                                 <div className="descBlock__desc-innerReviews">
                                     <div className="reviews__leftBlock">
 
-                                        {/*  */}
 
-                                        {!isFetching && dataComments?.length ?
+                                        {!isFetching && dataComments?.count ?
                                             <>
                                                 <div className="reviews__leftBlock-comments">
-                                                    {dataComments.map(comment =>
+
+                                                    {dataComments.rows.map(comment =>
 
                                                         <ProductItemPageReviewItem key={comment.id} comment={comment} user={user} refetchComments={refetchComments} />
 
                                                     )}
+
                                                 </div>
+
+                                                {/* если длина массива всех объектов комментариев для определенной страницы пагинация(dataComments?.rows.length) больше 3,то показывать пагинацию,в другом случае пустая строка(то есть ничего не показывать) */}
+                                                {dataComments.count > 3 ?
+
+                                                    <div className="productsBlock__pagination sectionProductItemPage__paginationComments">
+
+                                                        <button className="productsBlock__pagination-btnArrowLeft" onClick={prevPage}>
+                                                            <img src="/images/sectionCatalog/ArrowLeft.png" alt="" className="pagination__btnArrow-img" />
+                                                        </button>
+
+                                                        {pagesArray.map(p =>
+
+                                                            <button
+                                                                className={page === p ? "pagination__item pagination__item--active" : "pagination__item"} // если состояние номера текущей страницы page равно значению элемента массива pagesArray,то отображаем такие классы(то есть делаем эту кнопку страницы активной),в другом случае другие
+
+                                                                key={p}
+
+                                                                onClick={() => setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
+
+                                                            >{p}</button>
+
+                                                        )}
+
+
+                                                        {/* если общее количество страниц больше 4 и текущая страница меньше общего количества страниц - 2,то отображаем три точки */}
+                                                        {totalPages > 4 && page < totalPages - 2 && <div className="pagination__dots">...</div>}
+
+
+                                                        {/* если общее количество страниц больше 3 и текущая страница меньше общего количества страниц - 1,то отображаем кнопку последней страницы,при клике на кнопку изменяем состояние текущей страницы на totalPages(общее количество страниц,то есть на последнюю страницу) */}
+                                                        {totalPages > 3 && page < totalPages - 1 && <button className="pagination__item" onClick={() => setPage(totalPages)}>{totalPages}</button>}
+
+
+                                                        <button className="productsBlock__pagination-btnArrowRight" onClick={nextPage}>
+                                                            <img src="/images/sectionCatalog/ArrowRight.png" alt="" className="pagination__btnArrow-img" />
+                                                        </button>
+
+                                                    </div>
+                                                    : ''
+
+                                                }
 
                                             </> : isFetching ?
                                                 <div className="innerForLoader">
