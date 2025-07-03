@@ -190,6 +190,21 @@ class ProductService {
 
     }
 
+    async updateProductRating(productId, rating) {
+
+        // ищем один объект в таблице Product в базе данных с помощью функции findOne() и помещаем его в переменную product,передаем условие,что нужно найти объект с полем id как параметр запроса productId
+        const productFounded = await models.Product.findOne({
+            where: { id: productId }
+        });
+
+        productFounded.rating = rating; // изменяем поле rating у найденного объекта товара в базе данных(productFounded) на значение поля rating(параметр этой функции updateProductRating)
+
+        await productFounded.save(); // сохраняем обновленный объект товара в базе данных
+
+        return productFounded; // возвращаем измененный объект товара
+
+    }
+
 }
 
 export default new ProductService(); // экспортируем уже объект на основе нашего класса ProductService,чтобы можно было вызывать эти функции в этом классе через точку(типа productService.generateTokens()),просто импортировав файл productService,если так не делать,то если у функций класса нету параметра static,то нельзя будет их вызвать,не создав перед этим объект на основе этого класса

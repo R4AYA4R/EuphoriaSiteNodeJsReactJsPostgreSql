@@ -37,9 +37,9 @@ class CommentController {
         // оборачиваем в try catch для обработки ошибок
         try {
 
-            const commentsData = await commentService.getCommentsForProduct(productId, page, limit);  // вызываем нашу функцию getCommentsForProduct из commentService,передаем туда productId(id товара из параметров запроса),эта функция возвращает найденный массив комментариев и помещаем его в переменную commentsData
+            const commentsData = await commentService.getCommentsForProduct(productId, page, limit);  // вызываем нашу функцию getCommentsForProduct из commentService,передаем туда productId(id товара из параметров запроса),эта функция возвращает объект с найденными массивами комментариев и помещаем их в переменную commentsData
 
-            return res.json(commentsData); // возвращаем массив найденных комментариев на клиент
+            return res.json(commentsData); // возвращаем массивы найденных комментариев на клиент
 
         } catch (e) {
 

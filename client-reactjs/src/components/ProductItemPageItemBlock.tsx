@@ -10,7 +10,7 @@ import 'swiper/css/navigation'; // импортируем стили для мо
 import 'swiper/css/thumbs'; // импортируем стили для модуля превью картинок (thumbs) этого слайдера swiper
 import 'swiper/css/zoom'; // импортируем стили для зума(приближения) картинок
 import { ChangeEvent, useEffect, useState } from 'react';
-import { IProduct } from '../types/types';
+import { IComment, IProduct } from '../types/types';
 
 interface IProductItemPageItemBlock {
 
@@ -18,10 +18,12 @@ interface IProductItemPageItemBlock {
 
     pathname: string, // указываем поле для pathname(url страницы),который взяли в родительском компоненте,то есть в компоненте ProductItemPage,указываем ему тип string
 
+    comments:IComment[] | undefined, // указываем поле для комментариев этого товара с типом на основе нашего интерфейса IComment,указываем,что это массив [],  или undefined(указываем это или undefined,так как выдает ошибку,что comments может быть undefined)
+    
 
 }
 
-const ProductItemPageItemBlock = ({ product, pathname }: IProductItemPageItemBlock) => {
+const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemPageItemBlock) => {
 
     const [thumbsSwiper, setThumbsSwiper] = useState<any>(null); // указываем тип в generic для этого состояния thumbsSwiper(превью картинок для слайдера swiper) как any,иначе выдает ошибку,что нельзя назначить тип Swiper состоянию
 
@@ -291,7 +293,7 @@ const ProductItemPageItemBlock = ({ product, pathname }: IProductItemPageItemBlo
 
                             }
                         </div>
-                        <p className="sectionNewArrivals__item-starsAmount">(0)</p>
+                        <p className="sectionNewArrivals__item-starsAmount">({comments?.length})</p>
                     </div>
 
                     {/* если product?.priceDiscount true(указываем знак вопроса после product)так как product может быть undefined и выдает ошибку об этом),то есть поле priceDiscount у product есть и в нем есть какое-то не пустое значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}

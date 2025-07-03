@@ -47,6 +47,27 @@ const ProductItemPage = () => {
 
     })
 
+    // описываем запрос на сервер для обновления рейтинга товара
+    const { mutate: mutateProductRating } = useMutation({
+        mutationKey: ['updateProductRating'],
+        mutationFn: async (product: IProduct) => {
+
+            // делаем put запрос на сервер для обновления данных на сервере,указываем тип данных,которые нужно добавить(обновить) на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,в объекте тела запроса передаем параметр productId со значением product.id(id объекта товара,который мы передадим в эту функцию запроса на сервер для обновления данных товара(mutateProductRating())),а также поле rating со значением product.rating(поле rating у объекта product,который мы передадим в эту функцию запроса на сервер для обновления данных товара(mutateProductRating()))
+            await axios.put<IProduct>(`${process.env.REACT_APP_BACKEND_URL}/api/updateProductRating`, { productId: product.id, rating: product.rating });
+
+        },
+
+        // при успешной мутации(изменения) рейтинга,переобновляем данные товара,данные массива товаров в секции sectionNewArrivals и данные массива комментариев для sectionNewArrivals
+        onSuccess() {
+
+            refetch();
+
+            // здесь еще надо будет переобновлять данные о товаре в sectionNewArrivals и массив комментариев для sectionNewArrivals
+
+        }
+
+    })
+
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу
 
     const params = useParams(); // с помощью useParams получаем параметры из url (в данном случае id товара)
@@ -93,19 +114,20 @@ const ProductItemPage = () => {
                 }
             }); // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productId со значением id товара(data?.data.id) на этой странице,но в данном случае указываем productId со значением params.id(id из url этой страницы,там тоже находится id этого товара),делаем это для того,чтобы при первоначальном запросе на сервер на получение комментариев для товара не было ошибки,что productId undefined,так как на тот момент data.data.id еще может быть undefined(то есть запрос на получение данных товара еще не загрузился), когда указываем params.id,то ошибки при первоначальном запросе нету,так как этот params.id доступен уже сразу при загрузке страницы,в данном случае не обязательно указывать параметр productId в объекте в params у этой функции запроса,так как и просто через знак вопроса в url тоже нормально работает 
 
-            // если dataComments?.count true,то есть в dataComments?.count есть какое-то значение,то изменяем общее количество страниц,делаем эту проверку, потому что dataComments?.count может быть undefined(выдает ошибку такую)
-            if (dataComments?.count) {
+            // если dataComments?.commentsForPagination.count true,то есть в dataComments?.commentsForPagination.count есть какое-то значение,то изменяем общее количество страниц,делаем эту проверку, потому что dataComments?.commentsForPagination.count может быть undefined(выдает ошибку такую)
+            if (dataComments?.commentsForPagination.count) {
 
-                setTotalPages(Math.ceil(dataComments?.count / limit));  // изменяем состояние totalPages на значение деления dataComments?.count на limit,используем Math.ceil() - она округляет получившееся значение в большую сторону к целому числу(например,5.3 округлит к 6),чтобы правильно посчитать общее количество страниц
+                setTotalPages(Math.ceil(dataComments?.commentsForPagination.count / limit));  // изменяем состояние totalPages на значение деления dataComments?.commentsForPagination.count на limit,используем Math.ceil() - она округляет получившееся значение в большую сторону к целому числу(например,5.3 округлит к 6),чтобы правильно посчитать общее количество страниц
 
             }
 
             console.log(response.data);
 
             console.log(totalPages);
-            console.log(response)
 
-            return response.data; // возвращаем объект ответа от сервера,в нем будет этот массив объектов товаров в поле data у data,которую мы берем из этого useQuery,а также другие поля в ответе от сервера
+            console.log(response);
+
+            return response.data; // возвращаем конкретный уже объект ответа от сервера(response.data),в нем будет объект массивов объектов комментариев(allComments,allCommentsForProduct и commentsForPagination),который мы берем из этого useQuery
 
         }
     })
@@ -141,12 +163,26 @@ const ProductItemPage = () => {
 
     }, [data?.data])
 
-    // обязательно указываем повторный запрос на обновление массива комментариев при изменении dataComments?.count(количество комментариев для товара),иначе,при загрузке страницы пагинация не показывается 
+    // при запуске(рендеринге) этого компонента(при загрузке этой страницы),а также при изменении массива комментариев для этого товара,будем обновлять рейтинг товара, обязательно указываем повторный запрос на обновление массива комментариев(refetchComments() в данном случае) при изменении dataComments?.allCommentsForProduct(массив объектов комментариев для этого товара),иначе,при загрузке страницы пагинация не показывается 
     useEffect(() => {
+
+        const commentsRating = dataComments?.allCommentsForProduct.reduce((prev, curr) => prev + curr.rating, 0) // проходимся по массиву объектов комментариев для товара на этой странице и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).rating ,это чтобы посчитать общую сумму всего рейтинга от каждого комментария и потом вывести среднее значение
+
+        // если commentsRating true(эта переменная есть и равна чему-то) и dataComments?.allCommentsForProduct.length true(этот массив отфильтрованных комментариев для товара на этой странице есть), и isFetching false(то есть сейчас не грузится запрос на сервер на получение массива комментариев для этого товара,то есть он уже загрузился,вроде без этой проверки на isFetching тоже работает,но чтобы избежать ошибок типа что к тому моменту массив товаров еще не загрузился и тд,то лучше ее указать),то считаем средний рейтинг всех комментариев и записываем его в переменную,а потом делаем запрос на сервер для обновления рейтинга у объекта товара в базе данных
+        if(commentsRating && dataComments?.allCommentsForProduct.length && !isFetching){
+
+            const commentsRatingMiddle = commentsRating / dataComments?.allCommentsForProduct.length; // считаем средний рейтинг всех комментариев,делим commentsRating(общая сумма рейтинга от каждого комментария) на dataComments?.allCommentsForProduct.length(длину массива комментариев для этого товара)
+
+            mutateProductRating({...data?.data, rating:commentsRatingMiddle} as IProduct); // делаем запрос на изменение рейтинга у товара,разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle,указываем тип этому объекту как тип на основе нашего интерфейса IProduct(в данном случае делаем это,так как выдает ошибку,что id и другие поля могут быть undefined)
+
+            // здесь еще надо будет обновлять рейтинг товара корзины
+
+        }
+        
 
         refetchComments();
 
-    }, [dataComments?.count])
+    }, [dataComments?.allCommentsForProduct])
 
     // функция для формы для создания комментария,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)   
     const submitFormHandler = (e: FormEvent<HTMLFormElement>) => {
@@ -291,7 +327,7 @@ const ProductItemPage = () => {
             <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionProductItemPage sectionCatalog__active " : "sectionCatalog sectionProductItemPage"} ref={sectionCatalog}>
 
                 {/* вынесли блок с информацией о товаре и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара),также передаем поле pathname(url страницы),чтобы потом при его изменении изменять значение количества товара,так как оно находится в этом компоненте ProductItemPageItemBlock,указываем именно таким образом pathname={pathname},иначе выдает ошибку типов,передаем функцию refetch для переобновления данных товара(повторный запрос на сервер для переобновления данных товара) и указываем ему название как refetchProduct(просто название этого пропса(параметра)) */}
-                <ProductItemPageItemBlock product={data?.data} pathname={pathname} />
+                <ProductItemPageItemBlock product={data?.data} pathname={pathname} comments={dataComments?.allCommentsForProduct}/>
 
                 {/* указываем здесь контейнер,так как для блока ProductItemPageItemBlock нужен контейнер в отдельной его части по такому дизайну */}
                 <div className="container">
@@ -306,7 +342,7 @@ const ProductItemPage = () => {
                             <button className={tab === 'Desc' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Desc')}>Description</button>
                             <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btnReviews descBlock__tabs-btn--active" : "descBlock__tabs-btn descBlock__tabs-btnReviews"} onClick={() => setTab('Reviews')}>
                                 <p className="tabs__btnReviews-text">Reviews</p>
-                                <p className="tabs__btnReviews-text">({dataComments?.count})</p>
+                                <p className="tabs__btnReviews-text">({dataComments?.commentsForPagination.count})</p>
                             </button>
                         </div>
 
@@ -346,11 +382,11 @@ const ProductItemPage = () => {
                                     <div className="reviews__leftBlock">
 
 
-                                        {!isFetching && dataComments?.count ?
+                                        {!isFetching && dataComments?.commentsForPagination.count ?
                                             <>
                                                 <div className="reviews__leftBlock-comments">
 
-                                                    {dataComments.rows.map(comment =>
+                                                    {dataComments.commentsForPagination.rows.map(comment =>
 
                                                         <ProductItemPageReviewItem key={comment.id} comment={comment} user={user} refetchComments={refetchComments} />
 
@@ -358,8 +394,8 @@ const ProductItemPage = () => {
 
                                                 </div>
 
-                                                {/* если длина массива всех объектов комментариев для определенной страницы пагинация(dataComments?.rows.length) больше 3,то показывать пагинацию,в другом случае пустая строка(то есть ничего не показывать) */}
-                                                {dataComments.count > 3 ?
+                                                {/* если dataComments.commentsForPagination.count больше 3,то есть количество всех объектов комментариев для этого товара больше 3,то показывать пагинацию,в другом случае пустая строка,то есть не показывать,то есть если всего комментариев 3 и меньше,то вообще пагинация не нужна в данном случае */}
+                                                {dataComments.commentsForPagination.count > 3 ?
 
                                                     <div className="productsBlock__pagination sectionProductItemPage__paginationComments">
 
