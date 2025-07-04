@@ -4,11 +4,20 @@ import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import ReactSlider from "react-slider"; // импортируем ReactSlider из 'react-slider' вручную,так как автоматически не импортируется(в данном случае автоматически импортировалось),перед этим устанавливаем(npm install --save-dev @types/react-slider --force( указываем --force,чтобы установить эту библиотеку через силу,так как для версии react 19,выдает ошибку при установке этой библиотеки) типы для react-slider,иначе выдает ошибку,если ошибка сохраняется,что typescript не может найти типы для ReactSlider,после того,как установили для него типы,то надо закрыть запущенный локальный хост для нашего сайта в терминале и заново его запустить с помощью npm start
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
-import { IProduct, IProductsCatalogResponse } from "../types/types";
+import { ICommentResponse, IProduct, IProductsCatalogResponse } from "../types/types";
 import ProductItemCatalog from "../components/ProductItemCatalog";
 import { getPagesArray } from "../utils/getPagesArray";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useLocation } from "react-router-dom";
+import { useActions } from "../hooks/useActions";
 
 const Catalog = () => {
+
+    const { catalogCategory } = useTypedSelector(state => state.catalogSlice); // указываем наш слайс(редьюсер) под названием catalogSlice и деструктуризируем у него поле состояния catalogCategory,используя наш типизированный хук для useSelector
+
+    const { setCategoryCatalog } = useActions(); // берем action для изменения состояния категории каталога у слайса(редьюсера) catalogSlice у нашего хука useActions уже обернутый в диспатч,так как мы оборачивали это в самом хуке useActions
+
+    const { pathname } = useLocation(); // берем pathname(url страницы) из useLocation()
 
     const sectionCatalog = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
@@ -126,6 +135,20 @@ const Catalog = () => {
             setTotalPages(Math.ceil(totalCount / limit)); // изменяем состояние totalPages на значение деления totalCount на limit,используем Math.ceil() - она округляет получившееся значение в большую сторону к целому числу(например,5.3 округлит к 6),чтобы правильно посчитать общее количество страниц
 
             return response.data; // возвращаем response.data,то есть объект data,который получили от сервера,в котором есть поля products(внутри него есть поле count и rows) и maxPriceAllProducts
+
+        }
+    })
+
+    // указываем такой же queryKey как и в секции sectionNewArrivals и на странице ProductItemPage для получения всех комментариев,чтобы при изменении комментариев у товара на странице ProductItemPage переобновлять массив комментариев в секции sectionNewArrivals и на странице Catalog
+    const { data:dataComments,refetch:refetchComments } = useQuery({
+        queryKey: ['commentsForProduct'], // указываем название
+        queryFn: async () => {
+
+            const response = await axios.get<ICommentResponse>(`${process.env.REACT_APP_BACKEND_URL}/api/getCommentsForProduct`); // делаем запрос на сервер для получения всех комментариев для секции sectionNewArrivals,указываем в типе в generic наш тип на основе интерфейса ICommentResponse,указываем(то есть указываем тип данных,которые придут от сервера),вынесли основной url до бэкэнда в переменную REACT_APP_BACKEND_URL(REACT_APP_ обязательная приставка для переменных в .env файле для react js,иначе не находит эти переменные,и после изменения этих переменных в файле .env,нужно заново запустить сайт,то есть закрыть терминал(консоль) с текущим открытым сайтом(если это на localhost запускается,то есть на локальном компьютере),и заново в новом терминале запустить его командой npm start) в файле .env,чтобы было более удобно ее указывать и было более безопасно,так как обычно git не отслеживает этот файл и не будет его пушить в репозиторий,также после этого url указываем конкретный путь до нашего роутера на бэкэнде(/api в данном случае),а потом уже конкретный url до эндпоинта
+
+            console.log(response.data);
+
+            return response.data; // возвращаем конкретный уже объект ответа от сервера(response.data),в нем будет объект массивов объектов комментариев(allComments,allCommentsForProduct и commentsForPagination),который мы берем из этого useQuery
 
         }
     })
@@ -318,6 +341,33 @@ const Catalog = () => {
 
 
     }, [searchValue])
+
+    // при рендеринге(запуске) этого компонента и при изменении catalogCategory отработает код в этом useEffect
+    useEffect(()=>{
+
+        // если catalogCategory не равно пустой строке,то изменяем filterCategories на catalogCategory и делаем повторный запрос для получения товаров каталога,делаем эту проверку,чтобы не шел лишний повторный запрос на сервер для получения товаров каталога,если состояние catalogCategory равно пустой строке,то есть пользователь не выбрал категорию товаров на странице Home.tsx,а просто перешел на страницу каталога
+        if(catalogCategory !== ''){
+
+            setFilterCategories(catalogCategory); // изменяем состояние filterCategories на catalogCategory(категорию,которую выбрал пользователь на странице HomePage)
+
+            // в данно случае и так правильно работает и переобновляются категории,поэтому этот setTimeout здесь не нужен,поэтому его закомментировали
+            // используем setTimeout,чтобы успело переобновиться состояние filterCategories и правильно отобразились товары уже с новым фильтром категорий,если не сделать setTimeout,то не будут сразу правильно фильтроваться товары по категориям,а только после изменения страницы пагинации,указываем задержку в setTimeout как 100 миллисекунд(0.1 секунда)
+            // setTimeout(()=>{
+
+            //     refetch();
+
+            // },200)
+
+        }
+
+    },[catalogCategory])
+
+    // при изменении pathname(то есть при изменении url страницы) изменяем состояние categoryCatalog на пустую строку,чтобы после перехода на другую страницу со страницы каталога категория фильтра товаров убиралась,иначе,если так не сделать,то если состояние categoryCatalog не равно пустой строке,то категория фильтра товаров будет выбрана,и даже после перехода на другую страницу и возвращении на страницу каталога,эта категория фильтра товаров все равно будет выбрана,и надо будет нажимать на крестик вручную,чтобы ее убрать
+    useEffect(()=>{
+
+        setCategoryCatalog('');
+
+    },[pathname])
 
     // при изменении фильтров и состояния сортировки(sortBlockValue в данном случае) изменяем состояние текущей страницы пагинации на первую
     useEffect(() => {
@@ -658,7 +708,7 @@ const Catalog = () => {
 
                                     {data?.products.rows.map((product) =>
 
-                                        <ProductItemCatalog key={product.id} product={product} />
+                                        <ProductItemCatalog key={product.id} product={product} comments={dataComments?.allComments}/>
 
                                     )}
 

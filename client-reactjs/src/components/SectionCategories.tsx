@@ -1,8 +1,14 @@
-import { RefObject, useRef } from "react";
+import { RefObject, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom"
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useActions } from "../hooks/useActions";
 
 const SectionCategories = () => {
+
+    const { catalogCategory } = useTypedSelector(state => state.catalogSlice); // указываем наш слайс(редьюсер) под названием catalogSlice и деструктуризируем у него поле состояния catalogCategory,используя наш типизированный хук для useSelector
+
+    const { setCategoryCatalog } = useActions(); // берем action для изменения состояния категории каталога у слайса(редьюсера) catalogSlice у нашего хука useActions уже обернутый в диспатч,так как мы оборачивали это в самом хуке useActions
 
     const sectionCategories = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
@@ -12,28 +18,28 @@ const SectionCategories = () => {
 
     const setJoggersCategory = () => {
 
-        // здесь будем изменять состояние редакса для категорий
+        setCategoryCatalog('Joggers'); // изменяем значение categoryCatalog на Joggers
 
         router('/catalog'); // перекидываем пользователя на страницу каталога(/catalog)
     }
 
     const setLongSleeveCategory = () => {
 
-        // здесь будем изменять состояние редакса для категорий
+        setCategoryCatalog('Long Sleeves'); // изменяем значение categoryCatalog на Long Sleeves
 
         router('/catalog'); // перекидываем пользователя на страницу каталога(/catalog)
     }
 
     const setTshirtsCategory = () => {
 
-        // здесь будем изменять состояние редакса для категорий
+        setCategoryCatalog('T-Shirts'); // изменяем значение categoryCatalog на T-Shirts
 
         router('/catalog'); // перекидываем пользователя на страницу каталога(/catalog)
     }
 
     const setShortsCategory = () => {
 
-        // здесь будем изменять состояние редакса для категорий
+        setCategoryCatalog('Shorts'); // изменяем значение categoryCatalog на Shorts
 
         router('/catalog'); // перекидываем пользователя на страницу каталога(/catalog)
     }

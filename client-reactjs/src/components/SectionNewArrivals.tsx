@@ -2,7 +2,7 @@ import { RefObject, useRef } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { IProduct } from "../types/types";
+import { ICommentResponse, IProduct } from "../types/types";
 import ProductItemArrivals from "./ProductItemArrivals";
 
 const SectionNewArrivals = () => {
@@ -25,6 +25,20 @@ const SectionNewArrivals = () => {
         }
     })
 
+    // указываем такой же queryKey как и в ProductItemPage для получения всех комментариев для секции sectionNewArrivals,чтобы при изменении комментариев у товара на странице ProductItemPage переобновлять массив комментариев в секции sectionNewArrivals
+    const { data:dataComments,refetch:refetchComments } = useQuery({
+        queryKey: ['commentsForProduct'], // указываем название
+        queryFn: async () => {
+
+            const response = await axios.get<ICommentResponse>(`${process.env.REACT_APP_BACKEND_URL}/api/getCommentsForProduct`); // делаем запрос на сервер для получения всех комментариев для секции sectionNewArrivals,указываем в типе в generic наш тип на основе интерфейса ICommentResponse,указываем(то есть указываем тип данных,которые придут от сервера),вынесли основной url до бэкэнда в переменную REACT_APP_BACKEND_URL(REACT_APP_ обязательная приставка для переменных в .env файле для react js,иначе не находит эти переменные,и после изменения этих переменных в файле .env,нужно заново запустить сайт,то есть закрыть терминал(консоль) с текущим открытым сайтом(если это на localhost запускается,то есть на локальном компьютере),и заново в новом терминале запустить его командой npm start) в файле .env,чтобы было более удобно ее указывать и было более безопасно,так как обычно git не отслеживает этот файл и не будет его пушить в репозиторий,также после этого url указываем конкретный путь до нашего роутера на бэкэнде(/api в данном случае),а потом уже конкретный url до эндпоинта
+
+            console.log(response.data);
+
+            return response.data; // возвращаем конкретный уже объект ответа от сервера(response.data),в нем будет объект массивов объектов комментариев(allComments,allCommentsForProduct и commentsForPagination),который мы берем из этого useQuery
+
+        }
+    })
+
 
     return (
         <section id="sectionCategories" className={onScreen.sectionCategoriesIntersecting ? "sectionCategories sectionCategories__active sectionNewArrivals" : "sectionCategories sectionNewArrivals"} ref={sectionCategories}>
@@ -38,7 +52,7 @@ const SectionNewArrivals = () => {
 
                         {/* проходимся по массиву товаров,который пришел от сервера и выводим карточки товаров */}
                         {data?.data.map((product)=>
-                            <ProductItemArrivals key={product.id} product={product}/>
+                            <ProductItemArrivals key={product.id} product={product} comments={dataComments?.allComments}/>
                         )}
                         
                     </div>

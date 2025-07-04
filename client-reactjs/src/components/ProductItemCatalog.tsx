@@ -1,15 +1,18 @@
 
 import { useEffect, useState } from "react";
-import { IProduct } from "../types/types";
+import { IComment, IProduct } from "../types/types";
 import { useNavigate } from "react-router-dom";
 
 // создаем интерфейс(тип) для пропсов компонента IProductItemCatalog,указываем в нем поле product с типом нашего интерфейса IProduct и тд
 interface IProductItemCatalog {
     product: IProduct,
+    comments: IComment[] | undefined, // указываем этому полю для комментариев тип IComment и что это массив,или тип undefined(указываем это или undefined,так как поле comments может быть undefined(также выдает ошибку об этом))
 }
 
 // указываем объекту пропсов(параметров,которые будем передавать этому компоненту) наш тип IProductItemArrivals
-const ProductItemCatalog = ({ product }: IProductItemCatalog) => {
+const ProductItemCatalog = ({ product, comments }: IProductItemCatalog) => {
+
+    const [commentsForProduct,setCommentsForProduct] = useState<IComment[] | undefined>([]);  // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
 
@@ -28,7 +31,12 @@ const ProductItemCatalog = ({ product }: IProductItemCatalog) => {
 
     }, [product])
 
+    // при рендеринге(запуске) этого компонента и при изменении comments(массива всех комментариев) будет отработан код в этом useEffect,обязательно указываем comments в массиве зависимостей этого useEffect,иначе комментарии могут не успеть загрузиться и в состоянии commentsForProduct будет пустой массив комментариев 
+    useEffect(()=>{
 
+        setCommentsForProduct(comments?.filter(comment => comment.productId === product.id)); // изменяем состояние commentsForProduct на отфильтрованный массив всех комментариев comments(пропс(параметр) этого компонента) по id товара(product.id),то есть оставляем в массиве все объекты комментариев,у которых поле productId равно product.id(объект товара,который передали пропсом(параметром) в этот компонент)
+
+    },[comments])
 
     return (
         <div className="sectionNewArrivals__item">
@@ -71,7 +79,7 @@ const ProductItemCatalog = ({ product }: IProductItemCatalog) => {
                     <img src={product.rating >= 4 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 3.5 && product.rating < 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                     <img src={product.rating >= 5 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 4.5 && product.rating < 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                 </div>
-                <p className="sectionNewArrivals__item-starsAmount">(0)</p>
+                <p className="sectionNewArrivals__item-starsAmount">({commentsForProduct?.length})</p>
             </div>
 
             {/* если product.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}

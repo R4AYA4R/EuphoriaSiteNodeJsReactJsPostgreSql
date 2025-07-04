@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import { IProduct } from "../types/types";
+import { IComment, IProduct } from "../types/types";
 import { useNavigate } from "react-router-dom";
 
 // создаем интерфейс(тип) для пропсов компонента ProductItemArrivals,указываем в нем поле product с типом нашего интерфейса IProduct и тд
 interface IProductItemArrivals {
     product: IProduct,
+    comments: IComment[] | undefined, // указываем этому полю для комментариев тип IComment и что это массив,или тип undefined(указываем это или undefined,так как поле comments может быть undefined(также выдает ошибку об этом))
 }
 
 // указываем объекту пропсов(параметров,которые будем передавать этому компоненту) наш тип IProductItemArrivals
-const ProductItemArrivals = ({ product }: IProductItemArrivals) => {
+const ProductItemArrivals = ({ product, comments }: IProductItemArrivals) => {
+
+    const [commentsForProduct,setCommentsForProduct] = useState<IComment[] | undefined>([]);  // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
 
@@ -26,6 +29,13 @@ const ProductItemArrivals = ({ product }: IProductItemArrivals) => {
 
 
     }, [product])
+
+    // при рендеринге(запуске) этого компонента и при изменении comments(массива всех комментариев) будет отработан код в этом useEffect,обязательно указываем comments в массиве зависимостей этого useEffect,иначе комментарии могут не успеть загрузиться и в состоянии commentsForProduct будет пустой массив комментариев 
+    useEffect(()=>{
+
+        setCommentsForProduct(comments?.filter(comment => comment.productId === product.id)); // изменяем состояние commentsForProduct на отфильтрованный массив всех комментариев comments(пропс(параметр) этого компонента) по id товара(product.id),то есть оставляем в массиве все объекты комментариев,у которых поле productId равно product.id(объект товара,который передали пропсом(параметром) в этот компонент)
+
+    },[comments])
 
 
 
@@ -52,7 +62,7 @@ const ProductItemArrivals = ({ product }: IProductItemArrivals) => {
             {/* если product.name.length > 29,то есть длина названия по количеству символов больше 29(это значение посчитали в зависимости от дизайна,сколько символов в названии нормально влазит в максимальную ширину и высоту текста названия),то показываем такой блок текста названия товара,с помощью substring() вырезаем из строки названия товара опеределенное количество символов(передаем первым параметром в substring с какого символа по индексу начинать вырезать,вторым параметром передаем до какого символа по индексу вырезать,в данном случае подобрали значение до 29 символа по индексу вырезать,так как еще нужно место на троеточие),и в конце добавляем троеточие,чтобы красиво смотрелось,в другом случае показываем обычное название товара(product.name) */}
             {product.name.length > 29 ?
 
-                <h2 className="sectionNewArrivals__item-title" onClick={() => router(`/catalog/${product.id}`)}>{(product.name).substring(0,29)}...</h2>
+                <h2 className="sectionNewArrivals__item-title" onClick={() => router(`/catalog/${product.id}`)}>{(product.name).substring(0, 29)}...</h2>
                 :
                 <h2 className="sectionNewArrivals__item-title" onClick={() => router(`/catalog/${product.id}`)}>{product.name}</h2>
 
@@ -70,7 +80,7 @@ const ProductItemArrivals = ({ product }: IProductItemArrivals) => {
                     <img src={product.rating >= 4 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 3.5 && product.rating < 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                     <img src={product.rating >= 5 ? "/images/sectionNewArrivals/Vector (1).png" : product.rating >= 4.5 && product.rating < 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
                 </div>
-                <p className="sectionNewArrivals__item-starsAmount">(0)</p>
+                <p className="sectionNewArrivals__item-starsAmount">({commentsForProduct?.length})</p>
             </div>
 
             {/* если product.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}

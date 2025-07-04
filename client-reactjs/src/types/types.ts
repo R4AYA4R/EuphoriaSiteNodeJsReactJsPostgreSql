@@ -76,3 +76,7 @@ export interface ICommentResponse{
     }
     
 }
+
+export interface ICatalogInitialState{
+    catalogCategory:string
+}
