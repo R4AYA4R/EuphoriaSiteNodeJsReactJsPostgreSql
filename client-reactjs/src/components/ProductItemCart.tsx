@@ -61,13 +61,25 @@ const ProductItemCart = () => {
     return (
         <div className="sectionCart__productsBlock-product">
             <div className="sectionCart__product-detailsBlock">
+
+                <div className="sectionNewArrivals__item-saleBlock sectionCart__product-saleBlock">35%</div>
+
+                <div className="sectionNewArrivals__item-saleBlockHot sectionCart__product-saleBlockHot">HOT</div>
+
                 <img src="/images/sectionNewArrivals/Rectangle 25.jpg" alt="" className="sectionCart__product-img" />
                 <div className="sectionCart__product-detailsBlockInfo">
                     <h1 className="sectionCart__product-name">Blue Flower Print Crop Top</h1>
                     <p className="sectionCart__product-size">Size: M</p>
                 </div>
             </div>
-            <p className="sectionCart__product-price">$29.00</p>
+
+            {/* <p className="sectionCart__product-price">$29.00</p> */}
+
+            <div className="sectionNewArrivals__item-priceBlock sectionCart__product-priceBlock">
+                <p className="item__priceBlock-priceSale sectionCart__product-priceSale">$10</p>
+                <p className="item__priceBlock-priceUsual sectionCart__product-price">$15</p>
+            </div>
+
             <div className="sectionProductItemPage__cartBlock-inputBlock">
                 <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
                     <img src="/images/sectionProductItemPage/Minus.png" alt="" className="cartBlock__inputBlock-btnImg" />

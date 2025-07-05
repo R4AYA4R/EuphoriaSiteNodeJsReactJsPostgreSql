@@ -2243,6 +2243,27 @@ a {
 .sectionCart__product-detailsBlock {
     display: flex;
     gap: 20px;
+    position: relative;
+}
+
+.sectionCart__product-saleBlock{
+    left: 7px;
+    padding: 3px 6px;
+}
+
+.sectionCart__product-saleBlockHot{
+    left: 7px;
+    top: 42px;
+    padding: 3px 6px;
+}
+
+.sectionCart__product-priceBlock{
+    justify-content: center;
+}
+
+.sectionCart__product-priceSale{
+    font-size: 19px;
+    font-weight: 700;
 }
 
 .sectionCart__product-img {
