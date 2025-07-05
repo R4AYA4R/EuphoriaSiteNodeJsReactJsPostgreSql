@@ -1779,9 +1779,9 @@ a {
     font-weight: 500;
 }
 
-.descBlock__desc-inner{
+.descBlock__desc-inner {
     display: flex;
-    gap:30px;
+    gap: 30px;
 }
 
 .descBlock__desc-inner,
@@ -1795,7 +1795,7 @@ a {
     justify-content: space-between;
 }
 
-.reviews__leftBlock-item{
+.reviews__leftBlock-item {
     margin-bottom: 30px;
 }
 
@@ -1836,7 +1836,7 @@ a {
     justify-content: end;
 }
 
-.reviews__rightBlock-btnBlock--disabled{
+.reviews__rightBlock-btnBlock--disabled {
     display: none;
 }
 
@@ -1904,17 +1904,18 @@ a {
     opacity: 0.5;
 }
 
-.form__mainBlock-textArea{
+.form__mainBlock-textArea {
     padding: 15px 15px 20px 15px;
     outline: none;
-    resize: none; /* убираем возможность изменять размер textarea */
+    resize: none;
+    /* убираем возможность изменять размер textarea */
     width: 100%;
-    border:1px solid #E5E7EB;
+    border: 1px solid #E5E7EB;
     margin-bottom: 10px;
-    font-family: 'Inter',sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
-.formErrorText{
+.formErrorText {
     margin-bottom: 10px;
     color: #EE5858;
     font-size: 16px;
@@ -1922,47 +1923,47 @@ a {
     max-width: 440px;
 }
 
-.form__mainBlock-bottomBlock{
+.form__mainBlock-bottomBlock {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.reviews__form-cancelBtn{
+.reviews__form-cancelBtn {
     color: #828282;
     background-color: #fff;
-    border:none;
+    border: none;
     font-size: 14px;
     font-weight: 500;
-    font-family: 'Inter',sans-serif;
+    font-family: 'Inter', sans-serif;
     opacity: 1;
-    transition:opacity .5s ease;
+    transition: opacity .5s ease;
 }
 
-.reviews__form-cancelBtn:hover{
+.reviews__form-cancelBtn:hover {
     cursor: pointer;
     opacity: 0.5;
 }
 
-.reviews__item-adminCommentBlock{
+.reviews__item-adminCommentBlock {
     margin-left: 30px;
     margin-top: 15px;
     position: relative;
 }
 
-.reviews__item-topBlockReplyText{
+.reviews__item-topBlockReplyText {
     color: #828282;
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 10px;
 }
 
-.sectionSignUp__inner{
+.sectionSignUp__inner {
     display: grid;
-    grid-template-columns: repeat(2,1fr);
+    grid-template-columns: repeat(2, 1fr);
 }
 
-.sectionSignUp__leftImgBlock{
+.sectionSignUp__leftImgBlock {
     width: 100%;
     background-image: url('/public/images/sectionUserPage/signUpPageImg.png');
     background-repeat: no-repeat;
@@ -1972,89 +1973,91 @@ a {
     margin-bottom: 0;
 }
 
-.sectionSignUp__signUpBlock{
-    transition-delay: 0.5s; /* указываем задержку по времени перед анимацией */
+.sectionSignUp__signUpBlock {
+    transition-delay: 0.5s;
+    /* указываем задержку по времени перед анимацией */
 }
 
-.sectionSignUp__leftImgBlock{
-    transition-delay: 1s; /* указываем задержку по времени перед анимацией */
+.sectionSignUp__leftImgBlock {
+    transition-delay: 1s;
+    /* указываем задержку по времени перед анимацией */
 }
 
-.sectionSignUp__signUpBlock-inner{
+.sectionSignUp__signUpBlock-inner {
     padding: 150px 75px 100px 75px;
 }
 
 
-.sectionSignUp__signUpBlock-container{
+.sectionSignUp__signUpBlock-container {
     max-width: 635px;
     padding: 0 10px;
 }
 
-.sectionSignUp__signUpBlock-tabs{
+.sectionSignUp__signUpBlock-tabs {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap:25px;
+    gap: 25px;
     margin-bottom: 30px;
 }
 
-.signUpBlock__tabs-btn{
+.signUpBlock__tabs-btn {
     background-color: #fff;
-    border:none;
-    font-family: 'Inter',sans-serif;
+    border: none;
+    font-family: 'Inter', sans-serif;
     font-size: 28px;
     font-weight: 600;
-    transition:all .5s ease;
+    transition: all .5s ease;
     color: #828282;
 }
 
-.signUpBlock__tabs-btn--active{
+.signUpBlock__tabs-btn--active {
     color: #3C4242;
 }
 
-.signUpBlock__tabs-btn:hover{
+.signUpBlock__tabs-btn:hover {
     cursor: pointer;
     opacity: 0.5;
 }
 
-.signUpBlock__tabs-btn:hover.signUpBlock__tabs-btn--active{
+.signUpBlock__tabs-btn:hover.signUpBlock__tabs-btn--active {
     opacity: 1;
 }
 
-.signUpBlock__signInForm{
+.signUpBlock__signInForm {
     animation: appear 1s ease forwards;
 }
 
-.signInForm__inputEmailBlock{
+.signInForm__inputEmailBlock {
     margin-bottom: 30px;
     position: relative;
 }
 
 
-.signInForm__inputEmailBlock-input{
+.signInForm__inputEmailBlock-input {
     padding: 12px 12px 12px 40px;
     width: 100%;
-    border:1px solid #828282;
+    border: 1px solid #828282;
     border-radius: 8px;
     outline: none;
-    font-family: 'Inter',sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
-.signInForm__inputEmailBlock-img{
+.signInForm__inputEmailBlock-img {
     position: absolute;
     top: 9px;
     left: 10px;
 }
 
 
-.signInForm__inputEmailBlock-inputPassword{
+.signInForm__inputEmailBlock-inputPassword {
     padding: 12px 36px 12px 40px;
 }
 
-.signInForm__inputEmailBlock-hideBtn{
+.signInForm__inputEmailBlock-hideBtn {
     background-color: #fff;
-    border:none;
-    transition:opacity .5s ease;
+    border: none;
+    transition: opacity .5s ease;
     position: absolute;
     top: 13px;
     right: 10px;
@@ -2063,138 +2066,337 @@ a {
     justify-content: center;
 }
 
-.signInForm__inputEmailBlock-hideBtn:hover{
+.signInForm__inputEmailBlock-hideBtn:hover {
     cursor: pointer;
     opacity: 0.5;
 }
 
-.signInForm__inputPasswordBlock{
+.signInForm__inputPasswordBlock {
     margin-bottom: 15px;
 }
 
-.signInForm__btn{
+.signInForm__btn {
     padding: 16px 57px;
     color: #fff;
     font-size: 18px;
     font-weight: 500;
     background-color: #8A33FD;
     border-radius: 8px;
-    border:none;
-    transition:all .5s ease;
+    border: none;
+    transition: all .5s ease;
     width: 100%;
 }
 
-.signInForm__btn:hover{
+.signInForm__btn:hover {
     cursor: pointer;
     background-color: rgba(138, 51, 253, 0.8);
 }
 
-.sectionUserPage{
+.sectionUserPage {
     padding: 50px 0 100px;
 }
 
-.sectionUserPage__leftBar-topBlock{
+.sectionUserPage__leftBar-topBlock {
     margin-bottom: 10px;
 }
 
-.sectionUserPage__leftBar-title{
+.sectionUserPage__leftBar-title {
     font-size: 28px;
     font-weight: 700;
 }
 
-.sectionUserPage__leftBar-subtitle{
+.sectionUserPage__leftBar-subtitle {
     font-size: 14px;
     font-weight: 400;
     color: #807D7E;
     margin-bottom: 40px;
 }
 
-.sectionUserPage__inner{
+.sectionUserPage__inner {
     display: grid;
     grid-template-columns: 1fr 4fr;
     gap: 40px;
 }
 
 
-.sectionUserPage__menu-btn{
+.sectionUserPage__menu-btn {
     display: flex;
-    align-items: center;    
-    gap:17px;
+    align-items: center;
+    gap: 17px;
     padding: 12px 0 12px 37px;
     width: 100%;
     background-color: #fff;
-    border:none;
+    border: none;
     border-left: 1px solid transparent;
-    transition:all .5s ease;
-    font-family: 'Inter',sans-serif;
+    transition: all .5s ease;
+    font-family: 'Inter', sans-serif;
 }
 
-.sectionUserPage__menu-btn:hover{
+.sectionUserPage__menu-btn:hover {
     cursor: pointer;
     background-color: #EAEAEA;
 }
 
-.sectionUserPage__menu-btn--active{
+.sectionUserPage__menu-btn--active {
     background-color: #F6F6F6;
     border-left: 1px solid #3C4242;
 }
 
-.sectionUserPage__menu-btn:hover.sectionUserPage__menu-btn--active{
+.sectionUserPage__menu-btn:hover.sectionUserPage__menu-btn--active {
     background-color: #F6F6F6;
 }
 
-.sectionUserPage__menu-btnText{
+.sectionUserPage__menu-btnText {
     font-size: 16px;
     font-weight: 600;
     color: #807D7E;
 }
 
-.sectionUserPage__mainBlock-inner{
+.sectionUserPage__mainBlock-inner {
     animation: appear 1s ease forwards;
 }
 
-.sectionUserPage__mainBlock-dashboard{
+.sectionUserPage__mainBlock-dashboard {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border:1px solid #E5E7EB;
+    border: 1px solid #E5E7EB;
     border-radius: 8px;
     padding: 20px;
 }
 
-.sectionUserPage__dashboard-title{
+.sectionUserPage__dashboard-title {
     font-size: 20px;
     font-weight: 600;
-    margin:10px 0;
+    margin: 10px 0;
 }
 
-.sectionUserPage__dashboard-email{
+.sectionUserPage__dashboard-email {
     font-size: 16px;
     font-weight: 400;
     color: #807D7E;
     margin-bottom: 15px;
 }
 
-.sectionUserPage__dashboard-btn{
+.sectionUserPage__dashboard-btn {
     background-color: #fff;
-    border:none;
+    border: none;
     color: #35b901;
-    font-family: 'Inter',sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 16px;
     font-weight: 500;
-    transition:opacity .5s ease;
+    transition: opacity .5s ease;
 }
 
-.sectionUserPage__dashboard-btn:hover{
+.sectionUserPage__dashboard-btn:hover {
     cursor: pointer;
     opacity: 0.5;
 }
 
-.sectionProductItemPage__paginationComments{
+.sectionProductItemPage__paginationComments {
     margin: 30px 0 0;
 }
 
-.reviews__leftBlock-comments{
+.reviews__leftBlock-comments {
     min-height: 270px;
     max-width: 595px;
+}
+
+.sectionCart {
+    padding: 50px 0 100px;
+}
+
+.sectionCart__inner {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.sectionCart__table-names {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
+    padding: 26px 0;
+    gap: 20px;
+
+}
+
+.sectionCart__table-name {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.sectionCart__table-name:nth-child(1){
+    text-align: start;
+}
+
+.sectionCart__productsBlock-product {
+    padding: 50px 0;
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
+    gap: 20px;
+    align-items: center;
+    border-top:1px solid #BEBCBD;
+}
+
+.sectionCart__product-detailsBlock {
+    display: flex;
+    gap: 20px;
+}
+
+.sectionCart__product-img {
+    max-width: 105px;
+    max-height: 120px;
+    min-width: 105px;
+    object-fit: cover;
+    border-radius: 12px;
+    transition:opacity .5s ease;
+}
+
+.sectionCart__product-img:hover{
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.sectionCart__product-name{
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    transition:all .5s ease;
+}
+
+.sectionCart__product-name:hover{
+    cursor: pointer;
+    color: #8A33FD;
+}
+
+.sectionCart__product-size{
+    font-size: 14px;
+    font-weight: 500;
+    color: #807D7E;
+}
+
+.sectionCart__product-price{
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.sectionCart__product-deleteBtn{
+    background-color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:opacity .5s ease;
+}
+
+.sectionCart__product-deleteBtn:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.sectionCart__table-bottomBlock{
+    padding: 26px 0;
+    border-top:1px solid #BEBCBD;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sectionCart__table-bottomBlockClearBtn{
+    padding: 8px 16px;
+    border-radius: 6px;
+    color: #fff;
+    background-color: #3c4242;
+    border:none;
+    font-family: 'Inter',sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    transition:all .5s ease;
+}
+
+.sectionCart__table-bottomBlockClearBtn:hover{
+    cursor: pointer;
+    background-color: #ebebeb;
+    color: #3c4242;
+}
+
+.sectionCart__table-bottomBlockUpdateBtn{
+    padding: 8px 16px;
+    border-radius: 6px;
+    color: #3c4242;
+    background-color:#ebebeb;
+    border:none;
+    font-family: 'Inter',sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    transition:all .5s ease;
+}
+
+.sectionCart__table-bottomBlockUpdateBtn:hover{
+    cursor: pointer;
+    background-color: #3c4242;
+    color: #ebebeb;
+}
+
+.sectionCart__bill{
+    border-radius: 8px;
+    background-color: #F3F3F3;
+}
+
+.sectionCart__bill-topBlock{
+    padding: 40px;
+    border-bottom: 1px solid #BEBCBD;
+}
+
+.sectionCart__bill-topBlockItem{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.bill__topBlockItem-text{
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.bill__topBlockItem-subtext{
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.bill__bottomBlockItem-text{
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.bill__bottomBlockItem-subtext{
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.sectionCart__bill-bottomBlock{
+    padding: 40px;
+}
+
+.sectionCart__bill-btn{
+    padding: 15px 0;
+    background-color: #8A33FD;
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    font-family: 'Inter',sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
+    transition:all .5s ease;
+    margin-top: 15px;
+}
+
+.sectionCart__bill-btn:hover{
+    cursor: pointer;
+    opacity: 0.8;
 }
