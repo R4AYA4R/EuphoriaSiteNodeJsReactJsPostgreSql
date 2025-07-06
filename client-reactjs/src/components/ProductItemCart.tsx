@@ -69,6 +69,9 @@ const ProductItemCart = () => {
                 <img src="/images/sectionNewArrivals/Rectangle 25.jpg" alt="" className="sectionCart__product-img" />
                 <div className="sectionCart__product-detailsBlockInfo">
                     <h1 className="sectionCart__product-name">Blue Flower Print Crop Top</h1>
+
+                    {/* здесь еще надо будет добавить звезды рейтинга */}
+
                     <p className="sectionCart__product-size">Size: M</p>
                 </div>
             </div>

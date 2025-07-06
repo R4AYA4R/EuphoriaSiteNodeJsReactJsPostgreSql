@@ -109,6 +109,35 @@ const Comment = db.define('comment',{
 
 })
 
+// создаем сущность(таблицу) для объекта товара корзины
+const CartProduct = db.define('cartProduct', {
+
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+
+    usualProductId: {type:DataTypes.INTEGER, allowNull:false}, // указываем поле для id объекта товара из обычного каталога,потом на фронтенде будем использовать это поле,чтобы перейти на страницу товара каталога
+
+    name: { type: DataTypes.STRING, allowNull: false },  // не указываем, что это поле уникально(unique:true),так как будем делать возможность добавлять один и тот же товар,но с разными размерами и указываем этому полю еще свойство allowNull:false,то есть оно не может быть null(пустым)
+
+    descText: { type: DataTypes.TEXT, allowNull: false }, // указываем этому полю описания для товара тип как DataTypes.TEXT,так как тип TEXT не имеет ограничение на длину символов строки,а тип STRING в Sequelize имеет ограничение символов в строке (255 символов максимум)
+
+    price: { type: DataTypes.FLOAT, allowNull: false }, // указываем полю для цены тип DataTypes.FLOAT( float - тип данных числа с запятой(точкой),типа 0.5)
+
+    priceDiscount: { type: DataTypes.FLOAT, allowNull: true }, // указываем этому полю allowNull как true,так как это необязательное поле для скидки товара,так как не у всех товаров будет скидка и потом будем просто проверять,есть ли это поле у товара или нет
+
+    amount: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 }, // указываем этому полю значение по умолчанию 1 (defaultValue:1)
+
+    totalPrice: { type: DataTypes.FLOAT, allowNull: false },
+
+    size: { type: DataTypes.STRING, allowNull: false }, // указываем поле для размера для товара
+
+    rating: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 0 }, // указываем полю для рейтинга тип DataTypes.FLOAT( float - тип данных числа с запятой(точкой),типа 0.5) и значение по дефолту как 0
+
+    mainImage: { type: DataTypes.STRING, allowNull: false }, // указываем этому полю для главного изображения товара тип STRING,так как там будем хранить только название файла и его расширение, указываем этому полю еще свойство allowNull:false,то есть оно не может быть null(пустым)
+
+    descImages: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: false } // указываем этому полю для массива названий картинок описания товара тип как DataTypes.ARRAY(DataTypes.STRING),то есть массив,внутри которого будут значения с типом STRING
+
+
+})
 
 
 // описываем связи между таблицами, hasMany(связь 1 ко многим,типа один объект этой таблицы может иметь связь с многими объектами другой таблицы), hasOne - связь 1 к 1(один объект этой таблицы может иметь одну связь(то есть будет отдельное поле у объекта одной таблицы, в котором будет указан id объекта другой таблицы,который принадлежит этой таблице) с объектом другой таблицы)
@@ -144,6 +173,19 @@ Product.hasMany(Comment);  // указываем,что объект из таб
 Comment.belongsTo(Product);  // указываем,что у объекта из таблицы Comment будет поле с ссылкой на объект из таблицы Product(в данном случае у объекта из таблицы Comment будет поле productId,где будет значение id объекта из таблицы Product,с которым связан этот объект из Comment),это касается связываний типа belongsTo
 
 
+User.hasMany(CartProduct); // указываем,что объект из таблицы User будет иметь много связей с объектами из таблицы CartProduct,но поле с ссылкой на объект из таблицы User будет создано у объекта из таблицы CartProduct(то есть в данном случае у объекта из таблицы CartProduct будет поле userId,где будет указано значение id объекта из таблицы User,с которым этот объект из таблицы CartProduct связан), это касается связываний типа hasOne,hasMany
+
+CartProduct.belongsTo(User); // указываем,что у объекта из таблицы CartProduct будет поле с ссылкой на объект из таблицы User(в данном случае у объекта из таблицы CartProduct будет поле userId,где будет значение id объекта из таблицы User,с которым связан этот объект из CartProduct),это касается связываний типа belongsTo
+
+Category.hasMany(CartProduct); // указываем,что одна запись(объект сущности(таблицы)) Category может иметь много связей с сущностью CartProduct(с многими объектами из сущности CartProduct),то есть у объекта из таблицы CartProduct будет поле с ссылкой на объект из таблицы Category(в данном случае у объекта из таблицы CartProduct будет поле categoryId,где будет значение id объекта из таблицы Category,с которым связан этот объект из CartProduct),это касается связываний типа hasOne,hasMany
+
+CartProduct.belongsTo(Category); // указываем,что у объекта из таблицы CartProduct будет поле с ссылкой на объект из таблицы Category(в данном случае у объекта из таблицы CartProduct будет поле categoryId,где будет значение id объекта из таблицы Category,с которым связан этот объект из CartProduct),это касается связываний типа belongsTo
+
+Type.hasMany(CartProduct); // указываем,что одна запись(объект сущности(таблицы)) Type может иметь много связей с сущностью CartProduct(с многими объектами из сущности CartProduct),то есть у объекта из таблицы CartProduct будет поле с ссылкой на объект из таблицы Type(в данном случае у объекта из таблицы CartProduct будет поле typeId,где будет значение id объекта из таблицы Type,с которым связан этот объект из CartProduct),это касается связываний типа hasOne,hasMany
+
+CartProduct.belongsTo(Type); // указываем,что сущность CartProduct принадлежит сущности Type, то есть каждый объект из таблицы CartProduct имеет поле typeId с id объекта из таблицы Type(то есть тип для мужской или женской одежды)
+
+
 
 // экспортируем объект с полями всех таблиц,которые мы создали
 export default {
@@ -153,5 +195,6 @@ export default {
     User,
     Role,
     Token,
-    Comment
+    Comment,
+    CartProduct
 }

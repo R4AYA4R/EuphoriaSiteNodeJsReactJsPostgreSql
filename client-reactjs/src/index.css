@@ -1453,7 +1453,7 @@ a {
 
 .sectionProductItemPage__sizeBlock-sizes {
     display: flex;
-    align-items: center;
+    align-items: start;
     gap: 20px;
 }
 
@@ -1483,6 +1483,12 @@ a {
     background-color: #3C4242;
     color: #fff;
     border: 1px solid transparent;
+}
+
+.sizeBlock__sizes-itemDisabled{
+    pointer-events: none; /* указываем это свойство,чтобы этот элемент не реагировал на события мыши типа наведения,клика и тд,то есть делаем его типа выключенным,также события мыши будут передаваться на элементы,находящиеся под этим элементом */
+    background-color: #BEBCBD;
+    color: #3C4242;
 }
 
 .sectionNewArrivals__item-cartBlock {
@@ -1787,6 +1793,19 @@ a {
 .descBlock__desc-inner,
 .descBlock__desc-innerReviews {
     animation: appear 1s ease forwards;
+}
+
+.sectionProductItemPage__sizeBlock-sizesItemBlock{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sizeBlock-sizesItemBlock-textInCart{
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 5px;
+    color: #6B7280;
 }
 
 .reviews__item-topBlock {
@@ -2420,4 +2439,9 @@ a {
 .sectionCart__bill-btn:hover{
     cursor: pointer;
     opacity: 0.8;
+}
+
+.sectionProductItemPage__errorCartText{
+    margin-top: 15px;
+    font-weight: 500;
 }
