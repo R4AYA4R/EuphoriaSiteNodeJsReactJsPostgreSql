@@ -2250,6 +2250,10 @@ a {
     text-align: start;
 }
 
+.sectionCart__table-productsBlock{
+    min-height: 515px;
+}
+
 .sectionCart__productsBlock-product {
     padding: 50px 0;
     display: grid;
@@ -2318,7 +2322,7 @@ a {
 }
 
 .sectionCart__product-price{
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     text-align: center;
 }
@@ -2409,13 +2413,13 @@ a {
 }
 
 .bill__bottomBlockItem-text{
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
 }
 
 .bill__bottomBlockItem-subtext{
     font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .sectionCart__bill-bottomBlock{
@@ -2444,4 +2448,11 @@ a {
 .sectionProductItemPage__errorCartText{
     margin-top: 15px;
     font-weight: 500;
+}
+
+.textEmptyCart{
+    border-top: 1px solid #BEBCBD;
+    padding-top: 15px;
+    font-size: 16px;
+    font-weight: 700;
 }
