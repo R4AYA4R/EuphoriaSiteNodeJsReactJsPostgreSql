@@ -1,23 +1,51 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { IComment, IProductCart } from "../types/types";
+import { IComment, IProductCart, IProductsCartResponse } from "../types/types";
 import { useNavigate } from "react-router-dom";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useActions } from "../hooks/useActions";
+import { QueryObserverResult, useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 interface IProductItemCart {
     productCart: IProductCart,
-    comments: IComment[] | undefined
+    comments: IComment[] | undefined,
+    refetchProductsCart:() => Promise<QueryObserverResult<IProductsCartResponse | null, Error>> // указываем этому полю,что это стрелочная функция и возвращает Promise<QueryObserverResult<IProductsCartResponse | null, Error>> (этот тип скопировали из файла Cart.tsx у этой функции refetchProductsCart),то есть указываем,что эта функция возвращает Promise,внутри которого тип QueryObserverResult,внутри которого наш тип IProductsCartResponse или null(так как наша функция запроса на сервер может вернуть null,мы это указали) и тип Error, если бы мы в функции запроса на получение комментариев возвращали бы response,а не response.data,то тип у этой функции запроса на сервер был бы Promise<QueryObserverResult<AxiosResponse<IProductsCartResponse | null, any>, Error>>,но в данном случае возвращаем response.data,поэтому тип Promise<QueryObserverResult<IProductsCartResponse | null, Error>> 
 }
 
-const ProductItemCart = ({ productCart, comments }: IProductItemCart) => {
+const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProductItemCart) => {
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
 
-    const [inputAmountValue, setInputAmountValue] = useState(1);
+    const [inputAmountValue, setInputAmountValue] = useState(productCart.amount); // делаем дефолтное значение у inputAmountValue как productCart.amount,чтобы сразу показывалось число товаров,которое пользователь выбрал на странице товара
 
     const [valueDiscount, setValueDiscount] = useState<number>(0);  // указываем состояние для скидки в процентах,указываем ему в generic тип number,то есть в этом состоянии будут числа,но если указать дефолтное значение состоянию useState,то автоматически ему выдается тип тех данных,которые мы указали по дефолту,в данном случае указали этому состоянию по дефолту значение 0,поэтому тип в generic здесь можно было не указывать,так как он был бы присвоен автоматически как number
 
     const [commentsForProduct, setCommentsForProduct] = useState<IComment[] | undefined>([]);  // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
 
-    const [subtotalPriceProduct,setSubtotalPriceProduct] = useState(0);
+    const [subtotalPriceProduct, setSubtotalPriceProduct] = useState(0);
+
+    const { updateProductsCart } = useTypedSelector(state => state.cartSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
+
+    const { setUpdateProductsCart } = useActions();  // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+
+    // описываем запрос на сервер для обновления товара корзины,берем isPending,чтобы отслеживать,загружается ли сейчас этот запрос на сервер для изменения данных товара корзины
+    const { mutate: mutateUpdateProductCart, isPending } = useMutation({
+        mutationKey: ['updateProductCart'],
+        mutationFn: async (productCart: IProductCart) => {
+
+            // делаем put запрос на сервер для обновления данных на сервере,указываем тип данных,которые нужно добавить(обновить) на сервер(в данном случае IProductCart),но здесь не обязательно указывать тип,в объекте тела запроса передаем объект productCart(будем его передавать в эту фукнцию запроса на сервер для обновления данных товара(mutateUpdateProductCart()))
+            await axios.put<IProductCart>(`${process.env.REACT_APP_BACKEND_URL}/api/updateProductCart`, productCart);
+
+        },
+
+        // при успешной мутации обновляем весь массив товаров корзины с помощью функции refetchProductsCart,которую мы передали как пропс (параметр) этого компонента
+        onSuccess() {
+
+            refetchProductsCart();
+
+        }
+
+    })
 
 
     // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
@@ -91,11 +119,38 @@ const ProductItemCart = ({ productCart, comments }: IProductItemCart) => {
 
     }, [productCart])
 
-    useEffect(()=>{
+    useEffect(() => {
 
-        setSubtotalPriceProduct(inputAmountValue * productCart.totalPrice); // изменяем subtotalPriceProduct на inputAmountValue умноженное на productCart.totalPrice(цена товара уже со скидкой(если она есть) или обычная цена,помещали это значение в это поле еще при добавлении товара в корзину)
+        // если productCart.priceDiscount true,то есть есть цена со скидкой у товара,то изменяем subtotalPriceProduct на inputAmountValue умноженное на productCart.priceDiscount(цену со скидкой),в другом случае изменяем subtotalPriceProduct на inputAmountValue умноженное на productCart.price(обычную цену товара)
+        if (productCart.priceDiscount) {
 
-    },[inputAmountValue])
+            setSubtotalPriceProduct(inputAmountValue * productCart.priceDiscount); // умножаем inputAmountValue(выбранное количество товаров) на productCart.priceDiscount(цену товара со скидкой)
+
+
+        } else {
+
+            setSubtotalPriceProduct(inputAmountValue * productCart.price); // умножаем inputAmountValue(выбранное количество товаров) на productCart.price(цену товара)
+
+
+        }
+
+        setUpdateProductsCart(false); // обязательно изменяем поле updateProductsCart у состояния слайса(редьюсера) cartSlice на false при изменении inputAmountValue,чтобы срабатывала нормально проверка на updateProductsCart true,при изменении этого состояния updateProductsCart,иначе,если без изменения количества товара просто тыкать на кнопку обновления товаров корзины,то updateProductsCart будет изменено на true,но запрос не будет идти на обновление количества товара корзины,так как текущее значение инпута количества товара будет такое же,как уже есть у этого товара в базе данных,и потом,когда все-таки пользователь изменит инпут количества товара,то запрос на обновление количества товара корзины тоже не будет идти,так как уже не будет правильно срабатывать эта проверка на updateProductsCart true,поэтому при каждом изменении inputAmountValue изменяем updateProductsCart на false,чтобы можно было нажимать на кнопку обновления товаров корзины и шел запрос на обновление товара корзины и уже будет не важно,нажимал ли до этого пользователь эту кнопку,так как ему придется изменить значение инпута количества товара и соответсвенно состояние updateProductsCart изменится на false и это все будет работать правильно
+
+    }, [inputAmountValue])
+
+    // при рендеринге(запуске) этого компонента и при изменении поля updateProductsCart у состояния слайса(редьюсера) cartSlice делаем запрос на сервер на обновление данных о товаре в корзине
+    useEffect(() => {
+
+        // если updateProductsCart true(то есть пользователь нажал на кнопку обновить товары корзины) и productCart.amount не равно inputAmountValue(то есть количество товара в корзине(которое мы получили из запроса на сервер на получения всех товаров корзины в компоненте Cart.tsx) не равно значению состояния inputAmountValue,то есть пользователь изменил количество товара в корзине),то обновляем данные товара,делаем эту проверку,чтобы не циклился запрос на переобновление массива товаров корзины ,который мы делаем при обновлении данных товара,если эту проверку не сделать,то будут циклиться запросы на сервер и не будет нормально работать сайт, и чтобы если пользователь нажал на кнопку обновить товары в корзине,но не изменил inputAmountValue(количество товара) на новое значение,то не делать запрос на обновление товара корзины,чтобы не шли запросы на сервер просто так,а также указываем проверку на !isPending(isPending false),то есть сейчас запрос на обновление товара корзины не грузится,если не сделать эту проверку,то можно будет кучу раз нажимать на кнопку обновления товаров корзины и будет идти куча запросов на обновление товаров корзины,пока еще первый не загрузился,также делаем проверку на inputAmountValue не равно 0,чтобы оно не обновлялось,если указали в инпуте количества товара 0
+        if (updateProductsCart && productCart.amount !== inputAmountValue && !isPending && inputAmountValue !== 0) {
+
+            mutateUpdateProductCart({ ...productCart, amount: inputAmountValue, totalPrice: subtotalPriceProduct });  // делаем запрос на обновление данных товара корзины,разворачиваем весь объект productCart,то есть вместо productCart будут подставлены все поля из объекта productCart,но для полей amount и totalPrice указываем значения состояний количества товара (inputAmountValue) и цены товара(subtotalPriceProduct) на этой странице
+
+            setUpdateProductsCart(false); // изменяем поле updateProductsCart у состояния слайса(редьюсера) cartSlice на false,чтобы указать,что данные товара обновились и потом можно было опять нажимать на кнопку обновления всех товаров корзины
+
+        }
+
+    }, [updateProductsCart])
 
     return (
         <div className="sectionCart__productsBlock-product">

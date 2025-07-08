@@ -116,3 +116,8 @@ export interface IProductsCartResponse{
     } 
 
 }
+
+
+export interface ICartInitialState{
+    updateProductsCart:boolean
+}

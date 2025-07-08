@@ -240,6 +240,30 @@ class ProductService {
 
     }
 
+    async updateProductCart(productCart) {
+
+        const productCartFounded = await models.CartProduct.findOne({ where: { id: productCart.id } }); // находим объект товара в базе данных по id,который взяли у объекта тела запроса productCart(это будет объект с обновленными данными товара корзины,если пользователь изменил эти данные товара корзины на фронтенде,если пользователь эти данные товара не изменил,то это будет объект товара такой же,как и уже есть в корзине)
+
+        // если productCartFounded.amount не равно productCart.amount(то есть если количество найденного товара корзины в базе данных(productCartFounded) не равно количеству товара корзины productCart(который мы передали с фронтенда),то тогда изменяем данные товара корзины,в другом случае возвращаем текст типа с ошибкой на клиент(фронтенд))
+        if (productCartFounded.amount !== productCart.amount) {
+
+            productCartFounded.amount = productCart.amount; // изменяем поле amount у productCartFounded(у этого объекта товара корзины,который мы нашли в базе данных) на значение поля amount у productCart(объекта товара,который мы передали с фронтенда)
+
+            productCartFounded.totalPrice = productCart.totalPrice; // изменяем поле totalPrice у productCartFounded(у этого объекта товара корзины,который мы нашли в базе данных) на значение поля totalPrice у productCart(объекта товара,который мы передали с фронтенда)
+
+            await productCartFounded.save();  // сохраняем обновленный объект товара в базе данных
+
+            return productCartFounded; // возвращаем обновленный объект товара корзины из этой функции updateProductCart
+
+        } else {
+
+            return `Данные товара с id = ${productCartFounded.id} не были изменены`; // вместо ошибки просто возвращаем строку с сообщением из этой функции updateProductCart,в данном случае просто,чтобы не было куча ошибок в консоли,так как это не критичная ошибка,а просто больше как уведомление
+
+        }
+
+
+    }
+
 }
 
 export default new ProductService(); // экспортируем уже объект на основе нашего класса ProductService,чтобы можно было вызывать эти функции в этом классе через точку(типа productService.generateTokens()),просто импортировав файл productService,если так не делать,то если у функций класса нету параметра static,то нельзя будет их вызвать,не создав перед этим объект на основе этого класса

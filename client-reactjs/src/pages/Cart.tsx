@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { getPagesArray } from "../utils/getPagesArray";
+import { useActions } from "../hooks/useActions";
 
 
 const Cart = () => {
@@ -24,6 +25,8 @@ const Cart = () => {
     const [totalPages, setTotalPages] = useState(0); // указываем состояние totalPages в данном случае для общего количества страниц
 
     const { user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
+
+    const { setUpdateProductsCart } = useActions();  // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
     // указываем в этой функции запроса на сервер для получения массива товаров корзины такой же queryKey как и на странице ProductItemPageItemBlock.tsx,чтобы эти данные кешировались и можно было переобновить их на этой странице,чтобы они переобновились сразу же и для страницы ProductItemPageItemBlock.tsx
     const { data: dataProductsCart, refetch: refetchProductsCart, isFetching } = useQuery({
@@ -146,7 +149,7 @@ const Cart = () => {
 
                                             {dataProductsCart?.productsCartForPagination.rows.map(productCart =>
 
-                                                <ProductItemCart key={productCart.id} productCart={productCart} comments={dataComments?.allComments} />
+                                                <ProductItemCart key={productCart.id} productCart={productCart} comments={dataComments?.allComments} refetchProductsCart={refetchProductsCart}/>
 
                                             )}
 
@@ -195,7 +198,8 @@ const Cart = () => {
                                         <div className="sectionCart__table-bottomBlock">
                                             <button className="sectionCart__table-bottomBlockClearBtn">Clear Cart</button>
 
-                                            <button className="sectionCart__table-bottomBlockUpdateBtn">Update Cart</button>
+                                            {/* изменяем поле updateProductsCart у состояния слайса(редьюсера) cartSlice на true,чтобы обновились все данные о товарах в корзине по кнопке,потом в компоненте ProductItemCart отслеживаем изменение этого поля updateProductsCart и делаем там запрос на сервер на обновление данных о товаре в корзине */}
+                                            <button className="sectionCart__table-bottomBlockUpdateBtn" onClick={() => setUpdateProductsCart(true)}>Update Cart</button>
                                         </div>
 
 
