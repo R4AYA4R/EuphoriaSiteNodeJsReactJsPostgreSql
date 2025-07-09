@@ -9,7 +9,7 @@ import axios from "axios";
 interface IProductItemCart {
     productCart: IProductCart,
     comments: IComment[] | undefined,
-    refetchProductsCart:() => Promise<QueryObserverResult<IProductsCartResponse | null, Error>> // указываем этому полю,что это стрелочная функция и возвращает Promise<QueryObserverResult<IProductsCartResponse | null, Error>> (этот тип скопировали из файла Cart.tsx у этой функции refetchProductsCart),то есть указываем,что эта функция возвращает Promise,внутри которого тип QueryObserverResult,внутри которого наш тип IProductsCartResponse или null(так как наша функция запроса на сервер может вернуть null,мы это указали) и тип Error, если бы мы в функции запроса на получение комментариев возвращали бы response,а не response.data,то тип у этой функции запроса на сервер был бы Promise<QueryObserverResult<AxiosResponse<IProductsCartResponse | null, any>, Error>>,но в данном случае возвращаем response.data,поэтому тип Promise<QueryObserverResult<IProductsCartResponse | null, Error>> 
+    refetchProductsCart: () => Promise<QueryObserverResult<IProductsCartResponse | null, Error>> // указываем этому полю,что это стрелочная функция и возвращает Promise<QueryObserverResult<IProductsCartResponse | null, Error>> (этот тип скопировали из файла Cart.tsx у этой функции refetchProductsCart),то есть указываем,что эта функция возвращает Promise,внутри которого тип QueryObserverResult,внутри которого наш тип IProductsCartResponse или null(так как наша функция запроса на сервер может вернуть null,мы это указали) и тип Error, если бы мы в функции запроса на получение комментариев возвращали бы response,а не response.data,то тип у этой функции запроса на сервер был бы Promise<QueryObserverResult<AxiosResponse<IProductsCartResponse | null, any>, Error>>,но в данном случае возвращаем response.data,поэтому тип Promise<QueryObserverResult<IProductsCartResponse | null, Error>> 
 }
 
 const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProductItemCart) => {
@@ -47,6 +47,24 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
 
     })
 
+    // описываем запрос на сервер для удаления товара корзины
+    const { mutate: mutateDeleteProductCart } = useMutation({
+        mutationKey: ['deleteProductCart'],
+        mutationFn: async (productCart: IProductCart) => {
+
+            // делаем запрос на сервер для удаление товара корзины,и указываем тип данных,которые вернет сервер(то есть в данном случае будем от сервера возвращать удаленный объект товара в базе данных,то есть в данном случае тип IProductCart),но здесь не обязательно указывать тип,указываем productCart.id в url,чтобы передать id товара корзины,который надо удалить
+            await axios.delete<IProductCart>(`${process.env.REACT_APP_BACKEND_URL}/api/deleteProductCart/${productCart.id}`);
+
+        },
+
+        // при успешной мутации обновляем весь массив товаров корзины с помощью функции refetchProductsCart,которую мы передали как пропс (параметр) этого компонента
+        onSuccess() {
+
+            refetchProductsCart();
+
+        }
+
+    })
 
     // функция для изменения значения инпута количества товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
     const changeInputAmountValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -183,8 +201,6 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
 
                     }
 
-                    {/* <h1 className="sectionCart__product-name">{productCart.name}</h1> */}
-
                     <div className="sectionNewArrivals__item-starsBlock">
                         <div className="sectionNewArrivals__item-stars">
 
@@ -229,7 +245,9 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
             </div>
             {/* указываем цену с помощью toFixed(2),чтобы было 2 цифры после запятой,иначе,при изменении количества товара,может быть число с большим количеством цифр после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически  */}
             <p className="sectionCart__product-price">${subtotalPriceProduct.toFixed(2)}</p>
-            <button className="sectionCart__product-deleteBtn">
+
+            {/* в onClick этой кнопке указываем нашу функцию для удаления товара из корзины и передаем туда productCart(объект товара корзины)(то есть в данном случае удаляем его из базы данных у сущности(модели) корзины) */}
+            <button className="sectionCart__product-deleteBtn" onClick={() => mutateDeleteProductCart(productCart)}>
                 <img src="/images/sectionCart/deletecon.png" alt="" className="sectionCart__product-deleteBtnImg" />
             </button>
         </div>

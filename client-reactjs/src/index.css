@@ -2282,6 +2282,7 @@ a {
 
 .sectionCart__product-priceBlock{
     justify-content: center;
+    min-width: 140px;
 }
 
 .sectionCart__product-priceSale{

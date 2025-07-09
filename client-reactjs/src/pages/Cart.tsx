@@ -2,8 +2,8 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import ProductItemCart from "../components/ProductItemCart";
 import SectionUnderTop from "../components/SectionUnderTop";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
-import { ICommentResponse, IProductsCartResponse } from "../types/types";
-import { useQuery } from "@tanstack/react-query";
+import { ICommentResponse, IProductCart, IProductsCartResponse } from "../types/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { getPagesArray } from "../utils/getPagesArray";
@@ -77,6 +77,26 @@ const Cart = () => {
         }
     })
 
+    // описываем запрос на сервер для удаления товара корзины
+    const { mutate: mutateDeleteProductCart } = useMutation({
+        mutationKey: ['deleteProductCart'],
+        mutationFn: async (productCart: IProductCart) => {
+
+            // делаем запрос на сервер для удаление товара корзины,и указываем тип данных,которые вернет сервер(то есть в данном случае будем от сервера возвращать удаленный объект товара в базе данных,то есть в данном случае тип IProductCart),но здесь не обязательно указывать тип,указываем productCart.id в url,чтобы передать id товара корзины,который надо удалить
+            await axios.delete<IProductCart>(`${process.env.REACT_APP_BACKEND_URL}/api/deleteProductCart/${productCart.id}`);
+
+        },
+
+        // при успешной мутации обновляем весь массив товаров корзины с помощью функции refetchProductsCart,которую мы передали как пропс (параметр) этого компонента
+        onSuccess() {
+
+            refetchProductsCart();
+
+        }
+
+    })
+
+
     // при рендеринге этого компонента и при изменении dataProductsCart?.allProductsCartForUser(массив объектов товаров корзины) отработает этот useEffect
     useEffect(() => {
 
@@ -99,6 +119,18 @@ const Cart = () => {
         refetchProductsCart();
 
     }, [page])
+
+    // функция для удаления всех товаров корзины
+    const deleteAllProductsCart = () => {
+
+        // проходимся по каждому элементу массива товаров корзины и вызываем мутацию mutateDeleteProductCart и передаем туда productCart(сам productCart, каждый объект товара на каждой итерации,и потом в функции запроса на сервер mutateDeleteProductCart будем брать у этого productCart только id для удаления из корзины)
+        dataProductsCart?.allProductsCartForUser.forEach(productCart => {
+
+            mutateDeleteProductCart(productCart);
+
+        })
+
+    }
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
 
@@ -196,7 +228,7 @@ const Cart = () => {
 
 
                                         <div className="sectionCart__table-bottomBlock">
-                                            <button className="sectionCart__table-bottomBlockClearBtn">Clear Cart</button>
+                                            <button className="sectionCart__table-bottomBlockClearBtn" onClick={deleteAllProductsCart}>Clear Cart</button>
 
                                             {/* изменяем поле updateProductsCart у состояния слайса(редьюсера) cartSlice на true,чтобы обновились все данные о товарах в корзине по кнопке,потом в компоненте ProductItemCart отслеживаем изменение этого поля updateProductsCart и делаем там запрос на сервер на обновление данных о товаре в корзине */}
                                             <button className="sectionCart__table-bottomBlockUpdateBtn" onClick={() => setUpdateProductsCart(true)}>Update Cart</button>
