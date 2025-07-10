@@ -1,4 +1,4 @@
-import { Op, Sequelize } from "sequelize";
+import { Op, Sequelize, where } from "sequelize";
 import models from "../models/models.js"; // указываем тут расширение файла как .js вручную,иначе не находит файл
 
 
@@ -271,6 +271,25 @@ class ProductService {
         const productCartDeleted = await models.CartProduct.destroy({ where: { id: productId } });  // удаляем объект товара корзины у которого id равен параметру productId,который мы взяли из url(строки) запроса
 
         return productCartDeleted; // возвращаем удаленный объект товара из этой функции deleteProductCart
+
+
+    }
+
+    async updateProductCartRating(productId, rating) {
+
+        // находим все товары корзины,у которых поле usualProductId равно полю productId(id обычного товара,который взяли из тела запроса),находим все эти товары корзины,так как одинаковые товары могут быть у разных пользователей в корзине(только эти товары могут отличаться количеством,в зависимости от того,сколько выбрал пользователь положить их в корзину),также могут быть в данном случае одинаковые названия товаров и их usualProductId,так как пользователь сможет выбрать один и тот же товара в корзине,но разного размера
+        const productsCartFounded = await models.CartProduct.findAll({
+            where: { usualProductId: productId }
+        });
+
+        // если productsCartFounded true,то есть в корзине есть такие товары,как и в каталоге с таким usualProductId
+        if (productsCartFounded) {
+
+            await models.CartProduct.update({ rating: rating }, { where: { usualProductId: productId } }); // обновляем все объекты товаров корзины с помощью update(), у которых поле usualProductId равно полю productId(id обычного товара,который взяли из тела запроса),обновляем у них поле rating на значение поля rating(параметр этой функции updateProductCartRating,то есть это тот новый rating,который взяли из тела запроса)
+
+        }
+
+        return productsCartFounded; // возвращаем из этой функции updateProductCartRating массив найденных товаров корзины(если он пустой,то значение будет null)
 
 
     }

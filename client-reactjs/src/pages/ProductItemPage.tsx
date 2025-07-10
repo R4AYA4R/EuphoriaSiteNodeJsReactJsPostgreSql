@@ -3,8 +3,8 @@ import SectionUnderTopProductPage from "../components/SectionUnderTopProductPage
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { IComment, ICommentResponse, IProduct } from "../types/types";
+import axios, { AxiosResponse } from "axios";
+import { IComment, ICommentResponse, IProduct, IProductCart, IProductsCartResponse, IRequestUpdateRating } from "../types/types";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ProductItemPageItemBlock from "../components/ProductItemPageItemBlock";
 import ProductItemPageReviewItem from "../components/ProductItemPageReviewItem";
@@ -24,7 +24,33 @@ const ProductItemPage = () => {
     const [totalPages, setTotalPages] = useState(0); // указываем состояние totalPages в данном случае для общего количества страниц
 
 
-    const { user,isLoading:isLoadingUser } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
+    const { user, isLoading: isLoadingUser } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
+
+    // указываем в этой функции запроса на сервер для получения массива товаров корзины такой же queryKey как и на странице Cart.tsx,чтобы эти данные кешировались и можно было переобновить их на этой странице,чтобы они переобновились сразу же и для страницы Cart.tsx,но здесь уже не указываем параметры для этого запроса и дополнительную логику для пагинации товаров корзины,так как здесь не нужна пагинация,а основной запрос на получение товаров корзины работает также без пагинации,сделали так на бэкэнде
+    const { data: dataProductsCart, refetch: refetchProductsCart } = useQuery({
+        queryKey: ['getAllProductsCart'], // указываем название
+        queryFn: async () => {
+
+            // если user.id true,то есть id у user есть,то делаем запрос на сервер,делаем эту проверку,чтобы шел запрос на сервер на получение массива объектов товаров корзины только когда user.id true(то есть пользователь авторизован),в другом случае возвращаем null,делаем так,чтобы не выдавало ошибку на сервере,что user.id undefined,а возвращаем null,чтобы не выдавало ошибку,что query data(данные из функции запроса на сервер с помощью useQuery) не может быть undefined
+            if (user.id) {
+
+                const response = await axios.get<IProductsCartResponse>(`${process.env.REACT_APP_BACKEND_URL}/api/getAllProductsCart?userId=${user.id}`); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductsCartResponse),указываем query параметр userId со значением id пользователя,чтобы получать товары корзины для конкретного авторизованного пользователя,вынесли основной url до бэкэнда в переменную окружения REACT_APP_BACKEND_URL в файле .env
+
+                console.log(response.data);
+
+                return response.data; // возвращаем конкретный уже объект ответа от сервера(response.data),в нем будет объект массивов объектов товаров корзины(allProductsCartForUser и productsCartForPagination),который мы берем из этого useQuery
+
+
+            } else {
+
+                return null;
+
+            }
+
+
+        }
+    })
+
 
     // функция для post запроса на сервер с помощью useMutation(react query(сейчас уже tanstack query)),создаем комментарий на сервере,берем mutate у useMutation,чтобы потом вызвать эту функцию запроса на сервер в нужный момент
     const { mutate } = useMutation({
@@ -54,8 +80,8 @@ const ProductItemPage = () => {
         mutationKey: ['updateProductRating'],
         mutationFn: async (product: IProduct) => {
 
-            // делаем put запрос на сервер для обновления данных на сервере,указываем тип данных,которые нужно добавить(обновить) на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,в объекте тела запроса передаем параметр productId со значением product.id(id объекта товара,который мы передадим в эту функцию запроса на сервер для обновления данных товара(mutateProductRating())),а также поле rating со значением product.rating(поле rating у объекта product,который мы передадим в эту функцию запроса на сервер для обновления данных товара(mutateProductRating()))
-            await axios.put<IProduct>(`${process.env.REACT_APP_BACKEND_URL}/api/updateProductRating`, { productId: product.id, rating: product.rating });
+            // делаем put запрос на сервер для обновления данных на сервере,указываем тип данных,которые нужно добавить(обновить) на сервер(в данном случае IRequestUpdateRating(тип для объекта с полями productId и rating)),вторым параметром в generic тут указываем какой ответ придет от сервера,но здесь не обязательно указывать тип,в объекте тела запроса передаем параметр productId со значением product.id(id объекта товара,который мы передадим в эту функцию запроса на сервер для обновления данных товара(mutateProductRating())),а также поле rating со значением product.rating(поле rating у объекта product,который мы передадим в эту функцию запроса на сервер для обновления данных товара(mutateProductRating()))
+            await axios.put<IRequestUpdateRating>(`${process.env.REACT_APP_BACKEND_URL}/api/updateProductRating`, { productId: product.id, rating: product.rating });
 
         },
 
@@ -71,6 +97,26 @@ const ProductItemPage = () => {
         }
 
     })
+
+    // описываем запрос на сервер для обновления рейтинга товаров корзины,чтобы когда обновлялись комментарии и рейтинг обычного товара каталога,то обновлялся и рейтинг этого же товара в корзине у всех пользователей,у которых он есть,если так не сделать,то рейтинг товара корзины не будет обновляться при обновлении комментариев и рейтинга обычного товара каталога
+    const { mutate: mutateProductCartRating } = useMutation({
+        mutationKey: ['updateProductCartRating'],
+        mutationFn: async (product: IProduct) => {
+
+            // делаем put запрос на сервер для обновления данных на сервере,указываем тип данных,которые нужно добавить(обновить) на сервер(в данном случае IRequestUpdateRating(тип для объекта с полями productId и rating)),вторым параметром в generic тут указываем какой ответ придет от сервера,указываем,что придет объект типа AxiosResponse,в котором будет поле data с типом IProductCart[] | null,но здесь не обязательно указывать тип,в объекте тела запроса передаем параметр productId со значением product.id(id объекта товара,который мы передадим в эту функцию запроса на сервер для обновления данных товара(mutateProductRating())),а также поле rating со значением product.rating(поле rating у объекта product,который мы передадим в эту функцию запроса на сервер для обновления данных товара(mutateProductRating()))
+            await axios.put<IRequestUpdateRating, AxiosResponse<IProductCart[] | null>>(`${process.env.REACT_APP_BACKEND_URL}/api/updateProductCartRating`, { productId: product.id, rating: product.rating });
+
+        },
+
+        // при успешной мутации(изменения) рейтинга,переобновляем массив товаров корзины
+        onSuccess() {
+
+            refetchProductsCart();
+
+        }
+
+    })
+
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу
 
@@ -137,7 +183,7 @@ const ProductItemPage = () => {
     })
 
     // скопировали этот запрос на сервер из файла sectionNewArrivals,и указали такой же queryKey как и там,чтобы при изменении рейтинга у товара переобновлять массив товаров в секции sectionNewArrivals
-    const { data:dataNewArrivals, refetch:refetchNewArrivals } = useQuery({
+    const { data: dataNewArrivals, refetch: refetchNewArrivals } = useQuery({
         queryKey: ['getProductsNewArrivals'], // указываем название
         queryFn: async () => {
 
@@ -151,7 +197,7 @@ const ProductItemPage = () => {
     })
 
     // указываем такой же queryKey как и в секции sectionNewArrivals для получения всех комментариев,чтобы при изменении комментариев у товара на странице ProductItemPage переобновлять массив комментариев в секции sectionNewArrivals
-    const { data:dataCommentsArrivals,refetch:refetchCommentsArrivals } = useQuery({
+    const { data: dataCommentsArrivals, refetch: refetchCommentsArrivals } = useQuery({
         queryKey: ['commentsForProduct'], // указываем название
         queryFn: async () => {
 
@@ -201,16 +247,16 @@ const ProductItemPage = () => {
         const commentsRating = dataComments?.allCommentsForProduct.reduce((prev, curr) => prev + curr.rating, 0) // проходимся по массиву объектов комментариев для товара на этой странице и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).rating ,это чтобы посчитать общую сумму всего рейтинга от каждого комментария и потом вывести среднее значение
 
         // если commentsRating true(эта переменная есть и равна чему-то) и dataComments?.allCommentsForProduct.length true(этот массив отфильтрованных комментариев для товара на этой странице есть), и isFetching false(то есть сейчас не грузится запрос на сервер на получение массива комментариев для этого товара,то есть он уже загрузился,вроде без этой проверки на isFetching тоже работает,но чтобы избежать ошибок типа что к тому моменту массив товаров еще не загрузился и тд,то лучше ее указать),то считаем средний рейтинг всех комментариев и записываем его в переменную,а потом делаем запрос на сервер для обновления рейтинга у объекта товара в базе данных
-        if(commentsRating && dataComments?.allCommentsForProduct.length && !isFetching){
+        if (commentsRating && dataComments?.allCommentsForProduct.length && !isFetching) {
 
             const commentsRatingMiddle = commentsRating / dataComments?.allCommentsForProduct.length; // считаем средний рейтинг всех комментариев,делим commentsRating(общая сумма рейтинга от каждого комментария) на dataComments?.allCommentsForProduct.length(длину массива комментариев для этого товара)
 
-            mutateProductRating({...data?.data, rating:commentsRatingMiddle} as IProduct); // делаем запрос на изменение рейтинга у товара,разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle,указываем тип этому объекту как тип на основе нашего интерфейса IProduct(в данном случае делаем это,так как выдает ошибку,что id и другие поля могут быть undefined)
+            mutateProductRating({ ...data?.data, rating: commentsRatingMiddle } as IProduct); // делаем запрос на изменение рейтинга у товара,разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle,указываем тип этому объекту как тип на основе нашего интерфейса IProduct(в данном случае делаем это,так как выдает ошибку,что id и другие поля могут быть undefined)
 
-            // здесь еще надо будет обновлять рейтинг товара корзины
+            mutateProductCartRating({...data?.data,rating:commentsRatingMiddle} as IProduct); // делаем запрос на обновление рейтинга товара корзины,также как и с рейтингом обычного товара каталога выше в коде
 
         }
-        
+
 
         refetchComments();
 
@@ -359,7 +405,7 @@ const ProductItemPage = () => {
             <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionProductItemPage sectionCatalog__active " : "sectionCatalog sectionProductItemPage"} ref={sectionCatalog}>
 
                 {/* вынесли блок с информацией о товаре и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара),также передаем поле pathname(url страницы),чтобы потом при его изменении изменять значение количества товара,так как оно находится в этом компоненте ProductItemPageItemBlock,указываем именно таким образом pathname={pathname},иначе выдает ошибку типов,передаем функцию refetch для переобновления данных товара(повторный запрос на сервер для переобновления данных товара) и указываем ему название как refetchProduct(просто название этого пропса(параметра)) */}
-                <ProductItemPageItemBlock product={data?.data} pathname={pathname} comments={dataComments?.allCommentsForProduct}/>
+                <ProductItemPageItemBlock product={data?.data} pathname={pathname} comments={dataComments?.allCommentsForProduct} />
 
                 {/* указываем здесь контейнер,так как для блока ProductItemPageItemBlock нужен контейнер в отдельной его части по такому дизайну */}
                 <div className="container">

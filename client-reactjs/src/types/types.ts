@@ -121,3 +121,9 @@ export interface IProductsCartResponse{
 export interface ICartInitialState{
     updateProductsCart:boolean
 }
+
+// создаем тип для данных,которые будем передавать в put запросе на обновление рейтинга товара обычного и товаров корзин
+export interface IRequestUpdateRating{
+    productId:number,
+    rating:number
+}
