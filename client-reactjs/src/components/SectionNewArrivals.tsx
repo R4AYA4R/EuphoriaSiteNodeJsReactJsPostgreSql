@@ -2,14 +2,17 @@ import { RefObject, useRef } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { ICommentResponse, IProduct } from "../types/types";
+import { ICommentResponse, IProduct, IProductsCartResponse } from "../types/types";
 import ProductItemArrivals from "./ProductItemArrivals";
+import { useTypedSelector } from "../hooks/useTypedSelector";
 
 const SectionNewArrivals = () => {
 
     const sectionCategories = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
     const onScreen = useIsOnScreen(sectionCategories as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
+
+    const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
     const { data } = useQuery({
@@ -39,6 +42,31 @@ const SectionNewArrivals = () => {
         }
     })
 
+    // указываем в этой функции запроса на сервер для получения массива товаров корзины такой же queryKey как и на странице Cart.tsx,чтобы эти данные кешировались и можно было переобновить их на этой странице,чтобы они переобновились сразу же и для страницы Cart.tsx,но здесь уже не указываем параметры для этого запроса и дополнительную логику для пагинации товаров корзины,так как здесь не нужна пагинация,а основной запрос на получение товаров корзины работает также без пагинации,сделали так на бэкэнде
+    const { data: dataProductsCart, refetch: refetchProductsCart, isFetching } = useQuery({
+        queryKey: ['getAllProductsCart'], // указываем название
+        queryFn: async () => {
+
+            // если user.id true,то есть id у user есть,то делаем запрос на сервер,делаем эту проверку,чтобы шел запрос на сервер на получение массива объектов товаров корзины только когда user.id true(то есть пользователь авторизован),в другом случае возвращаем null,делаем так,чтобы не выдавало ошибку на сервере,что user.id undefined,а возвращаем null,чтобы не выдавало ошибку,что query data(данные из функции запроса на сервер с помощью useQuery) не может быть undefined
+            if (user.id) {
+
+                const response = await axios.get<IProductsCartResponse>(`${process.env.REACT_APP_BACKEND_URL}/api/getAllProductsCart?userId=${user.id}`,); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductsCartResponse),указываем query параметр userId со значением id пользователя,чтобы получать товары корзины для конкретного авторизованного пользователя,вынесли основной url до бэкэнда в переменную окружения REACT_APP_BACKEND_URL в файле .env
+
+                console.log(response.data);
+
+                return response.data; // возвращаем конкретный уже объект ответа от сервера(response.data),в нем будет объект массивов объектов товаров корзины(allProductsCartForUser и productsCartForPagination),который мы берем из этого useQuery
+
+
+            } else {
+
+                return null;
+
+            }
+
+
+        }
+    })
+
 
     return (
         <section id="sectionCategories" className={onScreen.sectionCategoriesIntersecting ? "sectionCategories sectionCategories__active sectionNewArrivals" : "sectionCategories sectionNewArrivals"} ref={sectionCategories}>
@@ -52,7 +80,7 @@ const SectionNewArrivals = () => {
 
                         {/* проходимся по массиву товаров,который пришел от сервера и выводим карточки товаров */}
                         {data?.data.map((product)=>
-                            <ProductItemArrivals key={product.id} product={product} comments={dataComments?.allComments}/>
+                            <ProductItemArrivals key={product.id} product={product} comments={dataComments?.allComments} dataProductsCart={dataProductsCart} refetchProductsCart={refetchProductsCart}/>
                         )}
                         
                     </div>

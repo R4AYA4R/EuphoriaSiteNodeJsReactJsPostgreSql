@@ -4,7 +4,7 @@ import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import ReactSlider from "react-slider"; // импортируем ReactSlider из 'react-slider' вручную,так как автоматически не импортируется(в данном случае автоматически импортировалось),перед этим устанавливаем(npm install --save-dev @types/react-slider --force( указываем --force,чтобы установить эту библиотеку через силу,так как для версии react 19,выдает ошибку при установке этой библиотеки) типы для react-slider,иначе выдает ошибку,если ошибка сохраняется,что typescript не может найти типы для ReactSlider,после того,как установили для него типы,то надо закрыть запущенный локальный хост для нашего сайта в терминале и заново его запустить с помощью npm start
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
-import { ICommentResponse, IProduct, IProductsCatalogResponse } from "../types/types";
+import { ICommentResponse, IProduct, IProductsCartResponse, IProductsCatalogResponse } from "../types/types";
 import ProductItemCatalog from "../components/ProductItemCatalog";
 import { getPagesArray } from "../utils/getPagesArray";
 import { useTypedSelector } from "../hooks/useTypedSelector";
@@ -28,6 +28,8 @@ const Catalog = () => {
     const [page, setPage] = useState(1); // указываем состояние текущей страницы
 
     const [totalPages, setTotalPages] = useState(0); // указываем состояние totalPages в данном случае для общего количества страниц
+
+    const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
 
     const [filteredLongSleeves, setFilteredLongSleeves] = useState<IProduct[]>([]); // состояние для отфильтрованного массива по категориям,чтобы показывать количество товаров в определенной категории,указываем в generic тип IProduct[] | undefined,иначе выдает ошибку
@@ -152,6 +154,32 @@ const Catalog = () => {
 
         }
     })
+
+    // указываем в этой функции запроса на сервер для получения массива товаров корзины такой же queryKey как и на странице Cart.tsx,чтобы эти данные кешировались и можно было переобновить их на этой странице,чтобы они переобновились сразу же и для страницы Cart.tsx,но здесь уже не указываем параметры для этого запроса и дополнительную логику для пагинации товаров корзины,так как здесь не нужна пагинация,а основной запрос на получение товаров корзины работает также без пагинации,сделали так на бэкэнде
+    const { data: dataProductsCart, refetch: refetchProductsCart } = useQuery({
+        queryKey: ['getAllProductsCart'], // указываем название
+        queryFn: async () => {
+
+            // если user.id true,то есть id у user есть,то делаем запрос на сервер,делаем эту проверку,чтобы шел запрос на сервер на получение массива объектов товаров корзины только когда user.id true(то есть пользователь авторизован),в другом случае возвращаем null,делаем так,чтобы не выдавало ошибку на сервере,что user.id undefined,а возвращаем null,чтобы не выдавало ошибку,что query data(данные из функции запроса на сервер с помощью useQuery) не может быть undefined
+            if (user.id) {
+
+                const response = await axios.get<IProductsCartResponse>(`${process.env.REACT_APP_BACKEND_URL}/api/getAllProductsCart?userId=${user.id}`,); // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductsCartResponse),указываем query параметр userId со значением id пользователя,чтобы получать товары корзины для конкретного авторизованного пользователя,вынесли основной url до бэкэнда в переменную окружения REACT_APP_BACKEND_URL в файле .env
+
+                console.log(response.data);
+
+                return response.data; // возвращаем конкретный уже объект ответа от сервера(response.data),в нем будет объект массивов объектов товаров корзины(allProductsCartForUser и productsCartForPagination),который мы берем из этого useQuery
+
+
+            } else {
+
+                return null;
+
+            }
+
+
+        }
+    })
+
 
     const [searchValue, setSearchValue] = useState(''); // состояние для инпута поиска
 
@@ -708,7 +736,7 @@ const Catalog = () => {
 
                                     {data?.products.rows.map((product) =>
 
-                                        <ProductItemCatalog key={product.id} product={product} comments={dataComments?.allComments}/>
+                                        <ProductItemCatalog key={product.id} product={product} comments={dataComments?.allComments} dataProductsCart={dataProductsCart} refetchProductsCart={refetchProductsCart}/>
 
                                     )}
 

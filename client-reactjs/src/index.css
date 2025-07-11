@@ -1105,6 +1105,10 @@ a {
     position: relative;
 }
 
+.sectionCatalog__item-textAlreadyInCart{
+    margin-bottom: 10px;
+}
+
 .searchBlock__inputBlock-input {
     padding: 12px 20px 12px 52px;
     border-radius: 8px;
@@ -1492,7 +1496,12 @@ a {
 }
 
 .sectionNewArrivals__item-cartBlock {
-    margin-top: 20px;
+    margin-top: 10px;
+}
+
+.sectionNewArrivals__item-textAlreadyInCart{
+    margin-top: 10px;
+    display: inline-block;
 }
 
 .sectionProductItemPage__rightBlock-btnCart {
@@ -2457,3 +2466,4 @@ a {
     font-size: 16px;
     font-weight: 700;
 }
+
