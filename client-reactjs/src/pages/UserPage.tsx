@@ -4,7 +4,7 @@ import UserPageFormComponent from "../components/UserPageFormComponent";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse } from "../types/types";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
@@ -16,6 +16,12 @@ const UserPage = () => {
     const { setLoadingUser, authorizationForUser, logoutUser } = useActions();  // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
     const [tab, setTab] = useState('Dashboard');
+
+    const [inputNameAccSettings, setInputNameAccSettings] = useState('');
+
+    const [inputEmailAccSettings, setInputEmailAccSettings] = useState('');
+
+    const [errorAccSettings, setErrorAccSettings] = useState('');
 
     const checkAuth = async () => {
 
@@ -76,12 +82,55 @@ const UserPage = () => {
 
             setTab('Dashboard');  // изменяем состояние таба на dashboard то есть показываем секцию dashboard(в данном случае главный отдел пользователя),чтобы при выходе из аккаунта и входе обратно у пользователя был открыт главный отдел аккаунта,а не настройки или последний отдел,который пользователь открыл до выхода из аккаунта
 
+            // очищаем поля инпутов форм для изменения данных пользователя
+            setInputEmailAccSettings(''); // изменяем состояние инпута почты на пустую строку,чтобы когда пользователь выходил из аккаунта очищался инпут почты,иначе,когда пользователь выйдет из аккаунта и войдет обратно,то в инпуте почты может быть текст,который он до этого там вводил
+
+            setInputNameAccSettings(''); // изменяем состояние инпута имени на пустую строку,чтобы когда пользователь выходил из аккаунта очищался инпут имени,иначе,когда пользователь выйдет из аккаунта и войдет обратно,то в инпуте имени может быть текст,который он до этого там вводил
+
+            setErrorAccSettings(''); // изменяем состояние ошибки формы изменения данных пользователя на пустую строку,чтобы когда пользователь выходил из аккаунта убиралась ошибка,даже если она там была,иначе,когда пользователь выйдет из аккаунта и войдет обратно,то может показываться ошибка,которую пользователь до этого получил
+
             // потом еще будем очищать поля формы настроек пользователя и поля формы создания нового товара для админа
 
 
         } catch (e: any) {
 
             console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e
+
+        }
+
+    }
+
+    // функция для формы изменения имени и почты пользователя,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const onSubmitAccSettings = async (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+        // если inputEmailAccSettings.trim() не равно пустой строке(то есть в inputEmailAccSettings,отфильтрованном по пробелам, есть какое-то значение) или inputNameAccSettings.trim() не равно пустой строке(то есть в inputNameAccSettings(отфильтрованное по пробелам с помощью trim()) есть какое-то значение), то делаем запрос на сервер для изменения данных пользователя,если же в поля инпутов имени или почты пользователь ничего не ввел,то не будет отправлен запрос
+        if(inputEmailAccSettings.trim() !== '' || inputNameAccSettings.trim() !== ''){
+
+            // оборачиваем в try catch для отлавливания ошибок
+            try{
+
+                let name = inputNameAccSettings.trim(); // помещаем в переменную значение инпута имени и убираем у него пробелы с помощю trim() (указываем ей именно let,чтобы можно было изменять ее значение)
+
+                // если name true(то есть в name есть какое-то значение),то изменяем первую букву этой строки инпута имени на первую букву этой строки инпута имени только в верхнем регистре,делаем эту проверку,иначе ошибка,так как пользователь может не ввести значение в инпут имени и тогда будет ошибка при изменении первой буквы инпута имени
+                if(name){
+
+                    name = name.replace(name[0], name[0].toUpperCase());  // заменяем первую букву этой строки инпута имени на первую букву этой строки инпута имени только в верхнем регистре,чтобы имя начиналось с большой буквы,даже если написали с маленькой
+
+                }
+
+                // дальше будем делать запрос на севрер для изменения данных пользователя и тд
+
+
+
+            }catch(e:any){
+
+                console.log(e.response?.data?.message); // выводим ошибку в логи
+
+                return setErrorAccSettings(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+
+            }
 
         }
 
@@ -122,7 +171,7 @@ const UserPage = () => {
     return (
         <main className="main">
 
-            <SectionUnderTop subtext="My Account"/> {/* указываем пропс(параметр) subtext(в данном случае со значением My Account,чтобы отобразить в этой секции текст My Account,так как это для страницы аккаунта пользователя),чтобы использовать этот компонент на разных страницах,а отличаться он будет только этим параметром subtext */}
+            <SectionUnderTop subtext="My Account" /> {/* указываем пропс(параметр) subtext(в данном случае со значением My Account,чтобы отобразить в этой секции текст My Account,так как это для страницы аккаунта пользователя),чтобы использовать этот компонент на разных страницах,а отличаться он будет только этим параметром subtext */}
 
             <section className="sectionUserPage">
                 <div className="container">
@@ -193,7 +242,26 @@ const UserPage = () => {
                             {user.role === 'USER' && tab === 'Account Settings' &&
                                 <div className="sectionUserPage__mainBlock-inner">
 
-                                    account settings {user.userName}
+                                    <form className="sectionUserPage__mainBlock-formInfo" onSubmit={onSubmitAccSettings}>
+                                        <h2 className="sectionUserPage__formInfo-title">Account Settings</h2>
+                                        <div className="sectionUserPage__formInfo-mainBlock">
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Name</p>
+                                                <input type="text" className="signInForm__inputEmailBlock-input sectionUserPage__formInfo-itemInput" placeholder={`${user.userName}`} value={inputNameAccSettings} onChange={(e) => setInputNameAccSettings(e.target.value)} />
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Email</p>
+                                                <input type="text" className="signInForm__inputEmailBlock-input sectionUserPage__formInfo-itemInput" placeholder={`${user.email}`} value={inputEmailAccSettings} onChange={(e) => setInputEmailAccSettings(e.target.value)}/>
+                                            </div>
+
+                                            {/* если errorAccSettings true(то есть в состоянии errorAccSettings что-то есть),то показываем текст ошибки */}
+                                            {errorAccSettings && <p className="formErrorText">{errorAccSettings}</p>}
+
+                                            {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
+                                            <button className="signInForm__btn sectionUserPage__formInfo-btn" type="submit">Save Changes</button>
+
+                                        </div>
+                                    </form>
 
                                 </div>
                             }
