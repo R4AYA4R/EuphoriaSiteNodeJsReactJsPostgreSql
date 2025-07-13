@@ -7,13 +7,14 @@ import { AuthResponse } from "../types/types";
 import { FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
+import $api from "../http/http";
 
 
 const UserPage = () => {
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
-    const { setLoadingUser, authorizationForUser, logoutUser } = useActions();  // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { setLoadingUser, authorizationForUser, logoutUser, setUser } = useActions();  // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
     const [tab, setTab] = useState('Dashboard');
 
@@ -22,6 +23,13 @@ const UserPage = () => {
     const [inputEmailAccSettings, setInputEmailAccSettings] = useState('');
 
     const [errorAccSettings, setErrorAccSettings] = useState('');
+
+    // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь,также можно это сделать было через useMutation с помощью react query,но так как мы в данном случае обрабатываем ошибки от сервера вручную,то сделали так
+    const changeAccInfoInDb = async (userId: number, name: string, email: string) => {
+
+        return $api.put('/changeAccInfo', { userId, name, email }); // возвращаем put запрос на сервер на эндпоинт /changeAccInfo для изменения данных пользователя и передаем вторым параметром объект с полями,используем здесь наш axios с определенными настройками,которые мы задали ему в файле http,чтобы правильно работали запросы на authMiddleware на проверку на access токен на бэкэнде,чтобы когда будет ошибка от бэкэнда от authMiddleware,то будет сразу идти повторный запрос на /refresh на бэкэнде для переобновления access токена и refresh токена(refresh и access токен будут обновляться только если текущий refresh токен еще годен по сроку годности,мы это прописали в функции у эндпоинта /refresh на бэкэнде) и опять будет идти запрос на изменение данных пользователя в базе данных(на /changeAccInfo в данном случае) но уже с переобновленным access токеном,который теперь действителен(это чтобы предотвратить доступ к аккаунту мошенникам,если они украли аккаунт,то есть если access токен будет не действителен уже,то будет запрос на /refresh для переобновления refresh и access токенов, и тогда у мошенников уже будут не действительные токены и они не смогут пользоваться аккаунтом,но если текущий refresh токен тоже будет не действителен,то будет ошибка,и пользователь не сможет получить доступ к этой функции(изменения данных пользователя в данном случае),пока заново не войдет в аккаунт)
+
+    }
 
     const checkAuth = async () => {
 
@@ -106,25 +114,33 @@ const UserPage = () => {
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
         // если inputEmailAccSettings.trim() не равно пустой строке(то есть в inputEmailAccSettings,отфильтрованном по пробелам, есть какое-то значение) или inputNameAccSettings.trim() не равно пустой строке(то есть в inputNameAccSettings(отфильтрованное по пробелам с помощью trim()) есть какое-то значение), то делаем запрос на сервер для изменения данных пользователя,если же в поля инпутов имени или почты пользователь ничего не ввел,то не будет отправлен запрос
-        if(inputEmailAccSettings.trim() !== '' || inputNameAccSettings.trim() !== ''){
+        if (inputEmailAccSettings.trim() !== '' || inputNameAccSettings.trim() !== '') {
 
             // оборачиваем в try catch для отлавливания ошибок
-            try{
+            try {
 
                 let name = inputNameAccSettings.trim(); // помещаем в переменную значение инпута имени и убираем у него пробелы с помощю trim() (указываем ей именно let,чтобы можно было изменять ее значение)
 
                 // если name true(то есть в name есть какое-то значение),то изменяем первую букву этой строки инпута имени на первую букву этой строки инпута имени только в верхнем регистре,делаем эту проверку,иначе ошибка,так как пользователь может не ввести значение в инпут имени и тогда будет ошибка при изменении первой буквы инпута имени
-                if(name){
+                if (name) {
 
                     name = name.replace(name[0], name[0].toUpperCase());  // заменяем первую букву этой строки инпута имени на первую букву этой строки инпута имени только в верхнем регистре,чтобы имя начиналось с большой буквы,даже если написали с маленькой
 
                 }
 
-                // дальше будем делать запрос на севрер для изменения данных пользователя и тд
+                const response = await changeAccInfoInDb(user.id, name, inputEmailAccSettings); // вызываем нашу функцию запроса на сервер для изменения данных пользователя,передаем туда user.id(id пользователя) и инпуты имени(в данном случае вынесли его в переменную name,чтобы убрать из него пробелы и сделать первую букву заглавной) и почты
+
+                setUser(response.data); // изменяем сразу объект пользователя на данные,которые пришли от сервера,чтобы не надо было обновлять страницу для обновления данных
 
 
+                setErrorAccSettings(''); // изменяем состояние ошибки на пустую строку,то есть убираем ошибку
 
-            }catch(e:any){
+                setInputEmailAccSettings(''); // изменяем состояние инпута почты на пустую строку,чтобы убирался текст в инпуте почты после успешного запроса
+
+                setInputNameAccSettings(''); // изменяем состояние инпута имени на пустую строку,чтобы убирался текст в инпуте имени после успешного запроса
+
+
+            } catch (e: any) {
 
                 console.log(e.response?.data?.message); // выводим ошибку в логи
 
@@ -251,7 +267,7 @@ const UserPage = () => {
                                             </div>
                                             <div className="sectionUserPage__formInfo-item">
                                                 <p className="sectionUserPage__formInfo-itemText">Email</p>
-                                                <input type="text" className="signInForm__inputEmailBlock-input sectionUserPage__formInfo-itemInput" placeholder={`${user.email}`} value={inputEmailAccSettings} onChange={(e) => setInputEmailAccSettings(e.target.value)}/>
+                                                <input type="text" className="signInForm__inputEmailBlock-input sectionUserPage__formInfo-itemInput" placeholder={`${user.email}`} value={inputEmailAccSettings} onChange={(e) => setInputEmailAccSettings(e.target.value)} />
                                             </div>
 
                                             {/* если errorAccSettings true(то есть в состоянии errorAccSettings что-то есть),то показываем текст ошибки */}

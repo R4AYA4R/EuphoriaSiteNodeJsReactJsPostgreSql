@@ -50,6 +50,13 @@ export const userSlice = createSlice({
 
         },
 
+        // указываем тип данных для action payload как PayloadAction и в generic указываем тип IUser(так как мы будем передавать потом в этот action параметр объект с типом IUser)
+        setUser:(state,action:PayloadAction<IUser>)=>{
+
+            state.user = action.payload;  // изменяем объект пользователя на action.payload(данные пользователя,которые пришли от сервера)
+
+        },
+
     }
 
 })
