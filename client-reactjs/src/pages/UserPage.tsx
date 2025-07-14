@@ -24,7 +24,23 @@ const UserPage = () => {
 
     const [errorAccSettings, setErrorAccSettings] = useState('');
 
-    // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь,также можно это сделать было через useMutation с помощью react query,но так как мы в данном случае обрабатываем ошибки от сервера вручную,то сделали так
+
+    const [inputCurrentPassword, setInputCurrentPassword] = useState('');
+
+    const [inputNewPassword, setInputNewPassword] = useState('');
+
+    const [inputConfirmPassword, setInputConfirmPassword] = useState('');
+
+    const [hideInputCurrentPass, setHideInputCurrentPass] = useState(true);
+
+    const [hideInputNewPass, setHideInputNewPass] = useState(true);
+
+    const [hideInputConfirmPass, setHideInputConfirmPass] = useState(true);
+
+    const [errorChangePass, setErrorChangePass] = useState('');
+
+
+    // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь,также можно это сделать было через useMutation с помощью react query(tanstack query),но так как мы в данном случае обрабатываем ошибки от сервера вручную,то сделали так
     const changeAccInfoInDb = async (userId: number, name: string, email: string) => {
 
         return $api.put('/changeAccInfo', { userId, name, email }); // возвращаем put запрос на сервер на эндпоинт /changeAccInfo для изменения данных пользователя и передаем вторым параметром объект с полями,используем здесь наш axios с определенными настройками,которые мы задали ему в файле http,чтобы правильно работали запросы на authMiddleware на проверку на access токен на бэкэнде,чтобы когда будет ошибка от бэкэнда от authMiddleware,то будет сразу идти повторный запрос на /refresh на бэкэнде для переобновления access токена и refresh токена(refresh и access токен будут обновляться только если текущий refresh токен еще годен по сроку годности,мы это прописали в функции у эндпоинта /refresh на бэкэнде) и опять будет идти запрос на изменение данных пользователя в базе данных(на /changeAccInfo в данном случае) но уже с переобновленным access токеном,который теперь действителен(это чтобы предотвратить доступ к аккаунту мошенникам,если они украли аккаунт,то есть если access токен будет не действителен уже,то будет запрос на /refresh для переобновления refresh и access токенов, и тогда у мошенников уже будут не действительные токены и они не смогут пользоваться аккаунтом,но если текущий refresh токен тоже будет не действителен,то будет ошибка,и пользователь не сможет получить доступ к этой функции(изменения данных пользователя в данном случае),пока заново не войдет в аккаунт)
@@ -97,6 +113,18 @@ const UserPage = () => {
 
             setErrorAccSettings(''); // изменяем состояние ошибки формы изменения данных пользователя на пустую строку,чтобы когда пользователь выходил из аккаунта убиралась ошибка,даже если она там была,иначе,когда пользователь выйдет из аккаунта и войдет обратно,то может показываться ошибка,которую пользователь до этого получил
 
+            setErrorChangePass('');  // изменяем состояние ошибки в форме для изменения пароля пользователя на пустую строку,то есть убираем ошибку 
+
+            // изменяем состояния инпутов на пустые строки(то есть убираем у них значения)
+            setInputCurrentPassword('');
+            setInputNewPassword('');
+            setInputConfirmPassword('');
+
+            // изменяем значения состояний для типов инпутов(чтобы менять инпутам тип на password или text при нажатии на кнопку скрытия или показа пароля) у формы для изменения пароля пользователя,чтобы когда пользователь выходил из аккаунта эти состояния опять принимали дефолтное значение(то есть скрывали текст пароля изначально),иначе,когда пользователь выйдет из аккаунта и войдет обратно,то могут по-разному отображаться инпуты для паролей,какие-то скрыты,какие-то открыты,в зависимости от того,что пользователь до этого нажимал
+            setHideInputCurrentPass(true);
+            setHideInputNewPass(true);
+            setHideInputConfirmPass(true);
+
             // потом еще будем очищать поля формы настроек пользователя и поля формы создания нового товара для админа
 
 
@@ -151,6 +179,57 @@ const UserPage = () => {
         }
 
     }
+
+    // функция для формы изменения пароля пользователя,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const onSubmitChangePassForm = async (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+        // если инпут текущего пароля равен пустой строке,то показываем ошибку
+        if (inputCurrentPassword === '') {
+
+            setErrorChangePass('Enter current password');
+
+        } else if (inputNewPassword.length < 3 || inputNewPassword.length > 32) {
+            // если инпут нового пароля по длине(по количеству символов) меньше 3 или больше 32,то показываем ошибку
+            setErrorChangePass('New password must be 3 - 32 characters');
+
+        } else if (inputNewPassword !== inputConfirmPassword) {
+            // если значение инпута нового пароля не равно значению инпута подтвержденного пароля,то показываем ошибку
+            setErrorChangePass('Passwords don`t match');
+
+        } else {
+
+            // оборачиваем в try catch для отлавливания ошибок
+            try {
+
+
+                // здесь будем делать запрос на сервер
+
+                setErrorChangePass('');  // изменяем состояние ошибки в форме для изменения пароля пользователя на пустую строку,то есть убираем ошибку 
+
+                // изменяем состояния инпутов на пустые строки(то есть убираем у них значения)
+                setInputCurrentPassword('');
+                setInputNewPassword('');
+                setInputConfirmPassword('');
+
+                // изменяем значения состояний для типов инпутов(чтобы менять инпутам тип на password или text при нажатии на кнопку скрытия или показа пароля) у формы для изменения пароля пользователя,чтобы после успешного запроса на сервер для изменения пароля пользователя эти состояния опять принимали дефолтное значение(то есть скрывали текст пароля изначально)
+                setHideInputCurrentPass(true);
+                setHideInputNewPass(true);
+                setHideInputConfirmPass(true);
+
+            } catch (e: any) {
+
+                console.log(e.response?.data?.message); // выводим ошибку в логи
+
+                return setErrorChangePass(e.response?.data?.message);  // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+
+            }
+
+        }
+
+    }
+
 
     // если состояние загрузки true,то есть идет загрузка запроса на сервер для проверки,авторизован ли пользователь,то показываем лоадер(загрузку),если не отслеживать загрузку при функции checkAuth(для проверки на refresh токен при запуске страницы),то будет не правильно работать(только через некоторое время,когда запрос на /refresh будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на /refresh)
     if (isLoading) {
@@ -275,6 +354,42 @@ const UserPage = () => {
 
                                             {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
                                             <button className="signInForm__btn sectionUserPage__formInfo-btn" type="submit">Save Changes</button>
+
+                                        </div>
+                                    </form>
+
+                                    <form className="sectionUserPage__mainBlock-formInfo sectionUserPage__mainBlock-formChangePass" onSubmit={onSubmitChangePassForm}>
+                                        <h2 className="sectionUserPage__formInfo-title">Change Password</h2>
+                                        <div className="sectionUserPage__formInfo-mainBlock">
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Current Password</p>
+
+                                                {/* если состояние hideInputCurrentPass true,то делаем этому инпуту тип как password,в другом случае делаем тип как text,и потом по кнопке показать или скрыть пароль в инпуте для пароля таким образом его скрываем или показываем */}
+                                                <input type={hideInputCurrentPass ? "password" : "text"} className="signInForm__inputEmailBlock-input sectionUserPage__formInfo-itemInput" placeholder="Current Password" value={inputCurrentPassword} onChange={(e) => setInputCurrentPassword(e.target.value)} />
+                                                <button className="signInForm__inputEmailBlock-hideBtn formChangePass__item-hideBtn" type="button" onClick={() => setHideInputCurrentPass((prev) => !prev)}>
+                                                    <img src="/images/sectionUserPage/Icon.png" alt="" className="signInForm__inputEmailBlock-imgHide" />
+                                                </button>
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">New Password</p>
+                                                <input type={hideInputNewPass ? "password" : "text"} className="signInForm__inputEmailBlock-input sectionUserPage__formInfo-itemInput" placeholder='New Password' value={inputNewPassword} onChange={(e) => setInputNewPassword(e.target.value)} />
+                                                <button className="signInForm__inputEmailBlock-hideBtn formChangePass__item-hideBtn" type="button" onClick={() => setHideInputNewPass((prev) => !prev)}>
+                                                    <img src="/images/sectionUserPage/Icon.png" alt="" className="signInForm__inputEmailBlock-imgHide" />
+                                                </button>
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Confirm Password</p>
+                                                <input type={hideInputConfirmPass ? "password" : "text"} className="signInForm__inputEmailBlock-input sectionUserPage__formInfo-itemInput" placeholder='Confirm Password' value={inputConfirmPassword} onChange={(e) => setInputConfirmPassword(e.target.value)} />
+                                                <button className="signInForm__inputEmailBlock-hideBtn formChangePass__item-hideBtn" type="button" onClick={() => setHideInputConfirmPass((prev) => !prev)}>
+                                                    <img src="/images/sectionUserPage/Icon.png" alt="" className="signInForm__inputEmailBlock-imgHide" />
+                                                </button>
+                                            </div>
+
+                                            {/* если errorChangePass true(то есть в состоянии errorChangePass что-то есть),то показываем текст ошибки */}
+                                            {errorChangePass && <p className="formErrorText">{errorChangePass}</p>}
+
+                                            {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
+                                            <button className="signInForm__btn sectionUserPage__formInfo-btn" type="submit">Change Password</button>
 
                                         </div>
                                     </form>

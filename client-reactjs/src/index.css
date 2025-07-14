@@ -2478,6 +2478,7 @@ a {
 
 .sectionUserPage__formInfo-item{
     margin-bottom: 15px;
+    position: relative;
 }
 
 .sectionUserPage__formInfo-itemText{
@@ -2494,8 +2495,17 @@ a {
 }
 
 .sectionUserPage__formInfo-itemInput{
-    padding: 16px;
+    padding: 16px 36px 16px 16px;
     background-color: #F6F6F6;
     border:none;
     color: #807D7E;
+}
+
+.sectionUserPage__mainBlock-formChangePass{
+    margin-top: 30px;
+}
+
+.formChangePass__item-hideBtn{
+    top: 46px;
+    background-color: transparent;
 }
