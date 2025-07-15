@@ -47,6 +47,13 @@ const UserPage = () => {
 
     }
 
+    // фукнция для запроса на сервер на изменение пароля пользователя в базе данных
+    const changeAccPassInDb = async (userId: number, currentPass: string, newPass: string) => {
+
+        return $api.put('/changeAccPass', { userId, currentPass, newPass }); // возвращаем put запрос на сервер на эндпоинт /changeAccPass для изменения данных пользователя и передаем вторым параметром объект с полями,используем здесь наш axios с определенными настройками,которые мы задали ему в файле http,чтобы правильно работали запросы на authMiddleware на проверку на access токен на бэкэнде,чтобы когда будет ошибка от бэкэнда от authMiddleware,то будет сразу идти повторный запрос на /refresh на бэкэнде для переобновления access токена и refresh токена(refresh и access токен будут обновляться только если текущий refresh токен еще годен по сроку годности,мы это прописали в функции у эндпоинта /refresh на бэкэнде) и опять будет идти запрос на изменение пароля пользователя в базе данных(на /changePass в данном случае) но уже с переобновленным access токеном,который теперь действителен(это чтобы предотвратить доступ к аккаунту мошенникам,если они украли аккаунт,то есть если access токен будет не действителен уже,то будет запрос на /refresh для переобновления refresh и access токенов, и тогда у мошенников уже будут не действительные токены и они не смогут пользоваться аккаунтом,но если текущий refresh токен тоже будет не действителен,то будет ошибка,и пользователь не сможет получить доступ к этой функции(изменения данных пользователя в данном случае),пока заново не войдет в аккаунт)
+
+    }
+
     const checkAuth = async () => {
 
         setLoadingUser(true);
@@ -203,8 +210,9 @@ const UserPage = () => {
             // оборачиваем в try catch для отлавливания ошибок
             try {
 
+                const response = await changeAccPassInDb(user.id, inputCurrentPassword, inputNewPassword); // вызываем нашу функцию запроса на сервер для изменения пароля пользователя,передаем туда user.id(id пользователя) и значения инпутов текущего пароля и нового пароля
 
-                // здесь будем делать запрос на сервер
+                console.log(response.data);
 
                 setErrorChangePass('');  // изменяем состояние ошибки в форме для изменения пароля пользователя на пустую строку,то есть убираем ошибку 
 
@@ -300,7 +308,19 @@ const UserPage = () => {
 
                                 }
 
-                                {/* здесь еще надо будет добавить вкладку для админа для админ панели */}
+                                {/* если user.role === 'ADMIN'(то есть если роль пользователя равна "ADMIN"),то показываем таб с панелью для админа */}
+                                {user.role === 'ADMIN' &&
+
+                                    <li className="sectionUserPage__menu-item">
+                                        <button className={tab === 'Admin Panel' ? "sectionUserPage__menu-btn sectionUserPage__menu-btn--active" : "sectionUserPage__menu-btn"} onClick={() => setTab('Admin Panel')}>
+                                            <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="sectionUserPage__menu-btnImg" />
+                                            <p className="sectionUserPage__menu-btnText">Admin Panel</p>
+                                        </button>
+                                    </li>
+
+                                }
+
+                            
 
                             </ul>
 
@@ -325,6 +345,11 @@ const UserPage = () => {
                                         {/* если user.role === 'USER'(то есть если роль пользователя равна "USER"),то показываем кнопку, по которой можно перейти в настройки аккаунта пользователя*/}
                                         {user.role === 'USER' &&
                                             <button className="sectionUserPage__dashboard-btn" onClick={() => setTab('Account Settings')}>Edit Profile</button>
+                                        }
+
+                                        {/* если user.role === 'ADMIN'(то есть если роль пользователя равна "ADMIN"),то показываем кнопку, по которой можно перейти в панель для админа */}
+                                        {user.role === 'ADMIN' &&
+                                            <button className="sectionUserPage__dashboard-btn" onClick={() => setTab('Admin Panel')}>Go to Admin Panel</button>
                                         }
 
 
@@ -393,6 +418,15 @@ const UserPage = () => {
 
                                         </div>
                                     </form>
+
+                                </div>
+                            }
+
+                            {/* если user.role === 'ADMIN'(то есть если роль пользователя равна "ADMIN") и tab === 'Admin Panel',то показываем таб с настройками профиля пользователя */}
+                            {user.role === 'ADMIN' && tab === 'Admin Panel' &&
+                                <div className="sectionUserPage__mainBlock-inner">
+
+                                    adminPanel
 
                                 </div>
                             }
