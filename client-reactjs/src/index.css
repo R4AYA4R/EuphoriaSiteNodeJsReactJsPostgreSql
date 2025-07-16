@@ -2509,3 +2509,38 @@ a {
     top: 46px;
     background-color: transparent;
 }
+
+.adminForm__textarea{
+    background-color: #F6F6F6;
+    border:none;
+    color: #807D7E;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 0;
+}
+
+.sortBlockAdminPanel__optionsBlock--active{
+    max-height: 175px;
+}
+
+.sectionUserPage__adminFormInfo-itemCategory{
+    display: flex;
+    align-items: center;
+    gap:30px;
+}
+
+.adminForm__filterItem-sizes{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    max-width: 270px;
+}
+
+.sectionUserPage__adminForm-itemPrice{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.sectionUserPage__adminForm-inputBlockDiscount{
+    max-width: 114px;
+}

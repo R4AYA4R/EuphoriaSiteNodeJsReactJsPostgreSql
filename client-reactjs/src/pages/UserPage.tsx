@@ -4,7 +4,7 @@ import UserPageFormComponent from "../components/UserPageFormComponent";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse } from "../types/types";
-import { FormEvent, RefObject, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import $api from "../http/http";
@@ -38,6 +38,61 @@ const UserPage = () => {
     const [hideInputConfirmPass, setHideInputConfirmPass] = useState(true);
 
     const [errorChangePass, setErrorChangePass] = useState('');
+
+
+    const [inputProductName, setInputProductName] = useState('');
+
+    const [textareaProductDesc, setTextareaProductDesc] = useState('');
+
+    const [activeSelectBlockCategory, setActiveSelectBlockCategory] = useState(false);
+
+    const [selectBlockCategoryValue, setSelectBlockCategoryValue] = useState(''); // состояние для значения селекта сортировки товаров по рейтингу и тд
+
+    const [activeSelectBlockType, setActiveSelectBlockType] = useState(false);
+
+    const [selectBlockTypeValue, setSelectBlockTypeValue] = useState(''); // состояние для значения селекта сортировки товаров по рейтингу и тд
+
+    const [sizesMass, setSizesMass] = useState<string[]>([]); // массив для выбранных размеров для товара
+
+    const [inputPriceValue,setInputPriceValue] = useState(1);
+
+    const [inputPriceDiscountValue,setInputPriceDiscountValue] = useState(0);
+
+    const [errorNewProductForm, setErrorNewProductForm] = useState('');
+
+    const selectBlockCategoryItemHandler = (category: string) => {
+
+        setSelectBlockCategoryValue(category); // изменяем состояние setSelectBlockCategoryValue на значение category(параметр этой функции)
+
+        setActiveSelectBlockCategory(false); // изменяем состояние setActiveSelectBlockCategory на значение false,то есть убираем появившийся селект блок
+    }
+
+    const selectBlockTypeItemHandler = (type: string) => {
+
+        setSelectBlockTypeValue(type); // изменяем состояние setSelectBlockTypeValue на значение type(параметр этой функции)
+
+        setActiveSelectBlockType(false); // изменяем состояние setActiveSelectBlockType на значение false,то есть убираем появившийся селект блок
+    }
+
+    // указываем функцию для добавления и удаления размеров в массив состояния sizes
+    const addSizes = (itemSize: string) => {
+
+        // если в массиве sizesMass нету элемента,равного значению itemSize(параметр этой функции)
+        if (!sizesMass.some(size => size === itemSize)) {
+
+            // изменянем состояние sizesMass,возвращаем новый массив,куда разворачиваем предыдущий(текущий) массив(...prev) и добавляем в него новый элемент itemSize,не используем здесь типа sizesMass.push(),так как тогда обновление состояние sizesMass будет не сразу,а ставится в очередь на обновление и это будет не правильно работать,а когда мы используем prev(текущее состояние),то тогда мы работаем уже точно с текущим состоянием массива,и он будет обновлен сразу
+            setSizesMass((prev) => [...prev, itemSize]);
+
+
+        } else {
+
+            // в другом случае,если этот элемент(itemSize) уже есть,то оставляем все элементы в массиве sizes,которые не равны значению itemSize,то есть удаляем этот элемент itemSize из массива sizes
+            setSizesMass((prev) => prev.filter(size => size !== itemSize));
+
+        }
+
+
+    }
 
 
     // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь,также можно это сделать было через useMutation с помощью react query(tanstack query),но так как мы в данном случае обрабатываем ошибки от сервера вручную,то сделали так
@@ -238,6 +293,89 @@ const UserPage = () => {
 
     }
 
+    const onSubmitNewProductForm = async (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+
+
+    }
+
+    // функция для изменения значения инпута цены товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
+    const changeInputPriceValue = (e: ChangeEvent<HTMLInputElement>) => {
+
+        // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
+        if (+e.target.value <= 0) {
+
+            setInputPriceValue(0);
+
+        } else {
+
+            setInputPriceValue(Number((+e.target.value).toFixed(2))); // изменяем состояние инпута цены на (+e.target.value).toFixed(2) (текущее значение инпута,округленное до 2 чисел после запятой,указываем это toFixed(2),чтобы больше 2 цифр после запятой не показывалось в инпуте,иначе иногда оно может так показывать,если изменять это значение на - 1 и тд),указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число,оборачиваем это все в Number(),чтобы преобразовать это все в число,Number() - преобразовывает переданный в нее аргумент в число,в данном случае преобразовываем строку в число,если преобразование будет невозможно,то будет возвращен NaN(not a number),иначе выдает ошибку,что нельзя назначить строку для состояния inputPriceValue
+
+        }
+
+    }
+
+    const handlerMinusPriceProductBtn = () => {
+
+        // если значение инпута цены товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля или 1 не отнимало - 1
+        if (inputPriceValue > 1) {
+
+            setInputPriceValue((prev) => +(prev - 1).toFixed(2)); // изменяем состояние инпута цены на (prev - 1).toFixed(2) (текущее значение инпута - 1,округленное до 2 чисел после запятой,указываем это toFixed(2),чтобы больше 2 цифр после запятой не показывалось в инпуте,иначе иногда оно может так показывать,если изменять это значение на - 1 и тд),указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число,также указываем + перед этим всем выражением,чтобы преобразовать это в число,в данном случае преобразовываем строку в число,если преобразование будет невозможно,то будет возвращен NaN(not a number),иначе выдает ошибку,что нельзя назначить строку для состояния inputPriceValue
+
+        } else {
+
+            setInputPriceValue(1);
+
+        }
+
+    }
+
+    const handlerPlusPriceProductBtn = () => {
+
+        // изменяем текущее значение инпута цены товара на + 1
+        setInputPriceValue((prev) => +(prev + 1).toFixed(2)); // изменяем состояние инпута цены на (prev + 1).toFixed(2) (текущее значение инпута + 1,округленное до 2 чисел после запятой,указываем это toFixed(2),чтобы больше 2 цифр после запятой не показывалось в инпуте,иначе иногда оно может так показывать,если изменять это значение на - 1 и тд),указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число,также указываем + перед этим всем выражением,чтобы преобразовать это в число,в данном случае преобразовываем строку в число,если преобразование будет невозможно,то будет возвращен NaN(not a number),иначе выдает ошибку,что нельзя назначить строку для состояния inputPriceValue
+
+    }
+
+    // функция для изменения значения инпута цены товара,указываем параметру e(event) тип как ChangeEvent<HTMLInputElement>
+    const changeInputPriceDiscountValue = (e: ChangeEvent<HTMLInputElement>) => {
+
+        // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
+        if (+e.target.value <= 0) {
+
+            setInputPriceDiscountValue(0);
+
+        } else {
+
+            setInputPriceDiscountValue(Number((+e.target.value).toFixed(2))); // изменяем состояние инпута цены на (+e.target.value).toFixed(2) (текущее значение инпута,округленное до 2 чисел после запятой,указываем это toFixed(2),чтобы больше 2 цифр после запятой не показывалось в инпуте,иначе иногда оно может так показывать,если изменять это значение на - 1 и тд),указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число,оборачиваем это все в Number(),чтобы преобразовать это все в число,Number() - преобразовывает переданный в нее аргумент в число,в данном случае преобразовываем строку в число,если преобразование будет невозможно,то будет возвращен NaN(not a number),иначе выдает ошибку,что нельзя назначить строку для состояния inputPriceValue
+
+        }
+
+    }
+
+    const handlerMinusPriceDiscountProductBtn = () => {
+
+        // если значение инпута цены товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля или 1 не отнимало - 1
+        if (inputPriceDiscountValue > 1) {
+
+            setInputPriceDiscountValue((prev) => +(prev - 1).toFixed(2)); // изменяем состояние инпута цены на (prev - 1).toFixed(2) (текущее значение инпута - 1,округленное до 2 чисел после запятой,указываем это toFixed(2),чтобы больше 2 цифр после запятой не показывалось в инпуте,иначе иногда оно может так показывать,если изменять это значение на - 1 и тд),указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число,также указываем + перед этим всем выражением,чтобы преобразовать это в число,в данном случае преобразовываем строку в число,если преобразование будет невозможно,то будет возвращен NaN(not a number),иначе выдает ошибку,что нельзя назначить строку для состояния inputPriceValue
+
+        } else {
+
+            setInputPriceDiscountValue(1);
+
+        }
+
+    }
+
+    const handlerPlusPriceDiscountProductBtn = () => {
+
+        // изменяем текущее значение инпута цены товара на + 1
+        setInputPriceDiscountValue((prev) => +(prev + 1).toFixed(2)); // изменяем состояние инпута цены на (prev + 1).toFixed(2) (текущее значение инпута + 1,округленное до 2 чисел после запятой,указываем это toFixed(2),чтобы больше 2 цифр после запятой не показывалось в инпуте,иначе иногда оно может так показывать,если изменять это значение на - 1 и тд),указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число,также указываем + перед этим всем выражением,чтобы преобразовать это в число,в данном случае преобразовываем строку в число,если преобразование будет невозможно,то будет возвращен NaN(not a number),иначе выдает ошибку,что нельзя назначить строку для состояния inputPriceValue
+
+    }
 
     // если состояние загрузки true,то есть идет загрузка запроса на сервер для проверки,авторизован ли пользователь,то показываем лоадер(загрузку),если не отслеживать загрузку при функции checkAuth(для проверки на refresh токен при запуске страницы),то будет не правильно работать(только через некоторое время,когда запрос на /refresh будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на /refresh)
     if (isLoading) {
@@ -320,7 +458,7 @@ const UserPage = () => {
 
                                 }
 
-                            
+
 
                             </ul>
 
@@ -426,7 +564,124 @@ const UserPage = () => {
                             {user.role === 'ADMIN' && tab === 'Admin Panel' &&
                                 <div className="sectionUserPage__mainBlock-inner">
 
-                                    adminPanel
+                                    <form className="sectionUserPage__mainBlock-formInfo sectionUserPage__mainBlock-formChangePass" onSubmit={onSubmitNewProductForm}>
+                                        <h2 className="sectionUserPage__formInfo-title">New Product</h2>
+                                        <div className="sectionUserPage__formInfo-mainBlock">
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Name</p>
+                                                <input type="text" className="signInForm__inputEmailBlock-input sectionUserPage__formInfo-itemInput" placeholder="Name" value={inputProductName} onChange={(e) => setInputProductName(e.target.value)} />
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Product Description</p>
+                                                <textarea className="form__mainBlock-textArea adminForm__textarea" placeholder="Enter product description" value={textareaProductDesc} onChange={(e) => setTextareaProductDesc(e.target.value)}></textarea>
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminFormInfo-itemCategory">
+                                                <div className="searchBlock__sortBlock">
+                                                    <p className="sortBlock__text">Category:</p>
+                                                    <div className="sortBlock__inner">
+                                                        <div className="sortBlock__topBlock" onClick={() => setActiveSelectBlockCategory((prev) => !prev)}>
+                                                            {/* если selectBlockCategoryValue true,то есть если в selectBlockCategoryValue есть какое-то значение,то указываем такие классы,в другом случае другие,в данном случае делаем это для анимации появления текста */}
+                                                            <p className={selectBlockCategoryValue ? "sortBlock__topBlock-text sortBlock__topBlock-text--active" : "sortBlock__topBlock-text"}>{selectBlockCategoryValue}</p>
+                                                            <img src="/images/sectionCatalog/Icon.png" alt="" className={activeSelectBlockCategory ? "sortBlock__topBlock-img sortBlock__topBlock-img--active" : "sortBlock__topBlock-img"} />
+                                                        </div>
+                                                        <div className={activeSelectBlockCategory ? "sortBlock__optionsBlock sortBlock__optionsBlock--active sortBlockAdminPanel__optionsBlock--active" : "sortBlock__optionsBlock"}>
+
+                                                            {/* в onclick передаем функцию callback внутри которого передаем нашу функцию selectBlockCategoryItemHandler и в нее передаем параметром название категории,которая есть у этого item(то есть таким образом указываем выбранную категорию и закрываем этот селект блок,а при этом используем одну функцию selectBlockCategoryItemHandler,передавая в параметр разные значения) */}
+                                                            <div className="sortBlock__optionsBlock-item" onClick={() => selectBlockCategoryItemHandler('Long Sleeves')}>
+                                                                <p className="optionsBlock__item-text">Long Sleeves</p>
+                                                            </div>
+                                                            <div className="sortBlock__optionsBlock-item" onClick={() => selectBlockCategoryItemHandler('Joggers')}>
+                                                                <p className="optionsBlock__item-text">Joggers</p>
+                                                            </div>
+                                                            <div className="sortBlock__optionsBlock-item" onClick={() => selectBlockCategoryItemHandler('T-Shirts')}>
+                                                                <p className="optionsBlock__item-text">T-Shirts</p>
+                                                            </div>
+                                                            <div className="sortBlock__optionsBlock-item" onClick={() => selectBlockCategoryItemHandler('Shorts')}>
+                                                                <p className="optionsBlock__item-text">Shorts</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="searchBlock__sortBlock">
+                                                    <p className="sortBlock__text">Type:</p>
+                                                    <div className="sortBlock__inner">
+                                                        <div className="sortBlock__topBlock" onClick={() => setActiveSelectBlockType((prev) => !prev)}>
+                                                            {/* если selectBlockCategoryValue true,то есть если в selectBlockCategoryValue есть какое-то значение,то указываем такие классы,в другом случае другие,в данном случае делаем это для анимации появления текста */}
+                                                            <p className={selectBlockTypeValue ? "sortBlock__topBlock-text sortBlock__topBlock-text--active" : "sortBlock__topBlock-text"}>{selectBlockTypeValue}</p>
+                                                            <img src="/images/sectionCatalog/Icon.png" alt="" className={activeSelectBlockType ? "sortBlock__topBlock-img sortBlock__topBlock-img--active" : "sortBlock__topBlock-img"} />
+                                                        </div>
+                                                        <div className={activeSelectBlockType ? "sortBlock__optionsBlock sortBlock__optionsBlock--active sortBlockAdminPanel__optionsBlock--active" : "sortBlock__optionsBlock"}>
+
+                                                            {/* в onclick передаем функцию callback внутри которого передаем нашу функцию selectBlockCategoryItemHandler и в нее передаем параметром название категории,которая есть у этого item(то есть таким образом указываем выбранную категорию и закрываем этот селект блок,а при этом используем одну функцию selectBlockCategoryItemHandler,передавая в параметр разные значения) */}
+                                                            <div className="sortBlock__optionsBlock-item" onClick={() => selectBlockTypeItemHandler('Men')}>
+                                                                <p className="optionsBlock__item-text">Men</p>
+                                                            </div>
+                                                            <div className="sortBlock__optionsBlock-item" onClick={() => selectBlockTypeItemHandler('Women')}>
+                                                                <p className="optionsBlock__item-text">Women</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item">
+                                                <p className="sectionUserPage__formInfo-itemText">Size</p>
+                                                <div className="filterItem__labels-sizes adminForm__filterItem-sizes">
+                                                    {/* в onClick этой кнопке указываем функцию callback внутри которой указываем нашу функцию addSizes,в которую передаем просто значение размера,которое нужно добавить или убрать из массива выбранных размеров для товара,и для класса делаем проверку,sizesMass.some(item => item === 'S') true,то есть в массиве sizesMass есть элемент со значением 'S' (в данном случае),то показываем активный класс кнопке,в другом случае обычный,указываем type этой кнопке как button,чтобы при нажатии на эти кнопки не отправлялась форма,то есть не срабатывало событие onSubmit у этой формы */}
+                                                    <button type="button" className={sizesMass.some(item => item === 'S') ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={() => addSizes('S')}>S</button>
+
+                                                    <button type="button" className={sizesMass.some(item => item === 'M') ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={() => addSizes('M')}>M</button>
+
+                                                    <button type="button" className={sizesMass.some(item => item === 'L') ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={() => addSizes('L')}>L</button>
+
+                                                    <button type="button" className={sizesMass.some(item => item === 'XL') ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={() => addSizes('XL')}>XL</button>
+                                                </div>
+                                            </div>
+                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminForm-itemPrice">
+                                                <div className="adminForm__itemPrice-inputBlock">
+                                                    <p className="sectionUserPage__formInfo-itemText">Price</p>
+                                                    <div className="sectionProductItemPage__cartBlock-inputBlock">
+                                                        {/* указываем этой кнопке тип button(type="button"),чтобы при нажатии на нее не отправлялась эта форма(для создания нового товара),указываем тип submit только одной кнопке формы,по которой она должна отправляться(то есть при нажатии на которую должен идти запрос на сервер для создания нового товара),всем остальным кнопкам формы указываем тип button */}
+                                                        <button type="button"  className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusPriceProductBtn}>
+                                                            <img src="/images/sectionProductItemPage/Minus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                                                        </button>
+
+                                                        {/* указываем step этому инпуту со значением 0.01,чтобы можно было вводить дробные числа(нужно указывать запятую(,) в этом инпуте,чтобы указать дробное число),и минимальный шаг изменения числа в этом инпуте был 0.01(то есть при изменении стрелочками,минимально изменялось число на 0.01) */}
+                                                        <input type="number" className="cartBlock__inputBlock-input" value={inputPriceValue} onChange={changeInputPriceValue} step={0.01}/>
+
+                                                        <button type="button"   className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusPriceProductBtn}>
+                                                            <img src="/images/sectionProductItemPage/Plus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="adminForm__itemPrice-inputBlock">
+                                                    <p className="sectionUserPage__formInfo-itemText">Price with Discount</p>
+                                                    <div className="sectionProductItemPage__cartBlock-inputBlock sectionUserPage__adminForm-inputBlockDiscount">
+                                                        {/* указываем этой кнопке тип button(type="button"),чтобы при нажатии на нее не отправлялась эта форма(для создания нового товара),указываем тип submit только одной кнопке формы,по которой она должна отправляться(то есть при нажатии на которую должен идти запрос на сервер для создания нового товара),всем остальным кнопкам формы указываем тип button */}
+                                                        <button type="button"  className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusPriceDiscountProductBtn}>
+                                                            <img src="/images/sectionProductItemPage/Minus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                                                        </button>
+
+                                                        {/* указываем step этому инпуту со значением 0.01,чтобы можно было вводить дробные числа(нужно указывать запятую(,) в этом инпуте,чтобы указать дробное число),и минимальный шаг изменения числа в этом инпуте был 0.01(то есть при изменении стрелочками,минимально изменялось число на 0.01) */}
+                                                        <input type="number" className="cartBlock__inputBlock-input" value={inputPriceDiscountValue} onChange={changeInputPriceDiscountValue} step={0.01}/>
+
+                                                        <button type="button"   className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusPriceDiscountProductBtn}>
+                                                            <img src="/images/sectionProductItemPage/Plus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            {/* если errorNewProductForm true(то есть в состоянии errorNewProductForm что-то есть),то показываем текст ошибки */}
+                                            {errorNewProductForm && <p className="formErrorText">{errorNewProductForm}</p>}
+
+                                            {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
+                                            <button className="signInForm__btn sectionUserPage__formInfo-btn" type="submit">Save Product</button>
+
+                                        </div>
+                                    </form>
 
                                 </div>
                             }
