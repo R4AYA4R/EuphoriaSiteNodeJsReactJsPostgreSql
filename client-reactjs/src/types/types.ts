@@ -127,3 +127,16 @@ export interface IRequestUpdateRating{
     productId:number,
     rating:number
 }
+
+// создаем тип для ответа от сервера при загрузке файла картинки для формы админа
+export interface IUploadFileResponse{
+    name:string,
+    path:string,
+    file:File // указываем этому полю тип данных как File,так как будем возвращать файл добавленной на сервер картинки
+}
+
+// создаем тип для ответа от сервера при удалении файла картинки для формы админа
+export interface IDeleteFileResponse{
+    message:string,
+    deletedFilePath:string, // это поле будет для пути,по которому удалили эту картинку
+}

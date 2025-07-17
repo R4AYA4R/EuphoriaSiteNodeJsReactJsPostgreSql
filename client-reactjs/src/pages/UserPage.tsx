@@ -1,9 +1,9 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import SectionUnderTop from "../components/SectionUnderTop";
 import UserPageFormComponent from "../components/UserPageFormComponent";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { AuthResponse } from "../types/types";
+import { AuthResponse, IDeleteFileResponse, IUploadFileResponse } from "../types/types";
 import { ChangeEvent, FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
@@ -54,11 +54,22 @@ const UserPage = () => {
 
     const [sizesMass, setSizesMass] = useState<string[]>([]); // массив для выбранных размеров для товара
 
-    const [inputPriceValue,setInputPriceValue] = useState(1);
+    const [inputPriceValue, setInputPriceValue] = useState(1);
 
-    const [inputPriceDiscountValue,setInputPriceDiscountValue] = useState(0);
+    const [inputPriceDiscountValue, setInputPriceDiscountValue] = useState(0);
+
+    const [inputFileMainImage, setInputFileMainImage] = useState<File | null>(); // состояние для файла картинки продукта,которые пользователь выберет в инпуте для файлов,указываем тут тип any,чтобы не было ошибки,в данном случае указываем тип как File или null
+
+    const [imgPath, setImgPath] = useState('');  // состояние для пути картинки,который мы получим от сервера,когда туда загрузим картинку(чтобы отобразить выбранную пользователем(админом) картинку уже полученную от сервера, когда туда ее загрузим)
+
+    // в данном случае уже не используем это,так как используем просто объект картинки на основе Image() (new Image())
+    // const newMainProductImage = useRef<HTMLImageElement>(null); // используем useRef для подключения к html тегу картинки нового товара,чтобы взять у него ширину и проверить ее,в generic типе этого useRef указываем,что в этом useRef будет HTMLImageElement(то есть картинка)
+
+    const inputMainImage = useRef<HTMLInputElement>(null); // указываем ссылку для инпута файлов главной картинки для товара
 
     const [errorNewProductForm, setErrorNewProductForm] = useState('');
+
+    const [errorNewProductFormForImg, setErrorNewProductFormForImg] = useState(''); // состояние ошибки для картинки для формы админа 
 
     const selectBlockCategoryItemHandler = (category: string) => {
 
@@ -72,6 +83,24 @@ const UserPage = () => {
         setSelectBlockTypeValue(type); // изменяем состояние setSelectBlockTypeValue на значение type(параметр этой функции)
 
         setActiveSelectBlockType(false); // изменяем состояние setActiveSelectBlockType на значение false,то есть убираем появившийся селект блок
+    }
+
+    // функция для удаления файла главной картинки нового товара на сервере,указываем тип imageName как string | undefined,так как иначе показывает ошибку,что нельзя передать параметр этой функции,если значение этого параметра undefined
+    const deleteMainImageRequest = async (imageName: string | undefined) => {
+
+        // оборачиваем в try catch для отлавливания ошибок
+        try {
+
+            const response = await axios.delete<IDeleteFileResponse>(`${process.env.REACT_APP_BACKEND_URL}/api/deleteImage/${imageName}`); // делаем запрос на сервер для удаления файла(картинки в данном случае) на сервере и указываем в ссылке на эндпоинт параметр imageName,чтобы на бэкэнде его достать,здесь уже используем обычный axios вместо нашего axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление файла с сервера уже не проверяем пользователя на access токен,так как проверяем это у запроса на загрузку файла на сервер(поэтому будет и так понятно,валидный(годен ли по сроку годности еще) ли access токен у пользователя или нет),указываем в generic тип данных,которые придут от сервера после удаления картинки(наш тип IDeleteFileResponse в данном случае)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+        } catch (e: any) {
+
+            setErrorNewProductFormForImg(e.response?.data?.message); // показываем ошибку в форме создания нового товара для админа
+
+        }
+
     }
 
     // указываем функцию для добавления и удаления размеров в массив состояния sizes
@@ -298,6 +327,97 @@ const UserPage = () => {
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
 
+
+    }
+
+    // при изменении imgPath проверяем ширину и высоту объекта картинки(на основе new Image()),которую выбрал пользователь(мы помещаем путь до картинки на нашем сервере node js в src в этот объект картинки),не используем уже здесь useRef,типа привязать его к html тегу картинки,потом показать его ширину,так как указали в css стили этой картинке,чтобы она отображалась небольшого размера,и когда бы мы проверяли ее ширину и высоту,то всегда бы показывалась ошибка,что типа она не подходит под этот размер,так как вы в стилях указали заранее меньший размер,чем нужно,поэтому создаем объект картинки на основе Image() и уже он не будет зависеть от отображаемой картинки,проверяем у него уже ширину и высоту
+    useEffect(() => {
+
+        const img = new Image(); // создаем новый объект картинки на основе обычного Image(на основе html тега картинки),он имеет те же свойства и параметры как и обычный html тег картинки
+
+        // в данном случае это не нужно и без этого работает
+        // при загрузке этого объекта картинки изменяем состояния для ширины и высоты этого объекта картинки
+        // img.onload = () => {
+
+        //     setPreMainImgHeight(img.height);
+
+        //     setPreMainImgWidth(img.width);
+
+        //     console.log(img.width);
+        //     console.log(img.height);
+
+        //     console.log(preMainImgHeight)
+
+        // }
+
+        img.src = imgPath; // указываем путь до настоящей картинки на нашем сервере этому объекту картинки
+
+
+        // используем тут setTimeout(код в этом callback будет выполнен через время,которое указали вторым параметром в setTimeout после запятой,это время указывается в миллисекундах,в данном случае этот код будет выполнен через 0.1 секунду(через 100 миллисекунд)),в данном случае это делаем для того,чтобы успела появится новая картинка(объект картинки в данном случае),после того,как пользователь(админ) ее выбрал в ипнуте файлов,иначе не успевает появиться и показывает ширину картинки как 0 и не работает правильно
+        setTimeout(() => {
+
+            // если img.width и img.height true,то есть ширина и высота этого объекта картинки true,то есть она есть,то есть эта картинка уже загрузилась(эта проверка для того,чтобы не шел запрос на удаление картинки сразу при запуске страницы,так как у этого объекта картинки не будет изначально ширины и высоты,если эту проверку не сделать,то будет идти сразу запрос на удаление картинки при запуске страницы,так как она типа не подходит по размеру)
+            if (img.width && img.height) {
+
+                // если img.width меньше 296(то есть если ширина объекта картинки меньше 296),или если высота объекта картинки(img.height) меньше 367(эти размеры смотрели в зависимости от дизайна у карточки товара и тд),то показываем ошибку
+                if (img.width < 296 || img.height < 367) {
+
+                    setErrorNewProductFormForImg('Width must be more than 295 and height must be more than 366'); // показываем ошибку для картинки для формы админа
+
+                    setInputFileMainImage(null); // изменяем состояние для инпута файла главной картинки для нового товара,указываем ему значение как null,чтобы если админ получил ошибку,что размер картинки неправильный,то это состояние для файла картинки становилось null,иначе будет идти запрос на сервер,когда состояние файла картинки пустое,и тогда будет ошибка на сервере,что файл картинки пустой
+
+                    // делаем удаление файла(картинки) на сервере,который неправильного размера ширины и высоты,так как если не удалять,а нужна конкретная ширина и высота картинки,то файлы будут просто скачиваться на наш node js сервер и не удаляться,поэтому отдельно делаем запрос на сервер на удаление файла
+                    deleteMainImageRequest(inputFileMainImage?.name);  // передаем в нашу функцию название файла,который пользователь выбрал в инпуте файлов(мы поместили его в состояние inputFileMainImage),наша функция deleteMainImageRequest делает запрос на сервер на удаление файла картинки и возвращает ответ от сервера(в данном случае при успешном запросе ответ от сервера будет объект с полями)
+
+                    setImgPath(''); // изменяем состояние imgPath(пути картинки) на пустую строку,чтобы картинка не показывалась,если она неправильная по размеру и была удалена с сервера(иначе картинка показывается,даже если она удалена с сервера)
+
+                    img.src = ''; // указываем этому объекту картинки путь до картинки как пустую строку,чтобы убрать эту картинку и чтобы она удалилась(она бы и так должна была удалиться после ререндера этого компонента(этой страницы в данном случае),но лучше все равно сразу ее убрать)
+
+                }
+
+            }
+
+        }, 100)
+
+    }, [imgPath])
+
+
+    // функция для выбора картинки с помощью инпута для файлов
+    const inputLoadMainImageHandler = async (e: ChangeEvent<HTMLInputElement>) => {
+
+        // e.target.files - массив файлов,которые пользователь выбрал при клике на инпут для файлов, если e.target.files true(делаем эту проверку,потому что выдает ошибку,что e.target.files может быть null) и e.target.files[0] true,то есть пользователь выбрал файл,также указываем здесь проверку на inputFileMainImage false,то есть если inputFileMainImage false,то загружаем файл картинки,делаем эту проверку,чтобы правильно удалять и добавлять файл картинки,иначе,если загрузить картинку на сервер,а потом поменять ее еще раз,при этом ее не удалив,то при повторной попытке загрузить эту же картинку будет ошибка,что такой файл уже есть,поэтому будем делать удаление картинки по кнопке возле картинки,и потом уже опять можно добавлять другую картинку
+        if (e.target.files && e.target.files[0] && !inputFileMainImage) {
+
+            setInputFileMainImage(e.target.files[0]); // помещаем в состояние файл,который выбрал пользователь,у files указываем тут [0],то есть берем первый элемент массива(по индексу 0) этих файлов инпута
+
+            const formData = new FormData(); // создаем объект на основе FormData(нужно,чтобы передавать файлы на сервер)
+
+            formData.append('image', e.target.files[0]);  // добавляем в этот объект formData по ключу(названию) 'image' сам файл в e.target.files[0] по индексу 0 (первым параметром тут передаем название файла,вторым сам файл)
+
+            console.log(e.target.files[0]);
+
+            // оборачиваем в try catch,чтобы отлавливать ошибки и делаем пока такой запрос на сервер для загрузки файла на сервер,загружаем объект formData(лучше вынести это в отдельную функцию запроса на сервер но и так можно),указываем здесь наш инстанс axios ($api в данном случае),чтобы обрабатывать правильно запросы с access токеном и refresh токеном,в данном случае делаем запрос на бэкэнд для загрузки файла и там сразу будет проверка нашего authMiddleware на нашем node js сервере для проверки на access токен
+            try {
+
+                const response = await $api.post<FormData, AxiosResponse<IUploadFileResponse>>('/uploadFile', formData); // делаем запрос на сервер для сохранения файла на сервере и как тело запроса тут передаем formData,указываем данные,которые отправляем на сервер(FormData в данном случае) и данные,которые получаем от сервера (AxiosResponse<IUploadFileResponse> в данном случае)
+
+                console.log(response);
+
+                setImgPath(`${process.env.REACT_APP_BACKEND_URL}/${response.data.name}`);  // помещаем в состояние imgPath путь до файла,то есть пишем путь до нашего сервера (вынесли основной url до бэкэнда в переменную окружения REACT_APP_BACKEND_URL в файле .env) и добавляем название файла,который нужно показать,который есть в папке (в данном случае checkStatic) на нашем сервере,это название пришло от сервера
+
+                setErrorNewProductForm(''); // убираем ошибку формы создания нового товара(чтобы если до этого пользователь выбрал неправильный файл и получил ошибку,то при повторном выборе файла эта ошибка убиралась)
+
+                setErrorNewProductFormForImg(''); // убираем ошибку(это состояние конкретно для ошибки,связанной с картинкой) формы создания нового товара(чтобы если до этого пользователь(админ) выбрал неправильный файл и получил ошибку,то при повторном выборе файла эта ошибка убиралась)
+
+            } catch (e: any) {
+
+                setInputFileMainImage(null);  // изменяем состояние файла на null,чтобы если ошибка,то название картинки не показывалось
+
+                return setErrorNewProductFormForImg(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+
+            }
+
+        }
 
     }
 
@@ -567,15 +687,15 @@ const UserPage = () => {
                                     <form className="sectionUserPage__mainBlock-formInfo sectionUserPage__mainBlock-formChangePass" onSubmit={onSubmitNewProductForm}>
                                         <h2 className="sectionUserPage__formInfo-title">New Product</h2>
                                         <div className="sectionUserPage__formInfo-mainBlock">
-                                            <div className="sectionUserPage__formInfo-item">
+                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminFormInfo-item">
                                                 <p className="sectionUserPage__formInfo-itemText">Name</p>
                                                 <input type="text" className="signInForm__inputEmailBlock-input sectionUserPage__formInfo-itemInput" placeholder="Name" value={inputProductName} onChange={(e) => setInputProductName(e.target.value)} />
                                             </div>
-                                            <div className="sectionUserPage__formInfo-item">
+                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminFormInfo-item">
                                                 <p className="sectionUserPage__formInfo-itemText">Product Description</p>
                                                 <textarea className="form__mainBlock-textArea adminForm__textarea" placeholder="Enter product description" value={textareaProductDesc} onChange={(e) => setTextareaProductDesc(e.target.value)}></textarea>
                                             </div>
-                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminFormInfo-itemCategory">
+                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminFormInfo-itemCategory sectionUserPage__adminFormInfo-item">
                                                 <div className="searchBlock__sortBlock">
                                                     <p className="sortBlock__text">Category:</p>
                                                     <div className="sortBlock__inner">
@@ -624,7 +744,7 @@ const UserPage = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="sectionUserPage__formInfo-item">
+                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminFormInfo-item">
                                                 <p className="sectionUserPage__formInfo-itemText">Size</p>
                                                 <div className="filterItem__labels-sizes adminForm__filterItem-sizes">
                                                     {/* в onClick этой кнопке указываем функцию callback внутри которой указываем нашу функцию addSizes,в которую передаем просто значение размера,которое нужно добавить или убрать из массива выбранных размеров для товара,и для класса делаем проверку,sizesMass.some(item => item === 'S') true,то есть в массиве sizesMass есть элемент со значением 'S' (в данном случае),то показываем активный класс кнопке,в другом случае обычный,указываем type этой кнопке как button,чтобы при нажатии на эти кнопки не отправлялась форма,то есть не срабатывало событие onSubmit у этой формы */}
@@ -637,19 +757,19 @@ const UserPage = () => {
                                                     <button type="button" className={sizesMass.some(item => item === 'XL') ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={() => addSizes('XL')}>XL</button>
                                                 </div>
                                             </div>
-                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminForm-itemPrice">
+                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminForm-itemPrice sectionUserPage__adminFormInfo-item">
                                                 <div className="adminForm__itemPrice-inputBlock">
                                                     <p className="sectionUserPage__formInfo-itemText">Price</p>
                                                     <div className="sectionProductItemPage__cartBlock-inputBlock">
                                                         {/* указываем этой кнопке тип button(type="button"),чтобы при нажатии на нее не отправлялась эта форма(для создания нового товара),указываем тип submit только одной кнопке формы,по которой она должна отправляться(то есть при нажатии на которую должен идти запрос на сервер для создания нового товара),всем остальным кнопкам формы указываем тип button */}
-                                                        <button type="button"  className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusPriceProductBtn}>
+                                                        <button type="button" className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusPriceProductBtn}>
                                                             <img src="/images/sectionProductItemPage/Minus.png" alt="" className="cartBlock__inputBlock-btnImg" />
                                                         </button>
 
                                                         {/* указываем step этому инпуту со значением 0.01,чтобы можно было вводить дробные числа(нужно указывать запятую(,) в этом инпуте,чтобы указать дробное число),и минимальный шаг изменения числа в этом инпуте был 0.01(то есть при изменении стрелочками,минимально изменялось число на 0.01) */}
-                                                        <input type="number" className="cartBlock__inputBlock-input" value={inputPriceValue} onChange={changeInputPriceValue} step={0.01}/>
+                                                        <input type="number" className="cartBlock__inputBlock-input" value={inputPriceValue} onChange={changeInputPriceValue} step={0.01} />
 
-                                                        <button type="button"   className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusPriceProductBtn}>
+                                                        <button type="button" className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusPriceProductBtn}>
                                                             <img src="/images/sectionProductItemPage/Plus.png" alt="" className="cartBlock__inputBlock-btnImg" />
                                                         </button>
                                                     </div>
@@ -659,23 +779,52 @@ const UserPage = () => {
                                                     <p className="sectionUserPage__formInfo-itemText">Price with Discount</p>
                                                     <div className="sectionProductItemPage__cartBlock-inputBlock sectionUserPage__adminForm-inputBlockDiscount">
                                                         {/* указываем этой кнопке тип button(type="button"),чтобы при нажатии на нее не отправлялась эта форма(для создания нового товара),указываем тип submit только одной кнопке формы,по которой она должна отправляться(то есть при нажатии на которую должен идти запрос на сервер для создания нового товара),всем остальным кнопкам формы указываем тип button */}
-                                                        <button type="button"  className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusPriceDiscountProductBtn}>
+                                                        <button type="button" className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusPriceDiscountProductBtn}>
                                                             <img src="/images/sectionProductItemPage/Minus.png" alt="" className="cartBlock__inputBlock-btnImg" />
                                                         </button>
 
                                                         {/* указываем step этому инпуту со значением 0.01,чтобы можно было вводить дробные числа(нужно указывать запятую(,) в этом инпуте,чтобы указать дробное число),и минимальный шаг изменения числа в этом инпуте был 0.01(то есть при изменении стрелочками,минимально изменялось число на 0.01) */}
-                                                        <input type="number" className="cartBlock__inputBlock-input" value={inputPriceDiscountValue} onChange={changeInputPriceDiscountValue} step={0.01}/>
+                                                        <input type="number" className="cartBlock__inputBlock-input" value={inputPriceDiscountValue} onChange={changeInputPriceDiscountValue} step={0.01} />
 
-                                                        <button type="button"   className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusPriceDiscountProductBtn}>
+                                                        <button type="button" className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusPriceDiscountProductBtn}>
                                                             <img src="/images/sectionProductItemPage/Plus.png" alt="" className="cartBlock__inputBlock-btnImg" />
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminFormInfo-item">
 
+                                                {/* указываем здесь проверку,если inputFileMainImage true(то есть в этом состоянии что-то есть,то есть пользователь добавил файл главной картинки),то показываем 1,в другом случае показываем 0 */}
+                                                <p className="sectionUserPage__formInfo-itemText">Main Image {inputFileMainImage ? 1 : 0} / 1</p>
+
+                                                {/* если imgPath не равно пустой строке,то показываем картинку */}
+                                                {imgPath !== '' &&
+                                                    <div className="adminForm__item-imageBlock">
+
+                                                        {/* здесь еще надо будет делать кнопку удаления картинки */}
+
+                                                        <img src={imgPath} alt="" className="adminForm__item-imageBlockImg" />
+
+                                                        {/* указываем название файла у состояния inputFileMainImage у поля name,указываем здесь ? перед name,так как иначе ошибка,что состояние inputFileMainImage может быть undefined */}
+                                                        <p className="adminForm__item-imageBlockText">{inputFileMainImage?.name}</p>
+                                                    </div>
+                                                }
+
+                                                <label htmlFor="inputFileMainImage" className="adminForm__item-imageBlockLabel">
+                                                    Load Image
+
+                                                    {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа,указываем этому инпуту ref как наш ref inputMainImage,указываем это,чтобы потом при удалении выбранной картинки очищать значение этого инпута,иначе,если выбрать картинку,потом ее удалить,а потом опять выбрать сразу же эту картинку в этом инпуте файлов,то она не будет выбираться,так как не будет срабатывать onChange для этого инпута,так как в этом инпуте будет еще сохранено предыдущее значение этого файла картинки */}
+                                                    <input id="inputFileMainImage" type="file" className="adminForm__imageBlockLabel-inputImage" accept="image/*" ref={inputMainImage} onChange={inputLoadMainImageHandler} />
+
+                                                </label>
+
+                                            </div>
 
                                             {/* если errorNewProductForm true(то есть в состоянии errorNewProductForm что-то есть),то показываем текст ошибки */}
                                             {errorNewProductForm && <p className="formErrorText">{errorNewProductForm}</p>}
+
+                                            {/* если errorNewProductFormForImg true(то есть в состоянии errorNewProductFormForImg(состояние для ошибки картинки для формы админа) что-то есть),то показываем текст ошибки */}
+                                            {errorNewProductFormForImg && <p className="formErrorText">{errorNewProductFormForImg}</p>}
 
                                             {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
                                             <button className="signInForm__btn sectionUserPage__formInfo-btn" type="submit">Save Product</button>

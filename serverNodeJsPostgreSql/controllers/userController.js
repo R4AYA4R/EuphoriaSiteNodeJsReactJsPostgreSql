@@ -137,7 +137,7 @@ class UserController {
 
     }
 
-     async changeAccPass(req, res, next) {
+    async changeAccPass(req, res, next) {
 
         // отличие req.params от req.query заключается в том,что в req.params указываются параметры в самом url до эндпоинта на бэкэнде(в node js в данном случае,типа /api/getProducts) через :(типа /:id,динамический параметр id),а req.query - это параметры,которые берутся из url(которые дополнительно добавили с фронтенда к url) через знак ?(типа ?name=bob)
 

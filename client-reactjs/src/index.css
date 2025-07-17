@@ -2544,3 +2544,38 @@ a {
 .sectionUserPage__adminForm-inputBlockDiscount{
     max-width: 114px;
 }
+
+.adminForm__item-imageBlockImg{
+    max-width: 177px;
+}
+
+.adminForm__item-imageBlockLabel{
+    display: inline-block; /* ставим display inline-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
+    background-color: #fff;
+    border:2px dashed #D5EDFD;
+    text-transform: uppercase;
+    color: #2DA5F3;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: 'Inter',sans-serif;
+    padding: 16px 24px;
+    transition:opacity .5s ease;
+}
+
+.adminForm__item-imageBlockLabel:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+/* скрываем инпут с типом file,чтобы его не было видно,и стилизуем label который привязан к этому инпуту,этот label будет иметь такую же функцию,как и этот инпут */
+.adminForm__imageBlockLabel-inputImage{
+    display: none;
+}
+
+.adminForm__item-imageBlock{
+    margin-bottom: 15px;
+}
+
+.sectionUserPage__adminFormInfo-item{
+    margin-bottom: 20px;
+}
