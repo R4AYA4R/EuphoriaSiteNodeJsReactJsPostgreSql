@@ -2549,6 +2549,11 @@ a {
     max-width: 177px;
 }
 
+.adminForm__imageBlock-mainImageBlcok{
+    max-width: 177px;
+    position: relative;
+}
+
 .adminForm__item-imageBlockLabel{
     display: inline-block; /* ставим display inline-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
     background-color: #fff;
@@ -2578,4 +2583,29 @@ a {
 
 .sectionUserPage__adminFormInfo-item{
     margin-bottom: 20px;
+}
+
+.adminForm__item-imageBlockBtn{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border:1px solid transparent; /* указываем границу этой кнопке изначально прозрачную (transparent),а потом при hover(наведении курсором мыши на нее) изменяем цвет этой границы,делаем так,иначе,если не указать границу по дефолту прозрачную,то при наведении будет добавляться новая граница и сдвигать другие элементы на 1 пиксель(размер границы),а также эта граница не будет анимироваться */
+    z-index: 5;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition:border-color .5s ease;
+}
+
+.adminForm__item-imageBlockBtn:hover{
+    cursor: pointer;
+    border-color: red;
+}
+
+.adminForm__descImagesBlock{
+    display: flex;
+    align-items: center;
+    gap:20px;
 }

@@ -140,3 +140,9 @@ export interface IDeleteFileResponse{
     message:string,
     deletedFilePath:string, // это поле будет для пути,по которому удалили эту картинку
 }
+
+// тип для массива состояния объектов картинок описания товара для формы админа
+export interface IDescImages{
+    name:string,
+    url:string
+}
