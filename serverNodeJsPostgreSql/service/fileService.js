@@ -35,7 +35,7 @@ class FileService {
         const filePathStatic = `${path.resolve()}\\static\\${image.name}`; // помещаем в переменную filePathStatic путь до файла,который возможно существует в папке static,и ниже в коде проверяем,существует ли он(здесь path.resolve() - берет текущую директорию(в данном случае директорию до \serverNodeJsPostgreSql) потом через слеши наша папка static(в которой мы храним все точные скачанные с фронтенда файлы картинок для товара)
 
         // если путь filePathCheckStatic существует(то есть уже есть такой файл в такой папке checkStatic в данном случае) или filePathStatic существует,то показываем ошибку,проверяем это с помощью fs.existsSync()
-        if(fs.existsSync(filePathCheckStatic) || fs.existsSync(filePathStatic)){
+        if (fs.existsSync(filePathCheckStatic) || fs.existsSync(filePathStatic)) {
 
             throw ApiError.BadRequest('This file already exists'); // вместо throw new Error указываем throw ApiError(наш класс для обработки ошибок),указываем у него функцию BadRequest,этот объект ошибки из функции BadRequest попадет в функцию next() (наш error middleware) у функции для эндпоинта,так как в ней мы отлавливали ошибки с помощью try catch и здесь указали throw,и эта ошибка там будет обработана,то есть показываем ошибку с сообщением
 
@@ -63,6 +63,25 @@ class FileService {
         fs.unlinkSync(imagePath); // удаляем файл по такому пути,который находится в переменной imagePath с помощью fs.unlinkSync(),у модуля fs для работы с файлами есть методы обычные(типа unlink) и Sync(типа unlinkSync), методы с Sync блокируют главный поток node js и код ниже этой строки не будет выполнен,пока не будет выполнен метод с Sync
 
         return imagePath; // в данном случае возвращаем из этой функции imagePath(путь до картинки в папке checkStatic,которую удалили)
+
+
+    }
+
+    // функция для удаления папки chechStatic
+    async deleteCheckStatic() {
+
+        const folderPath = `${path.resolve()}\\checkStatic`; // помещаем в переменную folderPath путь на диске до папки checkStatic,которая возможно существует
+
+        // если fs.existsSync(folderPath) false,то есть такого пути нет,который мы указали в переменной folderPath,то есть папки checkStatic нет,то показываем ошибку
+        if (!fs.existsSync(folderPath)) {
+
+            throw ApiError.BadRequest('No such file or directory to delete'); // вместо throw new Error указываем throw ApiError(наш класс для обработки ошибок),указываем у него функцию BadRequest,этот объект ошибки из функции BadRequest попадет в функцию next() (наш error middleware) у функции для эндпоинта,так как в ней мы отлавливали ошибки с помощью try catch и здесь указали throw,и эта ошибка там будет обработана,то есть показываем ошибку с сообщением
+
+        }
+
+        fs.rmSync(path.resolve('checkStatic'), { recursive: true });  // удаляем папку checkStatic,указываем до нее путь с помощью path.resolve() - берет текущую директорию(в данном случае директорию до \serverNodeJsPostgreSql) и добавляет к ней папку,которую мы передаем в параметре,также указываем вторым параметром объект опций,указываем поле recursive:true,то есть папка будет удалена рекурсивно со всем содержимым,если в папке есть содержимое,а параметр recursive:true не указан,то выдаст ошибку,но если папка пустая,то параметр recursive:true можно не указывать,так как она тогда удалится без ошибки
+
+        return 'Successfully deleted'; // в данном случае возвращаем из этой функции строку,типа сообщение,которое будем передавать потом на фронтенд
 
 
     }
