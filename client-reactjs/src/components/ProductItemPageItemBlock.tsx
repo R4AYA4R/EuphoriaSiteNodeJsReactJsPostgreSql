@@ -46,7 +46,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
 
     const [size, setSize] = useState<string>(''); // состояние для одного выбранного размера
 
-    const [errorSize, setErrorSize] = useState(''); // делаем состояние ошибки,чтобы показывать ее,если пользователь не выбрал размер
+    const [errorAdding, setErrorAdding] = useState(''); // делаем состояние ошибки,чтобы показывать ее,если пользователь не выбрал размер и тд
 
     const [isExistsCart, setIsExistsCart] = useState(false);
 
@@ -89,7 +89,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
 
             setSize(''); // убираем указанный размер товара
 
-            setErrorSize(''); // убираем ошибку для размера товара
+            setErrorAdding(''); // убираем ошибку для размера товара
 
             refetchProductsCart(); // переобновляем массив товаров корзины
 
@@ -117,7 +117,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
 
         } else {
 
-            setInputAmountValue(+e.target.value); // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+            setInputAmountValue(+(+e.target.value).toFixed(0)); // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число,потом указываем toFixed(0),чтобы убрать цифры после запятой у числа,так как в этот инпут могут ввести число с запятой,а таким образом,когда будут вводить число после запятой,то автоматически будет преобразовываться это число без запятой,а также перед этим всем еще раз ставим +,чтобы перевести строковое значение в числовое,иначе выдает ошибку,что нельзя назначить строку(toFixed() возвращает строку) для состояния с числовыми значениями
 
         }
 
@@ -165,7 +165,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
 
         setIsExistsCart(false); // изменяем состояние isExistsCart(для проверки есть ли этот товар уже в корзине) на false,чтобы при изменении url страницы это состояние становилось как по дефолту false,и чтобы изначально не была видна надпись,что этот товар уже в корзине на другой странице другого товара
 
-        setErrorSize(''); // очищаем ошибку,если пользователь не выбрал размер при добавлении товара в корзину,чтобы при изменении url страницы эта ошибка убиралась,чтобы ее изначально не было видно на других страницах других товаров
+        setErrorAdding(''); // очищаем ошибку,если пользователь не выбрал размер при добавлении товара в корзину,чтобы при изменении url страницы эта ошибка убиралась,чтобы ее изначально не было видно на других страницах других товаров
 
         // в данном случае и так без этого правильно работает,поэтому этот код закомментировали
         // refetchProductsCart(); // переобновляем массив объектов товаров корзины,чтобы при изменении pathname он переобновлялся и правильно работала проверка на есть ли этот товар уже в корзине
@@ -223,7 +223,11 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
             // если size равно пустой строке,то есть пользователь не выбрал размер,то показываем текст ошибки рядом с кнопкой добавления товара в корзину
             if (size === '') {
 
-                setErrorSize('Select size');
+                setErrorAdding('Select size');
+
+            } else if(inputAmountValue < 1){
+                // если inputAmountValue меньше 1(в этом инпуте можно ввести значение 0 и тд),то показываем ошибку и не добавляем товар в корзину
+                setErrorAdding('Product amount must be 1 or more');
 
             } else {
 
@@ -588,8 +592,8 @@ const ProductItemPageItemBlock = ({ product, pathname, comments }: IProductItemP
 
                             </div>
 
-                            {/* если errorSize true,то есть errorSize не равно пустой строке или имеет другое true значение(типа 1,true,не пустая строка и тд),то есть есть ошибка формы,то показываем ее */}
-                            {errorSize && <p className="formErrorText sectionProductItemPage__errorCartText">{errorSize}</p>}
+                            {/* если errorAdding true,то есть errorAdding не равно пустой строке или имеет другое true значение(типа 1,true,не пустая строка и тд),то есть есть ошибка формы,то показываем ее */}
+                            {errorAdding && <p className="formErrorText sectionProductItemPage__errorCartText">{errorAdding}</p>}
                         </>
 
                     }

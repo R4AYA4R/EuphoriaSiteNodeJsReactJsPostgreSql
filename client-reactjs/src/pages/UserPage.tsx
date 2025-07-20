@@ -3,7 +3,7 @@ import SectionUnderTop from "../components/SectionUnderTop";
 import UserPageFormComponent from "../components/UserPageFormComponent";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { AuthResponse, IDeleteFileResponse, IDescImages, IUploadFileResponse } from "../types/types";
+import { AuthResponse, IDeleteFileResponse, IDescImages, IProduct, IUploadFileResponse } from "../types/types";
 import { ChangeEvent, FormEvent, RefObject, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
@@ -501,10 +501,128 @@ const UserPage = () => {
             // если errorNewProductFormForImg === '', то есть состояние ошибки для картинок в форме для создания нового товара для админа равно пустой строке,то есть ошибки нет(делаем эту проверку,потому что при загрузке неправильной картинки товара на сервер мы показываем ошибку в другом useEffect,поэтому проверяем,нету ли ошибки,перед тем,как создать новый объект товара в базе данных)
             if (errorNewProductFormForImg === '') {
 
+                // оборачиваем в try catch для обработки ошибок
+                try {
 
+                    let newPriceDiscount; // создаем переменную для цены со скидкой,указываем ей let,чтобы можно было изменять ей значение потом,делаем эту переменную,чтобы потом ее указывать в объект при создании товара
+
+                    let descImagesProduct: string[] = []; // создаем переменную для массива названий картинок,указываем ей let,чтобы можно было изменять ей значение потом
+
+                    let totalPriceProduct; // переменная для totaPrice для товара
+
+                    let categoryId; // переменная для id категории для товара,так как сделали так,что у каждой категории свой id и так связали таблицы в базе данных
+
+                    let typeId;  // переменная для id типа для товара,так как сделали так,что у каждого типа свой id и так связали таблицы в базе данных
+
+                    let nameProduct = inputProductName.trim(); // помещаем в переменную name(указываем ей именно let,чтобы можно было изменять) значение инпута имени товара,отфильтрованное по пробелам,если его не отфильтровать здесь по пробелам,то даже при следующем изменении этой переменной nameProduct,если там указать trim(),то не будет работать,и не будет заменять первую букву на заглавную
+
+                    nameProduct = nameProduct.replace(nameProduct[0], nameProduct[0].toUpperCase());  // заменяем первую букву этой строки инпута имени(name[0] в данном случае) на первую букву этой строки инпута имени только в верхнем регистре(name[0].toUpperCase()),чтобы имя товара начиналось с большой буквы,даже если написали с маленькой
+
+                    console.log(nameProduct)
+
+                    // если inputPriceDiscountValue больше 0,то есть админ указал цену со скидкой для этого товара
+                    if (inputPriceDiscountValue > 0) {
+
+                        newPriceDiscount = inputPriceDiscountValue.toFixed(2); // указываем toFixed(2),чтобы преобразовать это число до 2 чисел после запятой,так как эти инпуты обычной цены и цены со скидкой могу быть дробными,типа с несколькими цифрами после запятой
+
+                    } else {
+
+                        newPriceDiscount = null; // в другом случае указываем значение переменной newPriceDiscount как null
+
+                    }
+
+                    // проходимся по массиву descImages и на каждой итерации добавляем image.name(название текущего итерируемого объекта картинки) в массив descImagesProduct,чтобы сохранить только названия файлов картинок в массив descImagesProduct
+                    descImages.forEach(image => {
+
+                        descImagesProduct.push(image.name);
+
+                    })
+
+                    // если inputPriceDiscountValue > 0,то есть админ указал скидку у товара 
+                    if (inputPriceDiscountValue > 0) {
+
+                        totalPriceProduct = inputPriceDiscountValue.toFixed(2); // изменяем значение totalPriceProduct на inputPriceDiscountValue.toFixed(2)
+
+                    } else {
+                        // в другом случае,если у товара не указана скидка,то изменяем значение totalPriceProduct на inputPriceValue.toFixed(2)(обычную цену товара)
+                        totalPriceProduct = inputPriceValue.toFixed(2);
+                    }
+
+                    // если selectBlockCategoryValue(значение категории,которое выбрал админ) равен 'Long Sleeves',то указываем значение переменной categoryId как 1,так как сделали так,что в нашей базе данных у категории 'Long Sleeves' id 1,проверки ниже по такому же принципу
+                    if (selectBlockCategoryValue === 'Long Sleeves') {
+
+                        categoryId = 1;
+
+                    } else if (selectBlockCategoryValue === 'Joggers') {
+
+                        categoryId = 2;
+
+                    } else if (selectBlockCategoryValue === 'T-Shirts') {
+
+                        categoryId = 3;
+
+                    } else if (selectBlockCategoryValue === 'Shorts') {
+
+                        categoryId = 4;
+
+                    }
+
+                    // если selectBlockTypeValue(значение типа одежды,которое выбрал админ) равно 'Men',то указываем значение переменной typeId как 1,так как сделали так,что в нашей базе данных у типа 'Men' id 1,проверки ниже по такому же принципу
+                    if (selectBlockTypeValue === 'Men') {
+
+                        typeId = 1;
+
+                    } else if (selectBlockTypeValue === 'Women') {
+
+                        typeId = 2;
+
+                    }
+
+                    // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,используем тут наш инстанс axios ($api),чтобы правильно обрабатывался этот запрос для проверки на access токен с помощью нашего authMiddleware на нашем сервере
+                    const response = await $api.post<IProduct>('/addNewProductCatalog', { name: nameProduct, descText: textareaProductDesc, categoryId: categoryId, typeId: typeId, sizes: sizesMass, price: inputPriceValue.toFixed(2), priceDiscount: newPriceDiscount, amount: 1, rating: 0, totalPrice: totalPriceProduct, mainImage: inputFileMainImage.name, descImages: descImagesProduct }); // указываем здесь первым параметром url только конкретного эндпоинта(типа без полного url до бэкэнда,потом до роутера,а только потом до эндпоинта),так как в этом нашем инстансе axios($api) мы указали параметр baseUrl(то есть базовый url для каждого запроса с помощью этого нашего инстанса axios($api),когда создавали наш этот инстанс axios,в файле http.ts) уже до нашего бэкэнда и до нашего роутера,поэтому остается только добавить url до конкретного эндпоинта, поле id не указываем,чтобы оно сгенерировалось на сервере автоматически,указываем поле mainImage как поле name у состояния inputFileMainImage(inputFileMainImage.name,то есть название файла,который выбрал пользователь(админ)), в mainImage передаем название файла картинки,которую выбрал админ для нового товара(она уже будет загружена на наш node js сервер,если она будет правильного размера),также указываем поле descImages со значением как descImagesProduct(массив только названий файлов картинок описания для товара),указываем priceDiscount со значением как у newPriceDiscount,то есть вместо него будет подставлено либо значение как newPriceDiscount,либо null(то есть ничего не будет подставлено),в зависимости от условия для этой переменной newPriceDiscount выше в коде,это чтобы указать цену со скидкой для товара,если она указана,указываем toFixed(2) для inputPriceValue,чтобы преобразовать это число до 2 чисел после запятой,так как эти инпуты обычной цены и цены со скидкой могут быть дробными,типа с несколькими цифрами после запятой,указываем totalPrice как totalPriceProduct,то есть как цену со скидкой или как обычную цену в зависимости от проверок выше в коде,указываем categoryId как переменная categoryId(делали ей проверки выше в коде) и typeId как переменная typeId(делали ей проверки выше в коде),указываем name как переменная nameProduct
+
+                    console.log(response);
+
+                } catch (e: any) {
+
+                    console.log(e.response?.data?.message);
+
+                    return setErrorNewProductForm(e.response?.data?.message);  // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+
+                }
 
 
                 setErrorNewProductForm(''); // убираем основную ошибку для всяких инпутов формы для создания нового товара для админа,так как мы разделили основную ошибку формы для всяких инпутов и ошибку формы,связанную с картинками для товара у этой формы,а убираем ошибку формы,связанную с картинками для товара, при загрузке нового файла главной картинки или картинки описания для товара
+
+                // очищаем инпуты формы создания нового товара
+                setInputProductName('');
+                setSelectBlockCategoryValue('');
+                setSelectBlockTypeValue('');
+                setTextareaProductDesc('');
+                setSizesMass([]); // очищаем массив выбранных размеров для нового товара
+                setInputPriceValue(1);
+                setInputPriceDiscountValue(0);
+
+                setImgPath(''); // указываем состоянию пути для главной картинки товара пустую строку,чтобы когда пользователь(админ) выбрал картинку для товара,не сохранил ее для товара,а просто вышел из аккаунта,то картинка не показывалась уже,чтобы при повторном заходе в аккаунт сразу без обновления страницы не показывалась эта картинка,которую выбрал админ до этого
+
+                setDescImages([]); // изменяем состяние descImages на пустой массив,чтобы не показывались картинки описания после выхода из аккаунта и сразу же захода обратно без обновления страницы
+
+                setInputFileMainImage(null);  // изменяем состояние для инпута файла главной картинки для нового товара,указываем ему значение как null,чтобы когда админ выбрал картинку для товара,не сохранил ее для товара,а просто вышел из аккаунта,то чтобы при повторном заходе в аккаунт сразу без обновления страницы админ мог выбрать опять картинку
+
+                // если inputMainImage.current true(то есть inputMainImage.current есть),делаем эту проверку,так как выдает ошибку,что inputMainImage.current может быть null
+                if (inputMainImage.current) {
+
+                    inputMainImage.current.value = ''; // изменяем текущее значение у inputMainImage.current(инпута файла для главной картинки для товара) на пустую строку,то есть очищаем этот инпут для файлов,чтобы потом при выходе из аккаунта очищать значение этого инпута,чтобы когда админ выбрал картинку для товара,не сохранил ее для товара,а просто вышел из аккаунта,то чтобы при повторном заходе в аккаунт сразу без обновления страницы админ мог выбрать опять картинку
+
+                }
+
+                // если inputDescImages.current true(то есть inputDescImages.current есть),делаем эту проверку,так как выдает ошибку,что inputDescImages.current может быть null
+                if (inputDescImages.current) {
+
+                    inputDescImages.current.value = ''; // изменяем текущее значение у inputDescImages.current(инпута файла для картинок описания для товара) на пустую строку,то есть очищаем этот инпут для файлов,чтобы потом при выходе из аккаунта очищать значение этого инпута,чтобы когда админ выбрал картинку для товара,не сохранил ее для товара,а просто вышел из аккаунта,то чтобы при повторном заходе в аккаунт сразу без обновления страницы админ мог выбрать опять картинку
+
+                }
+
 
             }
 
