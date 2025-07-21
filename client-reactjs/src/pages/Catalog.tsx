@@ -736,7 +736,8 @@ const Catalog = () => {
 
                                     {data?.products.rows.map((product) =>
 
-                                        <ProductItemCatalog key={product.id} product={product} comments={dataComments?.allComments} dataProductsCart={dataProductsCart} refetchProductsCart={refetchProductsCart}/>
+                                        // передаем этому компоненту функцию setPage в пропсах(параметрах),чтобы в этом компоненте указывать текущую страницу пагинации на 1 при удалении товара каталога
+                                        <ProductItemCatalog key={product.id} product={product} comments={dataComments?.allComments} dataProductsCart={dataProductsCart} refetchProductsCart={refetchProductsCart} setPage={setPage}/>
 
                                     )}
 

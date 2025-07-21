@@ -2602,7 +2602,7 @@ a {
 
 .adminForm__item-imageBlockBtn:hover{
     cursor: pointer;
-    border-color: red;
+    border-color: #d80101;
 }
 
 .adminForm__descImagesBlock{

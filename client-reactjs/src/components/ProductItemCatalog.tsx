@@ -1,10 +1,11 @@
 
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IComment, IProduct, IProductCart, IProductsCartResponse } from "../types/types";
 import { useNavigate } from "react-router-dom";
 import { QueryObserverResult, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useTypedSelector } from "../hooks/useTypedSelector";
+import $api from "../http/http";
 
 // создаем интерфейс(тип) для пропсов компонента IProductItemCatalog,указываем в нем поле product с типом нашего интерфейса IProduct и тд
 interface IProductItemCatalog {
@@ -13,17 +14,19 @@ interface IProductItemCatalog {
 
     dataProductsCart: IProductsCartResponse | null | undefined, // указываем это поле для ответа от сервера на получение товаров корзины,указываем ему тип как наш IProductsCartResponse или null(так как наша функция запроса на сервер может вернуть null,мы это указали) | undefined(указываем или undefined,иначе выдает ошибку,что нельзя назначить тип просто IProductsCartResponse,так как это поле может быть еще undefined)
 
-    refetchProductsCart: () => Promise<QueryObserverResult<IProductsCartResponse | null, Error>> // указываем поле для функции переобновления данных товаров корзины,указываем,что это стрелочная функция и она возвращает тип Promise,в котором QueryObserverResult,в котором IProductsCartResponse или null(так как наша функция запроса на сервер может вернуть null,мы это указали) и тип Error(что может прийти еще и ошибка),скопировали этот весь тип в файле sectionNewArrivals у этой функции refetchProductsCart у react query(tanstack query),этот полный тип подсветил vs code
+    refetchProductsCart: () => Promise<QueryObserverResult<IProductsCartResponse | null, Error>>, // указываем поле для функции переобновления данных товаров корзины,указываем,что это стрелочная функция и она возвращает тип Promise,в котором QueryObserverResult,в котором IProductsCartResponse или null(так как наша функция запроса на сервер может вернуть null,мы это указали) и тип Error(что может прийти еще и ошибка),скопировали этот весь тип в файле sectionNewArrivals у этой функции refetchProductsCart у react query(tanstack query),этот полный тип подсветил vs code
+
+    setPage: Dispatch<SetStateAction<number>> // указываем тип для функции setPage(она у нас меняет текущую страницу пагинации каталога),которая изменяет состояние useState и указываем,что параметр этой функции будет с типом number
 }
 
 // указываем объекту пропсов(параметров,которые будем передавать этому компоненту) наш тип IProductItemArrivals
-const ProductItemCatalog = ({ product, comments, dataProductsCart, refetchProductsCart }: IProductItemCatalog) => {
+const ProductItemCatalog = ({ product, comments, dataProductsCart, refetchProductsCart, setPage }: IProductItemCatalog) => {
 
     const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
     const [isExistsCart, setIsExistsCart] = useState(false);
 
-    const [commentsForProduct,setCommentsForProduct] = useState<IComment[] | undefined>([]);  // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
+    const [commentsForProduct, setCommentsForProduct] = useState<IComment[] | undefined>([]);  // состояние для всех комментариев для отдельного товара,указываем ему тип в generic как IComment[] | undefined,указываем или undefined,так как выдает ошибку,когда изменяем это состояние на отфильтрованный массив комментариев по имени товара,что comments может быть undefined
 
     const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу 
 
@@ -47,6 +50,29 @@ const ProductItemCatalog = ({ product, comments, dataProductsCart, refetchProduc
 
     })
 
+    // фукнция для удаления товара каталога по кнопке
+    const deleteProductCatalogByBtn = async () => {
+
+        // оборачиваем в try catch для отлавливания ошибок
+        try {
+
+            const response = await $api.post('/deleteProductCatalog', product); // делаем запрос на сервер для удаления товара каталога из базы данных,здесь используем наш axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление товара каталога проверяем пользователя на access токен,так как проверяем,валидный(годен ли по сроку годности еще) ли access токен у пользователя(админа в данном случае) или нет),передаем как тело запроса объект product(объект товара каталога в этом компоненте)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            setPage(1); // изменяем состояние текущей страницы пагинации каталога на 1,чтобы при удалении товара текущая страница становилась 1,в данном случае отдельно не переобновляем массив товаров каталога,так как изменяем состояние page(текущая страница пагинации) с помощью setPage и в файле Catalog.tsx при изменении этого состояния page,делается запрос на переобновление товаров каталога,поэтому здесь еще раз его указывать не нужно
+
+            // в данном случае еще раз отдельно переобновлять массив товаров корзины не нужно,так как изменяем состояние page(текущая страница пагинации) с помощью setPage и в файле Catalog.tsx при изменении этого состояния page,делается запрос на переобновление товаров каталога
+            // refetchProductsCart(); // переобновляем массив товаров корзины
+
+        } catch (e: any) {
+
+            console.log(e.response?.data?.message); // выводим ошибку в логи
+
+        }
+
+    }
+
     // при рендеринге этого компонента и при изменении product(объекта товара) будет отработан код в этом useEffect
     useEffect(() => {
 
@@ -61,11 +87,11 @@ const ProductItemCatalog = ({ product, comments, dataProductsCart, refetchProduc
     }, [product])
 
     // при рендеринге(запуске) этого компонента и при изменении comments(массива всех комментариев) будет отработан код в этом useEffect,обязательно указываем comments в массиве зависимостей этого useEffect,иначе комментарии могут не успеть загрузиться и в состоянии commentsForProduct будет пустой массив комментариев 
-    useEffect(()=>{
+    useEffect(() => {
 
         setCommentsForProduct(comments?.filter(comment => comment.productId === product.id)); // изменяем состояние commentsForProduct на отфильтрованный массив всех комментариев comments(пропс(параметр) этого компонента) по id товара(product.id),то есть оставляем в массиве все объекты комментариев,у которых поле productId равно product.id(объект товара,который передали пропсом(параметром) в этот компонент)
 
-    },[comments])
+    }, [comments])
 
     const addProductToCart = () => {
 
@@ -131,6 +157,14 @@ const ProductItemCatalog = ({ product, comments, dataProductsCart, refetchProduc
     return (
         <div className="sectionNewArrivals__item">
 
+            {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор),то показываем кнопку админа для удаления товара из базы данных */}
+            {user.role === 'ADMIN' &&
+                // в onClick этой button указываем нашу функцию deleteProductCatalogByBtn
+                <button className="adminForm__item-imageBlockBtn" type="button" onClick={deleteProductCatalogByBtn} >
+                    <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__imageBlockBtn-img" />
+                </button>
+            }
+
             {/* если product.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае пустую строку,то есть ничего не показываем */}
             {product.priceDiscount ?
                 <>
@@ -151,7 +185,7 @@ const ProductItemCatalog = ({ product, comments, dataProductsCart, refetchProduc
             {/* если product.name.length > 29,то есть длина названия по количеству символов больше 29(это значение посчитали в зависимости от дизайна,сколько символов в названии нормально влазит в максимальную ширину и высоту текста названия),то показываем такой блок текста названия товара,с помощью substring() вырезаем из строки названия товара опеределенное количество символов(передаем первым параметром в substring с какого символа по индексу начинать вырезать,вторым параметром передаем до какого символа по индексу вырезать,в данном случае подобрали значение до 29 символа по индексу вырезать,так как еще нужно место на троеточие),и в конце добавляем троеточие,чтобы красиво смотрелось,в другом случае показываем обычное название товара(product.name) */}
             {product.name.length > 29 ?
 
-                <h2 className="sectionNewArrivals__item-title" onClick={() => router(`/catalog/${product.id}`)}>{(product.name).substring(0,29)}...</h2>
+                <h2 className="sectionNewArrivals__item-title" onClick={() => router(`/catalog/${product.id}`)}>{(product.name).substring(0, 29)}...</h2>
                 :
                 <h2 className="sectionNewArrivals__item-title" onClick={() => router(`/catalog/${product.id}`)}>{product.name}</h2>
 
