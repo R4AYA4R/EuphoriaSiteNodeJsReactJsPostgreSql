@@ -108,28 +108,6 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
 
     })
 
-    // функция мутации(изменения данных) для изменения цены товара(она будет для админа)
-    const { mutate: mutateUpdateProductPrice } = useMutation({
-        mutationKey: ['updateProductPrice'],
-        mutationFn: async (product: IProduct) => {
-
-            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,передаем просто объект product как тело запроса,используем тут наш инстанс axios ($api),чтобы правильно обрабатывался этот запрос для проверки на access токен с помощью нашего authMiddleware на нашем сервере
-            await $api.put<IProduct>('/changeProductPriceCatalog', product);
-
-        },
-
-        // при успешной мутации(изменения) цены товара,переобновляем данные товара
-        onSuccess() {
-
-            refetchProduct(); // переобновляем данные товара
-
-            setTabChangePrice(false); // изменяем значение tabChangePrice на false,чтобы убрать инпут для изменения цены товара
-
-
-        }
-
-    })
-
 
     // const isExistsCart = dataProductsCart?.allProductsCartForUser.some(productCart => productCart.name === product?.name && product?.sizes.includes(productCart.size)); // делаем проверку методом some и результат записываем в переменную isExistsCart,если в dataProductsCart?.allProductsCartForUser(в массиве объектов товаров корзины для определенного авторизованного пользователя) есть элемент(объект) name которого равен product name(то есть name этого товара на этой странице) и если массив sizes у product(объект товара на этой странице) содержит елемент со значением size у productCart(объекта товара корзины),в итоге в isExistsCart будет помещено true или false в зависимости от проверки методом some
 
@@ -503,8 +481,6 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
                 totalPriceProduct = inputPriceValue?.toFixed(2); //  изменяем переменную productDiscountPrice на значение inputPriceValue(состояние инпута для обычной цены товара), указываем toFixed(2),чтобы преобразовать это число до 2 чисел после запятой,так как эти инпуты обычной цены и цены со скидкой могу быть дробными,типа с несколькими цифрами после запятой
 
             }
-
-            // mutateUpdateProductPrice({ ...product, price: inputPriceValue, totalPrice: totalPriceProduct, priceDiscount: productDiscountPrice } as IProduct);
 
             // используем try catch,чтобы отлавливать ошибки,в данном случае делаем так,так как от сервера может прийти ошибка,что пользователь не авторизован,как минимум ее и будем показывать пользователю в форме для изменения цены товара
             try {
