@@ -48,6 +48,8 @@ router.post('/addNewProductCatalog', authMIddleware, productController.createNew
 
 router.post('/deleteProductCatalog', authMIddleware, productController.deleteProductCatalog); // создаем post запрос на удаление товара из каталога для админа,делаем здесь post запрос,а не delete,так как нужно передать в тело запроса объект товара,который хотим удалить,чтобы брать у этого объекта нужные поля,а также,из-за того,что нужно брать еще и массив названий картинок описания для товара(descImages),то в delete запрос передать массив как параметр в url до эндпоинта сложнее,поэтому в данном случае уже сделали post запрос
 
+router.put('/changeProductPriceCatalog',authMIddleware,productController.changeProductPriceCatalog);  // создаем put запрос для изменения цены товара каталога(эта функция будет для админа)
+
 
 router.post('/registration',
     body('email').isEmail(),

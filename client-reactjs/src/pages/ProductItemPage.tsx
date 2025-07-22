@@ -406,7 +406,7 @@ const ProductItemPage = () => {
             <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionProductItemPage sectionCatalog__active " : "sectionCatalog sectionProductItemPage"} ref={sectionCatalog}>
 
                 {/* вынесли блок с информацией о товаре и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара),также передаем поле pathname(url страницы),чтобы потом при его изменении изменять значение количества товара,так как оно находится в этом компоненте ProductItemPageItemBlock,указываем именно таким образом pathname={pathname},иначе выдает ошибку типов,передаем функцию refetch для переобновления данных товара(повторный запрос на сервер для переобновления данных товара) и указываем ему название как refetchProduct(просто название этого пропса(параметра)) */}
-                <ProductItemPageItemBlock product={data?.data} pathname={pathname} comments={dataComments?.allCommentsForProduct} />
+                <ProductItemPageItemBlock product={data?.data} pathname={pathname} comments={dataComments?.allCommentsForProduct} refetchProduct={refetch}/>
 
                 {/* указываем здесь контейнер,так как для блока ProductItemPageItemBlock нужен контейнер в отдельной его части по такому дизайну */}
                 <div className="container">

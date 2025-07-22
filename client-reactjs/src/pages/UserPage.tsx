@@ -827,14 +827,14 @@ const UserPage = () => {
 
     const handlerMinusPriceProductBtn = () => {
 
-        // если значение инпута цены товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля или 1 не отнимало - 1
+        // если значение инпута цены товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля не отнимало - 1
         if (inputPriceValue > 1) {
 
             setInputPriceValue((prev) => +(prev - 1).toFixed(2)); // изменяем состояние инпута цены на (prev - 1).toFixed(2) (текущее значение инпута - 1,округленное до 2 чисел после запятой,указываем это toFixed(2),чтобы больше 2 цифр после запятой не показывалось в инпуте,иначе иногда оно может так показывать,если изменять это значение на - 1 и тд),указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число,также указываем + перед этим всем выражением,чтобы преобразовать это в число,в данном случае преобразовываем строку в число,если преобразование будет невозможно,то будет возвращен NaN(not a number),иначе выдает ошибку,что нельзя назначить строку для состояния inputPriceValue
 
         } else {
 
-            setInputPriceValue(1);
+            setInputPriceValue(0);
 
         }
 
@@ -865,14 +865,14 @@ const UserPage = () => {
 
     const handlerMinusPriceDiscountProductBtn = () => {
 
-        // если значение инпута цены товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля или 1 не отнимало - 1
+        // если значение инпута цены товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 0,чтобы после нуля не отнимало - 1
         if (inputPriceDiscountValue > 1) {
 
             setInputPriceDiscountValue((prev) => +(prev - 1).toFixed(2)); // изменяем состояние инпута цены на (prev - 1).toFixed(2) (текущее значение инпута - 1,округленное до 2 чисел после запятой,указываем это toFixed(2),чтобы больше 2 цифр после запятой не показывалось в инпуте,иначе иногда оно может так показывать,если изменять это значение на - 1 и тд),указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число,также указываем + перед этим всем выражением,чтобы преобразовать это в число,в данном случае преобразовываем строку в число,если преобразование будет невозможно,то будет возвращен NaN(not a number),иначе выдает ошибку,что нельзя назначить строку для состояния inputPriceValue
 
         } else {
 
-            setInputPriceDiscountValue(1);
+            setInputPriceDiscountValue(0);
 
         }
 
@@ -1191,7 +1191,7 @@ const UserPage = () => {
 
                                                         {/* в onClick этой button передаем в нашу функцию deleteMainImageRequestByBtn название файла,который пользователь выбрал в инпуте файлов(мы поместили его в состояние inputFileMainImage),наша функция deleteMainImageRequestByBtn делает запрос на сервер на удаление файла картинки и возвращает ответ от сервера(в данном случае при успешном запросе ответ от сервера будет объект с полями) */}
                                                         <button className="adminForm__item-imageBlockBtn" type="button" onClick={() => deleteMainImageRequestByBtn(inputFileMainImage?.name)} >
-                                                            <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__imageBlockBtn-img" />
+                                                            <img src="/images/sectionUserPage/CrossImg.png" alt="" className="adminForm__imageBlockBtn-img" />
                                                         </button>
 
                                                         <img src={imgPath} alt="" className="adminForm__item-imageBlockImg" />
@@ -1229,7 +1229,7 @@ const UserPage = () => {
 
                                                                 {/* в onClick этой button передаем в нашу функцию deleteDescImageRequestByBtn название файла,который пользователь выбрал в инпуте файлов(image.name, то есть имя текущего итерируемого объекта картинки в массиве descImages),наша функция deleteMainImageRequestByBtn делает запрос на сервер на удаление файла картинки и возвращает ответ от сервера(в данном случае при успешном запросе ответ от сервера будет объект с полями) */}
                                                                 <button className="adminForm__item-imageBlockBtn" type="button" onClick={() => deleteDescImageRequestByBtn(image.name)} >
-                                                                    <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__imageBlockBtn-img" />
+                                                                    <img src="/images/sectionUserPage/CrossImg.png" alt="" className="adminForm__imageBlockBtn-img" />
                                                                 </button>
 
                                                                 {/* указываем ref этой картинке как imageDescRef,этот ref будет меняться для каждой последней картинки,которую пользователь выбрал последней в инпуте файлов,то есть этот ref будет для картинки,которая последняя добавленная в массив descImages,поэтому не надо тут создавать несколько useRef */}

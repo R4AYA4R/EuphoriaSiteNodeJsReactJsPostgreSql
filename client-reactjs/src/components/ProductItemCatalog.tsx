@@ -161,7 +161,7 @@ const ProductItemCatalog = ({ product, comments, dataProductsCart, refetchProduc
             {user.role === 'ADMIN' &&
                 // в onClick этой button указываем нашу функцию deleteProductCatalogByBtn
                 <button className="adminForm__item-imageBlockBtn" type="button" onClick={deleteProductCatalogByBtn} >
-                    <img src="/images/sectionUserPage/Close.png" alt="" className="adminForm__imageBlockBtn-img" />
+                    <img src="/images/sectionUserPage/CrossImg.png" alt="" className="adminForm__imageBlockBtn-img" />
                 </button>
             }
 

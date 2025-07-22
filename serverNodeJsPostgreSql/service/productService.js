@@ -397,7 +397,7 @@ class ProductService {
         const mainImagePath = `${path.resolve()}\\static\\${productCatalog.mainImage}`;  // помещаем путь до файла,который хотим удалить в переменную mainImagePath(здесь path.resolve() - берет текущую директорию(в данном случае директорию до \serverNodeJsPostgreSql) потом через слеши наша папка static в которой мы храним все точные скачанные картинки для товара с фронтенда и еще через слеши указываем название файла)
 
         // если fs.existsSync(mainImagePath) false,то есть файл по такому пути,который находится в переменной mainImagePath не найден,то показываем ошибку и не удаляем такой файл,иначе может быть ошибка,когда хотим удалить файл,что такого файла и так нету
-        if(!fs.existsSync(mainImagePath)){
+        if (!fs.existsSync(mainImagePath)) {
 
             throw ApiError.BadRequest('No such file or directory to delete'); // throw тоже завершает функцию на этой строчке кода,как и return,а также на строчке throw сразу попадает в блок catch у родительской функции(если этот блок catch был описан,если не был,то будет ошибка,что типа не обработана ошибка с помощью try catch) вместо throw new Error указываем throw ApiError(наш класс для обработки ошибок),указываем у него функцию BadRequest,этот объект ошибки из функции BadRequest попадет в функцию next() (наш error middleware) у функции для эндпоинта,так как в ней мы отлавливали ошибки с помощью try catch и здесь указали throw,и эта ошибка там будет обработана,то есть показываем ошибку с сообщением
 
@@ -409,11 +409,11 @@ class ProductService {
             let descImagePath = `${path.resolve()}\\static\\${image}`; // указываем переменной descImagePath let,чтобы можно было изменять ей значение,помещаем в нее возможный путь для картинки описания,то есть если картинка описания с таким же названием как image уже добавилась,то такой путь будет,и проверяем потом ниже в коде существует ли такой путь,и если существует,то удаляем эту картинку,а если не существует,то показываем ошибку,что такого файла нету
 
             // если путь descImagePath false,то есть такой файл картинки описания в папке static не существует),то показываем ошибку,проверяем это с помощью fs.existsSync()
-            if(!fs.existsSync(descImagePath)){
+            if (!fs.existsSync(descImagePath)) {
 
                 throw ApiError.BadRequest('No such file or directory to delete'); // throw тоже завершает функцию на этой строчке кода,как и return,а также на строчке throw сразу попадает в блок catch у родительской функции(если этот блок catch был описан,если не был,то будет ошибка,что типа не обработана ошибка с помощью try catch) вместо throw new Error указываем throw ApiError(наш класс для обработки ошибок),указываем у него функцию BadRequest,этот объект ошибки из функции BadRequest попадет в функцию next() (наш error middleware) у функции для эндпоинта,так как в ней мы отлавливали ошибки с помощью try catch и здесь указали throw,и эта ошибка там будет обработана,то есть показываем ошибку с сообщением
 
-            } else {    
+            } else {
                 // в другом случае,если путь descImagePath существует(то есть есть этот файл картинки описания),то удаляем эту картинку
 
                 fs.unlinkSync(descImagePath);  // удаляем файл по такому пути,который находится в переменной descImagePath с помощью fs.unlinkSync(),у модуля fs для работы с файлами есть методы обычные(типа unlink) и Sync(типа unlinkSync), методы с Sync блокируют главный поток node js и код ниже этой строки не будет выполнен,пока не будет выполнен метод с Sync
@@ -425,6 +425,52 @@ class ProductService {
         fs.unlinkSync(mainImagePath); // удаляем файл по такому пути,который находится в переменной mainImagePath с помощью fs.unlinkSync(),у модуля fs для работы с файлами есть методы обычные(типа unlink) и Sync(типа unlinkSync), методы с Sync блокируют главный поток node js и код ниже этой строки не будет выполнен,пока не будет выполнен метод с Sync
 
         return deletedProductCatalog; // возвращаем из этой функции deletedProductCatalog(если товар каталога был удален успешно,то вернется 1(количество удаленных записей из базы данных, в данном случае удаляли одну эту запись,то есть один объект товара каталога),а если он не был удален,то вернется 0)
+
+
+    }
+
+    async changeProductPriceCatalog(productCatalog) {
+
+        const foundedProductCatalog = await models.Product.findOne({ where: { id: productCatalog.id } }); // ищем объект товара каталога у которого id равен id товара,который мы взяли из тела запроса(productCatalog.id)
+
+        foundedProductCatalog.price = productCatalog.price; // изменяем поле price у foundedProductCatalog(у товара каталога) на значение поля price у productCatalog(объект товара,который мы взяли из тела запроса)
+
+        foundedProductCatalog.priceDiscount = productCatalog.priceDiscount; // изменяем поле priceDiscount у foundedProductCatalog(у товара каталога) на значение поля priceDiscount у productCatalog(объект товара,который мы взяли из тела запроса)
+
+        foundedProductCatalog.totalPrice = productCatalog.totalPrice; // изменяем поле totalPrice у foundedProductCatalog(у товара каталога) на значение поля totalPrice у productCatalog(объект товара,который мы взяли из тела запроса)
+
+        await foundedProductCatalog.save(); // сохраняем объект товара каталога в базе данных
+
+        const foundedProductsCart = await models.CartProduct.findAll({ where: { name: productCatalog.name } });  // ищем все объекты товаров у которых name равен полю name у productCatalog(объект товара,который мы взяли из тела запроса),ищем эти объекты товаров по полю name,так как поле name может быть одинаковое у товаров в корзине,но у разных пользователей,поэтому находим все
+
+        // если foundedProductsCart true,то есть объекты товаров в корзине были найдены
+        if (foundedProductsCart) {
+
+            // проходимся по массиву найденных товаров корзины(если они были найдены),указываем async для функции внутри forEach,так как делаем там асинхронный запрос к базе данных для сохранения товара в базе данных,и на каждой итерации этого массива изменяем поля price и totalPrice этого товара в корзине
+            foundedProductsCart.forEach(async (productCart) => {
+
+                productCart.price = productCatalog.price;  // изменяем поле price у этого товара корзины(productCart) на значение поля price у productCatalog(объект товара каталога,который мы взяли из тела запроса)
+
+                // если productCatalog.priceDiscount больше 0,то есть поле priceDiscount у productCatalog(объект тела запроса) больше 0,то есть цена со скидко указана,то изменяем поле totalPrice на значение количества товара,умноженное на цену со скидкой
+                if (productCatalog.priceDiscount > 0) {
+
+                    productCart.totalPrice = productCart.amount * productCatalog.priceDiscount; // изменяем поле totalPrice у этого товара корзины(productCart) на значение поля amount у этого товара корзины(productCart),умноженное на поле priceDiscount у productCatalog(объект товара каталога,который мы взяли из тела запроса),то есть считаем общую цену товара со старым значением количества товара в корзине(amount,у каждого пользователя оно может быть разным),но уже с новым значением цены товара со скидкой(productCatalog.priceDiscount), делаем так,так как в корзине будет считаться общий счет и тд по полю totalPrice,и если не сделать проверку,есть ли цена со скидкой,и просто умножить количество товара на его обычную цену,то оно не будет считать цену со скидкой
+
+                } else {
+                    // в другом случае,если поле priceDiscount меньше или равно 0(то есть оно не указано),то изменяем поле totalPrice на значение количества товара,умноженное на его обычную цену
+                    productCart.totalPrice = productCart.amount * productCatalog.price;  // изменяем поле totalPrice у этого товара корзины(productCart) на значение поля amount у этого товара корзины(productCart),умноженное на поле price у productCatalog(объект товара каталога,который мы взяли из тела запроса),то есть считаем общую цену товара со старым значением количества товара в корзине(amount,у каждого пользователя оно может быть разным),но уже с новым значением цены товара(productCatalog.price)
+
+                }
+
+                productCart.priceDiscount = productCatalog.priceDiscount;  // изменяем поле priceDiscount у productCart(текущий итерируемый объект товара корзины) на значение поля priceDiscount у productCatalog(объект товара,который мы взяли из тела запроса)
+
+                await productCart.save(); // сохраняем этот обновленный объект товара корзины в базе данных
+
+            })
+
+        }
+
+        return { foundedProductCatalog, foundedProductsCart }; // возвращаем из этой функции changeProductPriceCatalog объект с полями измененного объекта товара каталога и обновленного массива товаров корзины,если они были найдены,возвращаем именно объект,так как уже указываем несколько полей в этом объекте,если не вернуть объект для нескольких полей,то выдает ошибку
 
 
     }
