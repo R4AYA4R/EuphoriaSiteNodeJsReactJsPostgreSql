@@ -508,6 +508,26 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
 
     }
 
+    // фукнция для удаления картинки описания для товара на сервере для удаления по кнопке
+    const deleteDescImageRequestByBtn = async (imageName:string, productId:number) => {
+
+        // оборачиваем в try catch, чтобы отлавливать ошибки
+        try{
+
+            const response = await $api.delete(`/deleteDescImage/${productId}/${imageName}`); // делаем запрос на сервер для удаления файла на сервере и указываем в ссылке на эндпоинт параметр productId и imageName,чтобы на бэкэнде его достать,здесь используем наш axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление файла с сервера проверяем пользователя на access токен,так как проверяем,валидный(годен ли по сроку годности еще) ли access токен у пользователя(админа в данном случае) или нет)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            refetchProduct(); // переобновляем данные товара,чтобы сразу переобновился слайдер с картинками,уже без удаленной картинки
+
+        }catch(e:any){
+
+            console.log(e.response?.data?.message); // выводим ошибку в логи
+
+        }
+
+    }
+
     return (
         <div className="sectionProductItemPage__itemBlock-inner">
             <div className="sectionProductItemPage__leftBlock">
@@ -630,6 +650,17 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
                             {product?.descImages.map((image, index) =>
 
                                 <SwiperSlide key={index}>
+
+                                    {/* помещаем эту картинку не в swiper-zoom-container,чтобы не зумилась кнопка удаления картинки вместе с самой картинкой,делаем проверку если user.role === 'ADMIN' (если роль у пользователя сейчас админ) и product.descImages.length > 1 (массив картинок описания у товара по длине больше 1,делаем эту проверку,чтобы если в массиве картинок описания осталась одна картинка,то эта кнопке не показывалась,чтобы нельзя было удалить последнюю картинку описания,в данном случае,делаем так,что чтобы изменить главную картинку товара или все картинки описания,то надо будет удалить весь товар и заново добавить это все) */}
+                                    {user.role === 'ADMIN' && product.descImages.length > 1 &&
+
+                                        // в onClick этой button передаем в нашу функцию deleteDescImageRequestByBtn название файла картинки image(которая сейчас итерируется с помощью map,то есть саму картинку описания),также передаем параметр id товара (product.id),у которого надо удалить эту картинку,наша функция deleteDescImageRequestByBtn делает запрос на сервер на удаление файла картинки и возвращает ответ от сервера(в данном случае при успешном запросе в ответе от сервера будет объект с полями)
+                                        <button className="adminForm__item-imageBlockBtn" type="button" onClick={() => deleteDescImageRequestByBtn(image,product.id)} >
+                                            <img src="/images/sectionUserPage/CrossImg.png" alt="" className="adminForm__imageBlockBtn-img" />
+                                        </button>
+
+                                    }
+
                                     {/* добавляем блок div с классом swiper-zoom-container (это класс этому слайдеру для зума по дефолту,мы подключили стили для этого zoom),чтобы работал зум картинок,в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем http://localhost:5000/ и image(текущий итерируемый элемент массива descImages,то есть название каждой картинки описания) */}
                                     <div className="swiper-zoom-container">
                                         <img src={`${process.env.REACT_APP_BACKEND_URL}/${image}`} alt="" className="sectionProductItemPage__sliderBlock-sliderImg" />

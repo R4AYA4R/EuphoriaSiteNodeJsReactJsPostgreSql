@@ -50,6 +50,8 @@ router.post('/deleteProductCatalog', authMIddleware, productController.deletePro
 
 router.put('/changeProductPriceCatalog',authMIddleware,productController.changeProductPriceCatalog);  // создаем put запрос для изменения цены товара каталога(эта функция будет для админа)
 
+router.delete('/deleteDescImage/:productId/:imageName',authMIddleware,productController.deleteDescImage);  // указываем delete запрос для удаления файла картинки описания с нашего node js сервера(в данном случае из папки static),delete запрос не имеет тела запроса и все параметры передаются через строку,тут указываем через :(двоеточие) динамический параметр imageName,то есть этот параметр может меняться(в данном случае этот параметр нужен,чтобы удалить файл из папки static по этому названию imageName),и динамический параметр productId(id товара,у которого нужно удалить эту картинку описания в базе данных)
+
 
 router.post('/registration',
     body('email').isEmail(),

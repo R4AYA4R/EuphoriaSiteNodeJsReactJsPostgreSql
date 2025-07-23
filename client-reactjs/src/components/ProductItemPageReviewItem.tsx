@@ -1,6 +1,7 @@
 import { QueryObserverResult } from "@tanstack/react-query";
 import { IComment, ICommentResponse, IUser } from "../types/types";
 import { AxiosResponse } from "axios";
+import { FormEvent, useState } from "react";
 
 interface IProductItemPageReviewItem {
     user: IUser,
@@ -9,6 +10,31 @@ interface IProductItemPageReviewItem {
 }
 
 const ProductItemPageReviewItem = ({ comment, user, refetchComments }: IProductItemPageReviewItem) => {
+
+    const [activeAdminForm, setActiveAdminForm] = useState(false);
+
+    const [errorAdminForm,setErrorAdminForm] = useState('');
+
+    const [textAreaValue, setTextAreaValue] = useState('');
+
+    // функция для формы для создания ответа от админа,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const submitAdminReplyForm = async (e:FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+        
+
+    }
+
+    const cancelFormHandler = () => {
+
+        setActiveAdminForm(false); // убираем форму,изменяя состояние activeAdminForm на false
+
+        setTextAreaValue(''); // очищаем значение в textarea(изменяя состояние textAreaValue на пустую строку),которое пользователь(админ) мог ввести
+
+        setErrorAdminForm(''); // убираем ошибку формы,если она была
+
+    }
 
     return (
         <div className="reviews__leftBlock-item">
@@ -31,6 +57,40 @@ const ProductItemPageReviewItem = ({ comment, user, refetchComments }: IProductI
                 <p className="reviews__item-topBlockTime">{comment.createdTime}</p>
             </div>
             <p className="reviews__item-text">{comment.text}</p>
+
+            {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор) и если comment.adminReply false(или null,или undefined,или другое false значение),то есть поле adminReply у comment(объект комментария) не указано,или в нем нету значения(то есть у этого комментария нету еще ответа от админа),то показываем блок и кнопку для добавления ответа от админа,в другом случае этот блок(div элемент со всей формой и тд) и кнопка показана не будет */}
+            {user.role === 'ADMIN' && !comment.adminReply &&
+
+                <div className="reviews__item-adminCommentBlock">
+
+                    <button className={activeAdminForm ? "reviews__item-btnAnswer reviews__item-btnAnswer--disabled" : "reviews__item-btnAnswer"} onClick={() => setActiveAdminForm(true)}>Add Reply</button>
+
+                    <form className={activeAdminForm ? "reviews__form reviews__form--active" : "reviews__form"} onSubmit={submitAdminReplyForm}>
+                        <div className="reviews__form-topBlock">
+                            <div className="reviews__form-topBlockInfo">
+                                <img src="/images/sectionProductItemPage/Profile.png" alt="" className="form__topBlockInfo-img" />
+                                <p className="form__topBlockInfo-name">ADMIN</p>
+                            </div>
+                        </div>
+                        <div className="reviews__form-mainBlock">
+                            <textarea className="form__mainBlock-textArea" placeholder="Enter your comment" value={textAreaValue} onChange={(e) => setTextAreaValue(e.target.value)}></textarea>
+
+                            {/* если errorAdminForm не равно пустой строке,то есть есть ошибка формы,то показываем ее */}
+                            {errorAdminForm !== '' && <p className="formErrorText">{errorAdminForm}</p>}
+
+                            <div className="form__mainBlock-bottomBlock">
+                                {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
+                                <button className="reviews__btnBlock-btn" type="submit">Save Reply</button>
+
+                                <button className="reviews__form-cancelBtn" type="button" onClick={cancelFormHandler}>Cancel</button>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+
+            }
 
             {/* здесь еще будем делать форму для ответа от админа и тд */}
             {/* <div className="reviews__item-adminCommentBlock">

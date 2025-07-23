@@ -1826,6 +1826,7 @@ a {
 
 .reviews__leftBlock-item {
     margin-bottom: 30px;
+    min-height: 291px;
 }
 
 .reviews__item-topBlockLeftInfo {
@@ -1888,13 +1889,21 @@ a {
 
 .reviews__form {
     opacity: 0;
+    pointer-events: none; /* указываем это свойство,чтобы убрать возможность наведения и всех событий мыши для взаимодействия с этим элементом,чтобы если этот элемент будет скрыт(opacity:0),то нельзя было навести и на этот элемент,нажать и тд,иначе,если в данном случае форма скрыта,но она не за границами экрана,то на нее можно навестись,и например,если навестись на textarea,то курсор будет изменен,типа как текстовый и тд */
     transform: translateX(100%);
     transition: all 1s ease;
 }
 
 .reviews__form--active {
     opacity: 1;
+    pointer-events: auto; /* указываем этому свойству дефолтное значение,чтобы вернуть все взаимодействия мыши с этим элементом */
     transform: translateX(0);
+}
+
+.form__topBlockInfo-img,
+.reviews__item-img{
+    -webkit-user-drag: none;
+    /* указываем это свойстов,чтобы нельзя было перетащить этот элемент и не срабатывал курсор типа запрещающий перетаскивание,при зажатии курсора и ведении его в другое место,в данном случае чтобы когда форма скрыта(но она в пределах экрана),то чтобы нельзя было тыкать в то место,где она скрытая стоит и чтобы не срабатывал этот запрещающий курсор перетаскивания этой картинки,также можно для других браузеров указать такое же свойство,но для других движков браузера,типа -moz-user-drag:none(для браузера firefox) и тд,но в данном случае это не критично,и можно было это вообще не указывать,поэтому оставим так */
 }
 
 .reviews__form-topBlock {
@@ -1985,6 +1994,26 @@ a {
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 10px;
+}
+
+.reviews__item-btnAnswer{
+    color: #828282;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border:none;
+    font-family: 'Inter',sans-serif;
+    transition:opacity .5s ease;
+}
+
+.reviews__item-btnAnswer:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.reviews__item-btnAnswer--disabled{
+    display: none;
 }
 
 .sectionSignUp__inner {
