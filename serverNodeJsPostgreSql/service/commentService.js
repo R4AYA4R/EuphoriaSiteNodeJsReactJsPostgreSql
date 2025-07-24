@@ -58,6 +58,18 @@ class CommentService {
 
     }
 
+    async addReplyForComment(comment) {
+
+        const foundedComment = await models.Comment.findByPk(comment.id); // находим объект комментария в базе данных по id,который равен id у comment(объект тела запроса)
+
+        foundedComment.adminReply = comment.adminReply; // изменяем поле adminReply у найденного объекта комментария на поле adminReply у comment(объект тела запроса,который передали с фронтенда)
+
+        await foundedComment.save(); // сохраняем этот обновленный объект комментария в базе данных
+       
+        return foundedComment; // возвращаем измененный объект комментария из этой функции addReplyForComment
+
+    }
+
 
 }
 

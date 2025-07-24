@@ -1826,7 +1826,6 @@ a {
 
 .reviews__leftBlock-item {
     margin-bottom: 30px;
-    min-height: 291px;
 }
 
 .reviews__item-topBlockLeftInfo {
@@ -1898,6 +1897,15 @@ a {
     opacity: 1;
     pointer-events: auto; /* указываем этому свойству дефолтное значение,чтобы вернуть все взаимодействия мыши с этим элементом */
     transform: translateX(0);
+}
+
+.reviews__formAnswer{
+    display: none; /* указываем в данном случае форме display:none,чтобы она не показывалась,если кнопку добавления ответа от админа не нажали,иначе,будет просто прозрачный блок с размером этой формы */
+}
+
+.reviews__formAnswer--active{
+    display: block;
+    animation: appear 1s ease forwards;
 }
 
 .form__topBlockInfo-img,
@@ -2259,7 +2267,7 @@ a {
 }
 
 .reviews__leftBlock-comments {
-    min-height: 270px;
+    min-height: 291px;
     max-width: 595px;
 }
 
@@ -2529,6 +2537,10 @@ a {
     background-color: #F6F6F6;
     border:none;
     color: #807D7E;
+}
+
+.sectionUserPage__formChangePrice-bottomBlock{
+    max-width: 240px;
 }
 
 .sectionUserPage__mainBlock-formChangePass{

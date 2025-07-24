@@ -52,6 +52,8 @@ router.put('/changeProductPriceCatalog',authMIddleware,productController.changeP
 
 router.delete('/deleteDescImage/:productId/:imageName',authMIddleware,productController.deleteDescImage);  // указываем delete запрос для удаления файла картинки описания с нашего node js сервера(в данном случае из папки static),delete запрос не имеет тела запроса и все параметры передаются через строку,тут указываем через :(двоеточие) динамический параметр imageName,то есть этот параметр может меняться(в данном случае этот параметр нужен,чтобы удалить файл из папки static по этому названию imageName),и динамический параметр productId(id товара,у которого нужно удалить эту картинку описания в базе данных)
 
+router.put('/addReplyForComment',authMIddleware,commentController.addReplyForComment); // создаем put запрос для изменения объекта комментария,чтобы добавить ему поле с объектом ответа от админа на этот комментарий
+
 
 router.post('/registration',
     body('email').isEmail(),

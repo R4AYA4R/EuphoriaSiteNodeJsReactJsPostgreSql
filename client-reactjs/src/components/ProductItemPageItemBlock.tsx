@@ -180,6 +180,13 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
         // в данном случае и так без этого правильно работает,поэтому этот код закомментировали
         // refetchProductsCart(); // переобновляем массив объектов товаров корзины,чтобы при изменении pathname он переобновлялся и правильно работала проверка на есть ли этот товар уже в корзине
 
+        // изменяем таб для изменения цены товара для админа на false,чтобы при изменении pathname(url страницы),в данном случае для того,чтобы при переходе на страницу товара убирался таб изменения цены товара и тд для админа
+        setTabChangePrice(false);
+
+        setErrorAdminChangePrice(''); // убираем ошибку формы для изменения цены товара для админа
+
+
+
     }, [pathname])
 
     // при рендеринге этого компонента и при изменении product(объекта товара) будет отработан код в этом useEffect
@@ -192,6 +199,19 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
 
         }
 
+        // изменяем состояние инпута цены товара для формы для админа,делаем это при изменении product(объекта товара),то есть для того,чтобы при переходе на страницу товара значение в инпуте для изменения цены товара становилось на новое значение нового товара,на страницу которого перешли и тд для админа
+        setInputPriceValue(product?.price);
+
+        // если product?.priceDiscount true,то есть если цена со скидкой у товара есть(делаем эту проверку,так как выдает,что product?.priceDiscount может быть undefined,а также,чтобы если у товара не указана цена со скидкой,то изменять состояние инпута для цены со скидкой для формы админа на 0,иначе будет показывать предыдущее значение цены со скидкой у предыдущего товара на предыдущей странице товара)
+        if (product?.priceDiscount) {
+
+            setInputPriceDiscountValue(product?.priceDiscount); // изменяем состояние инпута цены со скидкой для товара для формы админа,делаем это при изменении product(объекта товара),то есть в данном случае чтобы при переходе на страницу товара значение в инпуте для изменения цены со скидкой для товара становилось на новое значение нового товара,на страницу которого перешли и тд для админа 
+
+        } else {
+
+            setInputPriceDiscountValue(0); // изменяем состояние инпута цены со скидкой для товара для формы админа на 0,делаем это при изменении product(объекта товара),то есть в данном случае чтобы при переходе на страницу товара значение в инпуте для изменения цены со скидкой для товара становилось на 0,если у этого товара изначально не указан цена со скидкой,иначе будет показывать предыдущее значение цены со скидкой у предыдущего товара на предыдущей странице товара
+
+        }
 
     }, [product])
 
@@ -498,7 +518,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
 
                 console.log(e.response?.data?.message);
 
-                setErrorAdminChangePrice(e.response?.data?.message);
+                return setErrorAdminChangePrice(e.response?.data?.message); // возвращаем и показываем ошибку в форме,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию
 
             }
 
@@ -509,10 +529,10 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
     }
 
     // фукнция для удаления картинки описания для товара на сервере для удаления по кнопке
-    const deleteDescImageRequestByBtn = async (imageName:string, productId:number) => {
+    const deleteDescImageRequestByBtn = async (imageName: string, productId: number) => {
 
         // оборачиваем в try catch, чтобы отлавливать ошибки
-        try{
+        try {
 
             const response = await $api.delete(`/deleteDescImage/${productId}/${imageName}`); // делаем запрос на сервер для удаления файла на сервере и указываем в ссылке на эндпоинт параметр productId и imageName,чтобы на бэкэнде его достать,здесь используем наш axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление файла с сервера проверяем пользователя на access токен,так как проверяем,валидный(годен ли по сроку годности еще) ли access токен у пользователя(админа в данном случае) или нет)
 
@@ -520,11 +540,29 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
 
             refetchProduct(); // переобновляем данные товара,чтобы сразу переобновился слайдер с картинками,уже без удаленной картинки
 
-        }catch(e:any){
+        } catch (e: any) {
 
             console.log(e.response?.data?.message); // выводим ошибку в логи
 
         }
+
+    }
+
+    const cancelFormHandler = () => {
+
+        // изменяем состояния для формы изменения цены товара на дефолтные значения
+        setTabChangePrice(false); // убираем форму,изменяя состояние activeForm на false
+
+        setInputPriceValue(product?.price);
+
+        // если product?.priceDiscount true,то есть если цена со скидкой у товара есть(делаем эту проверку,так как выдает,что product?.priceDiscount может быть undefined и undefined нельзя назначить для состояния с типом number)
+        if (product?.priceDiscount) {
+
+            setInputPriceDiscountValue(product?.priceDiscount); 
+
+        } 
+
+        setErrorAdminChangePrice(''); // убираем ошибку формы,если она была
 
     }
 
@@ -655,7 +693,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
                                     {user.role === 'ADMIN' && product.descImages.length > 1 &&
 
                                         // в onClick этой button передаем в нашу функцию deleteDescImageRequestByBtn название файла картинки image(которая сейчас итерируется с помощью map,то есть саму картинку описания),также передаем параметр id товара (product.id),у которого надо удалить эту картинку,наша функция deleteDescImageRequestByBtn делает запрос на сервер на удаление файла картинки и возвращает ответ от сервера(в данном случае при успешном запросе в ответе от сервера будет объект с полями)
-                                        <button className="adminForm__item-imageBlockBtn" type="button" onClick={() => deleteDescImageRequestByBtn(image,product.id)} >
+                                        <button className="adminForm__item-imageBlockBtn" type="button" onClick={() => deleteDescImageRequestByBtn(image, product.id)} >
                                             <img src="/images/sectionUserPage/CrossImg.png" alt="" className="adminForm__imageBlockBtn-img" />
                                         </button>
 
@@ -789,8 +827,12 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
                             {/* если errorAdminChangePrice true(то есть в состоянии errorAdminChangePrice что-то есть),то показываем текст ошибки */}
                             {errorAdminChangePrice && <p className="formErrorText">{errorAdminChangePrice}</p>}
 
-                            {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
-                            <button className="signInForm__btn sectionUserPage__formInfo-btn" type="submit">Save Changes</button>
+                            <div className="form__mainBlock-bottomBlock sectionUserPage__formChangePrice-bottomBlock">
+                                {/* указываем этой кнопке тип submit,чтобы при нажатии на нее сработало событие onSubmit у этой формы */}
+                                <button className="signInForm__btn sectionUserPage__formInfo-btn" type="submit">Save Changes</button>
+
+                                <button className="reviews__form-cancelBtn" type="button" onClick={cancelFormHandler}>Cancel</button>
+                            </div>
 
                         </form>
 
