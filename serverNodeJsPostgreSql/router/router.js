@@ -54,6 +54,10 @@ router.delete('/deleteDescImage/:productId/:imageName',authMIddleware,productCon
 
 router.put('/addReplyForComment',authMIddleware,commentController.addReplyForComment); // создаем put запрос для изменения объекта комментария,чтобы добавить ему поле с объектом ответа от админа на этот комментарий
 
+router.delete('/deleteReplyFromAdmin/:commentId',authMIddleware,commentController.deleteReplyFromAdmin); // делаем delete запрос на удаление ответа от админа(в данном случае будем изменять поле adminReply у объекта комментария),указываем как динамический параметр commentId
+
+router.delete('/deleteComment/:commentId',authMIddleware,commentController.deleteComment); // делаем delete запрос на удаление комментария у товара для админа,указываем как динамический параметр commentId
+
 
 router.post('/registration',
     body('email').isEmail(),

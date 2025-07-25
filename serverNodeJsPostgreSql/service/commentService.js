@@ -65,11 +65,30 @@ class CommentService {
         foundedComment.adminReply = comment.adminReply; // изменяем поле adminReply у найденного объекта комментария на поле adminReply у comment(объект тела запроса,который передали с фронтенда)
 
         await foundedComment.save(); // сохраняем этот обновленный объект комментария в базе данных
-       
+
         return foundedComment; // возвращаем измененный объект комментария из этой функции addReplyForComment
 
     }
 
+    async deleteReplyFromAdmin(commentId) {
+
+        const foundedComment = await models.Comment.findByPk(commentId);  // находим объект комментария в базе данных по id,который равен commentId (id у объекта комментария)
+
+        foundedComment.adminReply = null; // изменяем поле adminReply у найденного объекта комментария на null,таким образом удаляем ответ от админа
+
+        await foundedComment.save(); // сохраняем этот обновленный объект комментария в базе данных
+
+        return foundedComment; // возвращаем измененный объект комментария из этой функции deleteReplyFromAdmin
+
+    }
+
+    async deleteComment(commentId) {
+
+        const deletedComment = await models.Comment.destroy({ where: { id: commentId } }); // удаляем объект комментария,у которого id равен commentId (id у объекта комментария,который взяли из параметров запроса)
+
+        return deletedComment; // возвращаем из этой функции deletedComment(если объект комментария был удален успешно,то вернется 1(количество удаленных записей из базы данных, в данном случае удаляли одну эту запись,то есть один объект комментария),а если он не был удален,то вернется 0)
+
+    }
 
 }
 

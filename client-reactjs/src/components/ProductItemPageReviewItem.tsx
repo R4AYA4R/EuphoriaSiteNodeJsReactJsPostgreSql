@@ -7,10 +7,12 @@ import $api from "../http/http";
 interface IProductItemPageReviewItem {
     user: IUser,
     comment: IComment,
-    refetchComments: () => Promise<QueryObserverResult<ICommentResponse, Error>> // указываем этому полю,что это стрелочная функция и возвращает Promise<QueryObserverResult<ICommentResponse, Error>> (этот тип скопировали из файла ProductItemPage.tsx у этой функции refetchComments),то есть указываем,что эта функция возвращает Promise,внутри которого тип QueryObserverResult,внутри которого наш тип ICommentResponse и тип Error, если бы мы в функции запроса на получение комментариев возвращали бы response,а не response.data,то тип у этой функции запроса на сервер был бы Promise<QueryObserverResult<AxiosResponse<ICommentResponse, any>, Error>>,но в данном случае возвращаем response.data,поэтому тип Promise<QueryObserverResult<ICommentResponse, Error>> 
+    refetchComments: () => Promise<QueryObserverResult<ICommentResponse, Error>>, // указываем этому полю,что это стрелочная функция и возвращает Promise<QueryObserverResult<ICommentResponse, Error>> (этот тип скопировали из файла ProductItemPage.tsx у этой функции refetchComments),то есть указываем,что эта функция возвращает Promise,внутри которого тип QueryObserverResult,внутри которого наш тип ICommentResponse и тип Error, если бы мы в функции запроса на получение комментариев возвращали бы response,а не response.data,то тип у этой функции запроса на сервер был бы Promise<QueryObserverResult<AxiosResponse<ICommentResponse, any>, Error>>,но в данном случае возвращаем response.data,поэтому тип Promise<QueryObserverResult<ICommentResponse, Error>> 
+
+    refetchCommentsArrivals: () => Promise<QueryObserverResult<ICommentResponse, Error>> // указываем этому полю,что это стрелочная функция и возвращает Promise<QueryObserverResult<ICommentResponse, Error>> (этот тип скопировали из файла ProductItemPage.tsx у этой функции refetchComments),то есть указываем,что эта функция возвращает Promise,внутри которого тип QueryObserverResult,внутри которого наш тип ICommentResponse и тип Error, если бы мы в функции запроса на получение комментариев возвращали бы response,а не response.data,то тип у этой функции запроса на сервер был бы Promise<QueryObserverResult<AxiosResponse<ICommentResponse, any>, Error>>,но в данном случае возвращаем response.data,поэтому тип Promise<QueryObserverResult<ICommentResponse, Error>> 
 }
 
-const ProductItemPageReviewItem = ({ comment, user, refetchComments }: IProductItemPageReviewItem) => {
+const ProductItemPageReviewItem = ({ comment, user, refetchComments,refetchCommentsArrivals }: IProductItemPageReviewItem) => {
 
     const [activeAdminForm, setActiveAdminForm] = useState(false);
 
@@ -97,6 +99,48 @@ const ProductItemPageReviewItem = ({ comment, user, refetchComments }: IProductI
 
     }
 
+    // фукнция для удаления ответа от админа для удаления по кнопке
+    const deleteReplyFromAdminByBtn = async () => {
+
+        // оборачиваем в try catch для отлавливания ошибок
+        try {
+
+            const response = await $api.delete<IComment>(`/deleteReplyFromAdmin/${comment.id}`); // делаем запрос на сервер для удаления ответа от админа, указываем в ссылке на эндпоинт параметр comment.id(id у объекта комментария),чтобы на бэкэнде его достать,здесь используем наш axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление проверяем пользователя на access токен,так как проверяем,валидный(годен ли по сроку годности еще) ли access токен у пользователя(админа в данном случае) или нет), указываем в generic тип данных,который вернется в ответе от сервера(в данном случае это будет наш тип IComment)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            refetchComments(); // переобновляем массив комментариев
+
+        } catch (e: any) {
+
+            console.log(e.response?.data?.message); // выводим ошибку в логи
+
+        }
+
+    }
+
+    // фукнция для удаления комментария для админа для удаления по кнопке
+    const deleteCommentForAdminByBtn = async () => {
+
+        // оборачиваем в try catch для отлавливания ошибок
+        try {
+
+            const response = await $api.delete(`/deleteComment/${comment.id}`); // делаем запрос на сервер для удаления комментария, указываем в ссылке на эндпоинт параметр comment.id(id у объекта комментария),чтобы на бэкэнде его достать,здесь используем наш axios с определенными настройками ($api в данном случае),так как на бэкэнде у этого запроса на удаление проверяем пользователя на access токен,так как проверяем,валидный(годен ли по сроку годности еще) ли access токен у пользователя(админа в данном случае) или нет)
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            refetchComments(); // переобновляем массив комментариев
+
+            refetchCommentsArrivals(); // переобновляем массив комментариев для секции sectionNewArrivals,чтобы там сразу переобновилось число комментариев для товара,а не после обновления страницы
+
+        } catch (e: any) {
+
+            console.log(e.response?.data?.message); // выводим ошибку в логи
+
+        }
+
+    }
+
     return (
         <div className="reviews__leftBlock-item">
             <div className="reviews__item-topBlock">
@@ -116,6 +160,16 @@ const ProductItemPageReviewItem = ({ comment, user, refetchComments }: IProductI
                     </div>
                 </div>
                 <p className="reviews__item-topBlockTime">{comment.createdTime}</p>
+
+                {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор),то показываем кнопку для удаления комментария для админа */}
+                {user.role === 'ADMIN' &&
+                    // в onClick этой button указываем нашу функцию deleteCommentForAdminByBtn для удаления комментария для админа
+                    <button className="adminForm__item-imageBlockBtn reviews__item-topBlockDeleteBtn" type="button" onClick={deleteCommentForAdminByBtn} >
+                        <img src="/images/sectionUserPage/CrossImg.png" alt="" className="adminForm__imageBlockBtn-img" />
+                    </button>
+
+                }
+
             </div>
             <p className="reviews__item-text">{comment.text}</p>
 
@@ -158,7 +212,15 @@ const ProductItemPageReviewItem = ({ comment, user, refetchComments }: IProductI
 
                 <div className="reviews__item-adminCommentBlock">
 
-                    
+                    {/* если user.role равно 'ADMIN'(то есть пользователь авторизован как администратор),то показываем кнопку для удаления ответа от админа */}
+                    {user.role === 'ADMIN' &&
+                        // в onClick этой button указываем нашу функцию deleteReplyFromAdminByBtn для удаления ответа от админа
+                        <button className="adminForm__item-imageBlockBtn reviews__item-adminCommentBlockDeleteBtn" type="button" onClick={deleteReplyFromAdminByBtn} >
+                            <img src="/images/sectionUserPage/CrossImg.png" alt="" className="adminForm__imageBlockBtn-img" />
+                        </button>
+
+                    }
+
                     <p className="reviews__item-topBlockReplyText">Reply for {comment.name}</p>
                     <div className="reviews__item-topBlock">
                         <div className="reviews__item-topBlockLeftInfo">
@@ -173,7 +235,7 @@ const ProductItemPageReviewItem = ({ comment, user, refetchComments }: IProductI
                 </div>
 
             }
-            
+
 
         </div>
     )

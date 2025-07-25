@@ -1822,6 +1822,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
 }
 
 .reviews__leftBlock-item {
@@ -2663,3 +2664,12 @@ a {
     right: auto;
 }
 
+.reviews__item-adminCommentBlockDeleteBtn{
+    top: 0;
+    right: 0;
+}
+
+.reviews__item-topBlockDeleteBtn{
+    right: 80px;
+    top: 8px;
+}

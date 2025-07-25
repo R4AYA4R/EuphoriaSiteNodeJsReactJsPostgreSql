@@ -246,6 +246,10 @@ const ProductItemPage = () => {
 
         const commentsRating = dataComments?.allCommentsForProduct.reduce((prev, curr) => prev + curr.rating, 0) // проходимся по массиву объектов комментариев для товара на этой странице и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).rating ,это чтобы посчитать общую сумму всего рейтинга от каждого комментария и потом вывести среднее значение
 
+        console.log(commentsRating);
+
+        console.log(dataComments?.allCommentsForProduct.length);
+
         // если commentsRating true(эта переменная есть и равна чему-то) и dataComments?.allCommentsForProduct.length true(этот массив отфильтрованных комментариев для товара на этой странице есть), и isFetching false(то есть сейчас не грузится запрос на сервер на получение массива комментариев для этого товара,то есть он уже загрузился,вроде без этой проверки на isFetching тоже работает,но чтобы избежать ошибок типа что к тому моменту массив товаров еще не загрузился и тд,то лучше ее указать),то считаем средний рейтинг всех комментариев и записываем его в переменную,а потом делаем запрос на сервер для обновления рейтинга у объекта товара в базе данных
         if (commentsRating && dataComments?.allCommentsForProduct.length && !isFetching) {
 
@@ -253,12 +257,19 @@ const ProductItemPage = () => {
 
             mutateProductRating({ ...data?.data, rating: commentsRatingMiddle } as IProduct); // делаем запрос на изменение рейтинга у товара,разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle,указываем тип этому объекту как тип на основе нашего интерфейса IProduct(в данном случае делаем это,так как выдает ошибку,что id и другие поля могут быть undefined)
 
-            mutateProductCartRating({...data?.data,rating:commentsRatingMiddle} as IProduct); // делаем запрос на обновление рейтинга товара корзины,также как и с рейтингом обычного товара каталога выше в коде
+            mutateProductCartRating({ ...data?.data, rating: commentsRatingMiddle } as IProduct); // делаем запрос на обновление рейтинга товара корзины,также как и с рейтингом обычного товара каталога выше в коде
+
+        } else if (!commentsRating && !dataComments?.allCommentsForProduct.length && !isFetching) {
+            // в другом случае если commentsRating false(то есть commentsRating равен 0(то есть общий рейтинг у объектов комментариев для этого товара равен 0,то есть у этого товара вообще нету комментариев) или другому false или null значению) и dataComments?.allCommentsForProduct.length false(то есть dataComments?.allCommentsForProduct.length(длина массива объектов комментариев для этого товара) равна 0 или другому false или null значению,то есть комментариев у этого товара вообще нету) и isFetching false(то есть сейчас не грузится запрос на сервер на получение массива комментариев для этого товара,то есть он уже загрузился,вроде без этой проверки на isFetching тоже работает,но чтобы избежать ошибок типа что к тому моменту массив товаров еще не загрузился и тд,то лучше ее указать),то изменяем значение рейтинга у товара каталога и у этого товара в корзине у пользователей на 0
+
+            mutateProductRating({ ...data?.data, rating: 0 } as IProduct); // делаем запрос на изменение рейтинга у товара,разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на 0,указываем тип этому объекту как тип на основе нашего интерфейса IProduct(в данном случае делаем это,так как выдает ошибку,что id и другие поля могут быть undefined)
+
+            mutateProductCartRating({ ...data?.data, rating: 0 } as IProduct); // делаем запрос на обновление рейтинга товара корзины,также как и с рейтингом обычного товара каталога выше в коде
 
         }
 
 
-        refetchComments();
+        refetchComments(); // переобновляем массив комментариев
 
     }, [dataComments?.allCommentsForProduct])
 
@@ -406,7 +417,7 @@ const ProductItemPage = () => {
             <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionProductItemPage sectionCatalog__active " : "sectionCatalog sectionProductItemPage"} ref={sectionCatalog}>
 
                 {/* вынесли блок с информацией о товаре и слайдером в наш компонент ProductItemPageItemBlock,так как там много кода,передаем туда как пропс(параметр) product со значением data?.data(объект товара),также передаем поле pathname(url страницы),чтобы потом при его изменении изменять значение количества товара,так как оно находится в этом компоненте ProductItemPageItemBlock,указываем именно таким образом pathname={pathname},иначе выдает ошибку типов,передаем функцию refetch для переобновления данных товара(повторный запрос на сервер для переобновления данных товара) и указываем ему название как refetchProduct(просто название этого пропса(параметра)) */}
-                <ProductItemPageItemBlock product={data?.data} pathname={pathname} comments={dataComments?.allCommentsForProduct} refetchProduct={refetch}/>
+                <ProductItemPageItemBlock product={data?.data} pathname={pathname} comments={dataComments?.allCommentsForProduct} refetchProduct={refetch} />
 
                 {/* указываем здесь контейнер,так как для блока ProductItemPageItemBlock нужен контейнер в отдельной его части по такому дизайну */}
                 <div className="container">
@@ -467,7 +478,7 @@ const ProductItemPage = () => {
 
                                                     {dataComments.commentsForPagination.rows.map(comment =>
 
-                                                        <ProductItemPageReviewItem key={comment.id} comment={comment} user={user} refetchComments={refetchComments} />
+                                                        <ProductItemPageReviewItem key={comment.id} comment={comment} user={user} refetchComments={refetchComments} refetchCommentsArrivals={refetchCommentsArrivals}/>
 
                                                     )}
 
