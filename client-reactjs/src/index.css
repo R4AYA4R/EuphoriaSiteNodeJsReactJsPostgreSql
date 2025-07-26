@@ -824,6 +824,12 @@ a {
     margin-bottom: 20px;
 }
 
+.footer__list-itemEmail{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .footer__item-link {
     font-size: 16px;
     font-weight: 400;
@@ -2672,4 +2678,29 @@ a {
 .reviews__item-topBlockDeleteBtn{
     right: 80px;
     top: 8px;
+}
+
+.footer__changeEmailBtn{
+    background-color: #BEBCBD;
+}
+
+.footer__changeEmailForm-cancelBtn{
+    background-color: transparent;
+    color: #BEBCBD;
+}
+
+.formChangeEmail__item-text{
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.footer__formChangeEmail-inputEmail{
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.footer__formChangeEmail{
+    width: 100%;
 }
