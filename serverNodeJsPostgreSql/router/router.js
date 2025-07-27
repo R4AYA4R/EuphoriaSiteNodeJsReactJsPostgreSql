@@ -5,6 +5,7 @@ import userController from "../controllers/userController.js";
 import commentController from "../controllers/commentController.js";
 import authMIddleware from "../middlewares/authMIddleware.js";
 import fileController from "../controllers/fileController.js";
+import adminFieldsController from "../controllers/adminFieldsController.js";
 
 const router = new Router(); // создаем объект на основе этого класса Router
 
@@ -57,6 +58,10 @@ router.put('/addReplyForComment',authMIddleware,commentController.addReplyForCom
 router.delete('/deleteReplyFromAdmin/:commentId',authMIddleware,commentController.deleteReplyFromAdmin); // делаем delete запрос на удаление ответа от админа(в данном случае будем изменять поле adminReply у объекта комментария),указываем как динамический параметр commentId
 
 router.delete('/deleteComment/:commentId',authMIddleware,commentController.deleteComment); // делаем delete запрос на удаление комментария у товара для админа,указываем как динамический параметр commentId
+
+router.get('/getAdminFields',adminFieldsController.getAdminFields); // создаем get запрос для получения объекта админ полей(текста и тд на сайте),которые потом админ сможет изменять на сайте
+
+router.put('/changeEmail',authMIddleware,body('newEmail').isEmail(),adminFieldsController.changeEmail); // создаем put запрос для изменения почты на сайте,указываем в параметре body() название поля из тела запроса,которое хотим провалидировать(в данном случае это newEmail),и указываем валидатор isEmail() для проверки на email
 
 
 router.post('/registration',

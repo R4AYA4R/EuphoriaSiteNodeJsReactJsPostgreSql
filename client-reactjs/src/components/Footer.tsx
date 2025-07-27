@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import $api from "../http/http";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { IAdminFields } from "../types/types";
 
 const Footer = () => {
 
@@ -12,38 +16,88 @@ const Footer = () => {
 
     const [errorEmailForm, setErrorEmailForm] = useState('');
 
+    // создаем функцию запроса и делаем запрос на сервер(при создании функции в useQuery запрос автоматически делается 1 раз при запуске страницы) для получения объекта админ полей(нужных полей текста и тд для сайта,чтобы потом мог админ их изменять в базе данных)
+    const { data: dataAdminFields, refetch: refetchAdminFields } = useQuery({
+        queryKey: ['getAdminFields'], // указываем название
+        queryFn: async () => {
+
+            const response = await axios.get<IAdminFields>(`${process.env.REACT_APP_BACKEND_URL}/api/getAdminFields`); // делаем запрос на сервер на получение объекта админ полей,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IAdminFields),используем тут обычный axios,так как не нужна здесь проверка на access токен пользователя
+
+            console.log(response.data);
+
+            return response; // возвращаем этот объект ответа от сервера,в котором есть всякие поля типа status,data(конкретно то,что мы возвращаем от сервера,в данном случае это будет массив объектов комментариев) и тд
+
+        }
+    })
+
+    // при изменении dataAdminFields?.data(объекта админ полей) изменяем состояние inputEmail на dataAdminFields?.data.email(почта из объекта админ полей,который взяли из базы данных),делаем этот useEffect,чтобы при загрузке страницы первоначальное значение состояния inputEmail было как dataAdminFields?.data.email,чтобы при показе инпута изменения почты для админа,там сразу было значение dataAdminFields?.data.email(почта из базы данных),которое можно стереть,если не сделать этот useEffect,то первоначальное значение состояния inputEmail не будет задано
+    useEffect(() => {
+
+        // если dataAdminFields?.data.email true,то есть поле email у объекта админ полей true,то есть оно есть(делаем эту проверку,так как выдает ошибку,что dataAdminFields?.data.email может быть undefined и что его нельзя назначить состоянию с типом string(можно было указать тип этому состоянию string | undefined,но тогда надо было бы делать проверки типа если dataAdminFields?.data.email true при проверке этого инпута в форме для изменения почты))
+        if (dataAdminFields?.data.email) {
+
+            setInputEmail(dataAdminFields?.data.email);
+
+        }
+
+    }, [dataAdminFields?.data])
+
     const cancelFormHandler = () => {
 
         // изменяем состояния для формы изменения почты на дефолтные значения
         setTabChangeEmail(false); // убираем форму,изменяя состояние tabChangeEmail на false
 
-        setInputEmail(''); // очищаем инпут почты
+        // если dataAdminFields?.data.email true,то есть поле email у объекта админ полей true,то есть оно есть(делаем эту проверку,так как выдает ошибку,что dataAdminFields?.data.email может быть undefined и что его нельзя назначить состоянию с типом string(можно было указать тип этому состоянию string | undefined,но тогда надо было бы делать проверки типа если dataAdminFields?.data.email true при проверке этого инпута в форме для изменения почты))
+        if (dataAdminFields?.data.email) {
+
+            setInputEmail(dataAdminFields?.data.email); // очищаем инпут почты
+
+        }
 
         setErrorEmailForm(''); // убираем ошибку формы,если она была
 
     }
 
     // функция для формы изменения почты для админа,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
-    const submitFormChangeEmail = async (e:FormEvent<HTMLFormElement>) => {
+    const submitFormChangeEmail = async (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
         // если инпут почты includes('.') false(то есть инпут почты не включает в себя точку) или значение инпута почты,отфильтрованное по пробелам( trim() ), по количеству символов меньше 4,то показываем ошибку
-        if(!inputEmail.includes('.') || inputEmail.trim().length < 4){
+        if (!inputEmail.includes('.') || inputEmail.trim().length < 4) {
 
             setErrorEmailForm('Enter email correctly'); // показываем ошибку формы
 
         } else {
 
+            // оборачиваем в try catch для отлавливания ошибок
+            try {
 
-            // здесь надо будет делать запрос на сервер для изменения почты на сайте
+                const response = await $api.put('/changeEmail', { newEmail: inputEmail.trim() });  // делаем запрос на сервер(лучше было это вынести в отдельную функцию,но уже сделали так),используем здесь наш axios с определенными настройками($api),которые мы задали ему в файле http,чтобы правильно работали запросы на authMiddleware на проверку на access токен на бэкэнде, и в объекте тела запроса указываем поле для новой почты,указываем inputEmail.trim(),то есть отфильтрованной по пробелам,иначе,если указать правильно почту,но поставить перед ней или после нее пробелы,то валидатор на бэкэнде будет считать,что эта почта неправильная
 
+                console.log(response.data);
 
-            setTabChangeEmail(false); // изменяем значение tabChangeEmail на false,чтобы убрать форму для изменения почты
+                refetchAdminFields(); // переобновляем данные объекта админ полей
 
-            setInputEmail(''); // очищаем инпут почты
+                setTabChangeEmail(false); // изменяем значение tabChangeEmail на false,чтобы убрать форму для изменения почты
 
-            setErrorEmailForm(''); // убираем ошибку формы
+                // если dataAdminFields?.data.email true,то есть поле email у объекта админ полей true,то есть оно есть(делаем эту проверку,так как выдает ошибку,что dataAdminFields?.data.email может быть undefined и что его нельзя назначить состоянию с типом string(можно было указать тип этому состоянию string | undefined,но тогда надо было бы делать проверки типа если dataAdminFields?.data.email true при проверке этого инпута в форме для изменения почты))
+                if (dataAdminFields?.data.email) {
+
+                    setInputEmail(dataAdminFields?.data.email); // очищаем инпут почты
+
+                }
+
+                setErrorEmailForm(''); // убираем ошибку формы
+
+            } catch (e: any) {
+
+                console.log(e.response?.data?.message);
+
+                return setErrorEmailForm(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не закрывался таб с инпутом для изменения почты и тд,если есть ошибка
+
+            }
+
 
         }
 
@@ -101,7 +155,8 @@ const Footer = () => {
                                 {!tabChangeEmail &&
 
                                     <>
-                                        <Link to="/aboutUs" className="footer__item-link">supporteuphoria@gmail.com</Link>
+                                        {/* указываем в href этой ссылке mailto: и название почты(чтобы по этой ссылке открывалась почта,чтобы сразу можно было писать,но в данном случае при нажатии на эту ссылку будет всплывающее окно,с вопросом о том,какое приложение использовать для открытия этой ссылки,и если выбрать просто браузер,то он просто откроется с пустой вкладкой в новом окне приложения,лучше выбирать приложение outlook(оно вроде поддерживает почту),но там надо сначала зарегестрироваться) */}
+                                        <a href={`mailto:${dataAdminFields?.data.email}`}className="footer__item-link">{dataAdminFields?.data.email}</a>
 
                                         {/* делаем проверку если user.role === 'ADMIN' (если роль у пользователя сейчас админ),то показываем кнопку изменения почты */}
                                         {user.role === 'ADMIN' &&

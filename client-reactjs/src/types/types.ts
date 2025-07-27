@@ -146,3 +146,12 @@ export interface IDescImages{
     name:string,
     url:string
 }
+
+// создаем и экспортируем тип для объекта админ полей(нужных полей текста и тд для сайта,чтобы потом мог админ их изменять в базе данных)
+export interface IAdminFields{
+
+    id:number,
+
+    email:string // поле для почты на сайте
+
+}
