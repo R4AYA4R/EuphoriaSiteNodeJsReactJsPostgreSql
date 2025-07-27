@@ -50,7 +50,7 @@ const Footer = () => {
         // если dataAdminFields?.data.email true,то есть поле email у объекта админ полей true,то есть оно есть(делаем эту проверку,так как выдает ошибку,что dataAdminFields?.data.email может быть undefined и что его нельзя назначить состоянию с типом string(можно было указать тип этому состоянию string | undefined,но тогда надо было бы делать проверки типа если dataAdminFields?.data.email true при проверке этого инпута в форме для изменения почты))
         if (dataAdminFields?.data.email) {
 
-            setInputEmail(dataAdminFields?.data.email); // очищаем инпут почты
+            setInputEmail(dataAdminFields?.data.email); // изменяем состояние инпута почты на dataAdminFields?.data.email(почту из объекта админ полей)
 
         }
 
@@ -84,7 +84,7 @@ const Footer = () => {
                 // если dataAdminFields?.data.email true,то есть поле email у объекта админ полей true,то есть оно есть(делаем эту проверку,так как выдает ошибку,что dataAdminFields?.data.email может быть undefined и что его нельзя назначить состоянию с типом string(можно было указать тип этому состоянию string | undefined,но тогда надо было бы делать проверки типа если dataAdminFields?.data.email true при проверке этого инпута в форме для изменения почты))
                 if (dataAdminFields?.data.email) {
 
-                    setInputEmail(dataAdminFields?.data.email); // очищаем инпут почты
+                    setInputEmail(dataAdminFields?.data.email); // изменяем состояние инпута почты на dataAdminFields?.data.email(почту из объекта админ полей,то есть уже новую почту,которую админ изменил,так как выше в коде мы переобновили dataAdminFields(объект админ полей))
 
                 }
 
