@@ -1,9 +1,14 @@
+import SectionAboutUsTop from "../components/SectionAboutUsTop";
+import SectionAboutUsTrusted from "../components/SectionAboutUsTrusted";
+import SectionUnderTop from "../components/SectionUnderTop";
 
 
 const AboutUs = () => {
     return(
         <main className="main">
-            AboutUs
+            <SectionUnderTop subtext="About Us"/>
+            <SectionAboutUsTop/>
+            <SectionAboutUsTrusted/>
         </main>
     )
 }

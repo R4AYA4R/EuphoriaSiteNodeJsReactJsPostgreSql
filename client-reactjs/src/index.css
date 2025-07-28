@@ -2704,3 +2704,66 @@ a {
 .footer__formChangeEmail{
     width: 100%;
 }
+
+.sectionAboutUsTop__inner{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 60px;
+    align-items: center;
+}
+
+.sectionAboutUsTop__infoBlock-title{
+    font-size: 56px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    max-width: 480px;
+}
+
+.sectionAboutUsTop__infoBlock-text{
+    font-size: 18px;
+    font-weight: 400;
+    color: #808080;
+}
+
+.sectionAboutUsTop__img{
+    background-image: url('/public/images/sectionAboutUs/fashionImg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: right center;
+    min-height: 420px;
+    border-radius: 8px;
+}
+
+.sectionAboutUsTrusted__img{
+    background-image: url('/public/images/sectionAboutUs/trustedImg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position:top;
+    min-height: 520px;
+    border-radius: 8px;
+}
+
+.sectionAboutUsTrusted__infoBlock-items{
+    margin-top: 24px;
+    display:grid;
+    grid-template-columns: repeat(2,1fr);
+    gap:24px;
+}
+
+.sectionAboutUsTrusted__items-item{
+    display: flex;
+    align-items: center;
+    gap:16px;
+}
+
+.sectionAboutUsTrusted__item-name{
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.sectionAboutUsTrusted__item-subtext{
+    font-size: 14px;
+    font-weight: 400;
+    color: #808080;
+}
