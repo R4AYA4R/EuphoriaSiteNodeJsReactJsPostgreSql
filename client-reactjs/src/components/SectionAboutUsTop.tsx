@@ -8,7 +8,7 @@ const SectionAboutUsTop = () => {
     const onScreen = useIsOnScreen(sectionCatalog as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
     return (
-        <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionCatalog__active " : "sectionCatalog"} ref={sectionCatalog}>
+        <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionCatalog__active sectionAboutUsTop" : "sectionCatalog sectionAboutUsTop"} ref={sectionCatalog}>
             <div className="container">
                 <div className="sectionAboutUsTop__inner">
                     <div className="sectionAboutUsTop__infoBlock">

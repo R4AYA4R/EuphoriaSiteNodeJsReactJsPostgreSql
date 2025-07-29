@@ -2705,6 +2705,10 @@ a {
     width: 100%;
 }
 
+.sectionAboutUsTop{
+    padding-top: 80px
+}
+
 .sectionAboutUsTop__inner{
     display: grid;
     grid-template-columns: repeat(2,1fr);
@@ -2732,6 +2736,10 @@ a {
     background-position: right center;
     min-height: 420px;
     border-radius: 8px;
+}
+
+.sectionAboutUsTrusted{
+    margin: 50px 0;
 }
 
 .sectionAboutUsTrusted__img{
@@ -2763,6 +2771,121 @@ a {
 }
 
 .sectionAboutUsTrusted__item-subtext{
+    font-size: 14px;
+    font-weight: 400;
+    color: #808080;
+}
+
+.sectionAboutUsDelivery__img{
+    background-image: url('/public/images/sectionAboutUs/deliveryImg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position:top;
+    min-height: 520px;
+    border-radius: 8px;
+}
+
+.sectionAboutUsDelivery__itemsBlock{
+    margin: 20px 0 24px;
+}
+
+.sectionAboutUsDelivery__itemsBlock-item{
+    display: flex;
+    align-items: center;
+    gap:8px;
+    margin-bottom: 16px;
+}
+
+.sectionAboutUsDelivery__item-text{
+    font-size: 14px;
+    font-weight: 400;
+    color: #808080;
+}
+
+.sectionAboutUsDelivery__link{
+    border:1px solid #3C4242;
+    max-width: 200px;
+}
+
+.sectionAboutUsDelivery__link-text{
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.sectionAboutUsDelivery__link:hover{
+    background-color: #fff;
+    opacity: 0.7;
+}
+
+.sectionAboutUsTeam{
+    padding-top: 80px;
+    margin-bottom: 80px;
+    background-image: linear-gradient(to bottom, #F2F2F2,#FFFFFF);
+}
+
+.sectionAboutUsTeam__title{
+    font-size: 48px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.sectionAboutUsTeam__subtitle{
+    font-size: 16px;    
+    font-weight: 400;
+    text-align: center;
+    color: #808080;
+    max-width: 640px;
+    margin: 0 auto 50px;
+}
+
+.sectionAboutUsTeam__items{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap:24px;
+}
+
+.sectionAboutUsTeam__item-img{
+    max-width: 312px;
+    min-height: 280px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position:top;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.sectionAboutUsTeam__item-img1{
+    background-image: url('/public/images/sectionAboutUs/image (3).jpg');
+}
+
+.sectionAboutUsTeam__item-img2{
+    background-image: url('/public/images/sectionAboutUs/image (1).jpg');
+}
+
+.sectionAboutUsTeam__item-img3{
+    background-image: url('/public/images/sectionAboutUs/image (2).jpg');
+}
+
+.sectionAboutUsTeam__item-img4{
+    background-image: url('/public/images/sectionAboutUs/image.jpg');
+}
+
+.sectionAboutUsTeam__item-bottomBlock{
+    padding: 16px 20px 20px 20px;
+    border:1px solid #E6E6E6;
+    border-top:none;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.sectionAboutUsTeam__item-name{
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.sectionAboutUsTeam__item-text{
     font-size: 14px;
     font-weight: 400;
     color: #808080;

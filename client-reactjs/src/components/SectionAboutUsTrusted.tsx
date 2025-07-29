@@ -10,7 +10,7 @@ const SectionAboutUsTrusted = () => {
 
 
     return (
-        <section className={onScreen.sectionPresentsIntersecting ? "sectionPresents sectionPresents__active" : "sectionPresents"} id="sectionPresents" ref={sectionPresentsRef}>
+        <section className={onScreen.sectionPresentsIntersecting ? "sectionPresents sectionPresents__active sectionAboutUsTrusted" : "sectionPresents sectionAboutUsTrusted"} id="sectionPresents" ref={sectionPresentsRef}>
             <div className="container">
                 <div className="sectionAboutUsTop__inner">
                     <div className="sectionAboutUsTrusted__img" />
