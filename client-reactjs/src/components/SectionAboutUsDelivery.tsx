@@ -2,7 +2,7 @@
 
 import { RefObject, useRef } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const SectionAboutUsDelivery = () => {
 
