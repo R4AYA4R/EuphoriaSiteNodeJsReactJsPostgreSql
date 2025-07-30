@@ -2,11 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { AuthResponse, IProductsCartResponse } from "../types/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { useActions } from "../hooks/useActions";
 
 const Header = () => {
+
+    const [activeMobileMenu,setActiveMobileMenu] = useState(false);
 
     const { user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth и тд,используя наш типизированный хук для useSelector
 
@@ -118,6 +120,43 @@ const Header = () => {
                             </NavLink>
                         </li>
                     </ul>
+
+                    {/* если activeMobileMenu true (то есть сейчас открыто мобильное меню),то показываем блок див и в onClick указываем,что изменяем состояние activeMobileMenu на false,то есть будем закрывать мобильное меню по клику на другую область,кроме этого меню,чтобы оно закрылось не только по кнопке,но и по области вокруг,в другом случае этот блок показан не будет */}
+                    {activeMobileMenu && <div className="header__menuMobileCloseBlock" onClick={()=>setActiveMobileMenu(false)}></div>}
+
+                    <ul className={activeMobileMenu ? "header__menuMobile header__menuMobile--active" : "header__menuMobile"}>
+                        <li className="header__menuList-item">
+                            {/* используем тут NavLink,чтобы при клике на эту ссылку перекинуть пользователя по маршруту /(то есть на главную страницу),указываем это в to,также используем тут NavLink,вместо обычного Link,чтобы отслеживать активное состояние этой ссылки,то есть находится ли пользователь на этой странице,для которой эта ссылка или нет,чтобы указать ей активный класс,также отслеживаем активную сейчас страницу и с помощью isActive у NavLink указываем,если isActive true,то указываем классы для активной кнопки текущей страницы,в другом случае обычные классы */}
+                            <NavLink to="/" className={({ isActive }) => isActive ? "header__menuList-link header__menuList-link--active" : "header__menuList-link"}>Home</NavLink>
+                        </li>
+                        <li className="header__menuList-item">
+                            <NavLink to="/catalog" className={({ isActive }) => isActive ? "header__menuList-link header__menuList-link--active" : "header__menuList-link"}>Shop</NavLink>
+                        </li>
+                        <li className="header__menuList-item">
+                            <NavLink to="/aboutUs" className={({ isActive }) => isActive ? "header__menuList-link header__menuList-link--active" : "header__menuList-link"}>About Us</NavLink>
+                        </li>
+
+                        <li className="header__menuList-item header__menuList-itemBoxes header__menuMobile-itemBoxes">
+                            <NavLink to="/userPage" className="header__menuList-link header__menuList-linkBox">
+                                <img src="/images/header/user.png" alt="" className="header__menuList-linkImg" />
+                            </NavLink>
+                            <NavLink to="/cart" className="header__menuList-link header__menuList-linkBox header__menuList-linkCart">
+                                <img src="/images/header/shopping cart.png" alt="" className="header__menuList-linkImg" />
+
+                                {/* если dataProductsCart?.allProductsCartForUser.length true(то есть массив товаров корзины для определенного пользователя есть),то показываем количество товаров корзины, в другом случае показываем 0 */}
+                                <span className="header__linkCart-span">{dataProductsCart?.allProductsCartForUser.length ? dataProductsCart?.allProductsCartForUser.length : 0}</span>
+                            </NavLink>
+                        </li>
+                    </ul>
+
+                    <button className="header__menuBtn" onClick={()=>setActiveMobileMenu((prev) => !prev)}>
+                        {/* если activeMobileMenu true(то есть сейчас открыто мобильное меню),то показываем активные классы для каждого спана отдельно,так как делаем им такую анимацию,в другом случае указываем обычный класс */}
+                        <span className={activeMobileMenu ? "header__menuBtn-span header__menuBtn-spanActive1" : "header__menuBtn-span"}></span>
+                        <span className={activeMobileMenu ? "header__menuBtn-span header__menuBtn-spanActive2" : "header__menuBtn-span"}></span>
+                        <span className={activeMobileMenu ? "header__menuBtn-span header__menuBtn-spanActive3" : "header__menuBtn-span"}></span>
+                        <span className={activeMobileMenu ? "header__menuBtn-span header__menuBtn-spanActive1" : "header__menuBtn-span"}></span>
+                    </button>
+
                 </div>
             </div>
         </header>

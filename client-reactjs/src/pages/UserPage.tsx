@@ -984,7 +984,7 @@ const UserPage = () => {
                                 <div className="sectionUserPage__mainBlock-inner">
 
                                     <div className="sectionUserPage__mainBlock-dashboard">
-                                        <img src="/images/sectionUserPage/Ellipse 5.png" alt="" className="sectionUserPage__dashboard-img" />
+                                        <img src="/images/sectionProductItemPage/Profile.png" alt="" className="sectionUserPage__dashboard-img" />
                                         <h3 className="sectionUserPage__dashboard-title">{user.userName}</h3>
                                         <p className="sectionUserPage__dashboard-email">{user.email}</p>
 

@@ -82,6 +82,12 @@ a {
     gap: 20px;
 }
 
+.header__menuMobile-itemBoxes{
+    position: absolute;
+    top: 25px;
+    left: 15px;
+}
+
 .header__menuList-link {
     font-size: 18px;
     font-weight: 500;
@@ -135,6 +141,38 @@ a {
     font-weight: 600;
 }
 
+.header__menuMobile{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(138, 51, 253, 0.5);
+    transform:translateX(100%);
+    transition:all 1s ease;
+    gap:35px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 50vh;
+    opacity: 0;
+    z-index: 5;
+    border-bottom-left-radius: 8px;
+}
+
+.header__menuBtn{
+    display: none;
+}
+
+.header__menuMobileCloseBlock{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: transparent;
+    z-index: 2;
+}
 
 .sectionTop {
     padding: 130px 0 130px 93px;
@@ -2238,7 +2276,11 @@ a {
     align-items: center;
     border: 1px solid #E5E7EB;
     border-radius: 8px;
-    padding: 20px;
+    padding: 40px;
+}
+
+.sectionUserPage__dashboard-img{
+    min-width: 65px;
 }
 
 .sectionUserPage__dashboard-title {
@@ -2889,4 +2931,102 @@ a {
     font-size: 14px;
     font-weight: 400;
     color: #808080;
+}
+
+
+/* когда ширина экрана будет 620px и меньше,то тогда будут работать эти стили,делаем так адаптив сайта */
+@media (max-width:620px) {
+
+    .header{
+        padding: 20px 0;
+    }
+    
+    .header__menuList{
+        display: none;
+    }
+
+    .header__menuMobile--active{
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    .header__menuBtn{
+        display: block;
+        width: 35px;
+        height: 40px;
+        background-color: transparent;
+        border:none;
+        position: relative;
+        z-index: 5;
+    }
+
+    .header__menuBtn:hover{
+        cursor: pointer;
+    }
+
+    .header__menuBtn-span{
+        width: 100%;    
+        height: 1px;
+        background-color: #3C4242;
+        border-radius: 20%;
+        position: absolute;
+        right: 0;
+        transition:all .5s ease-in-out;
+    }
+
+    /* указываем стили для первого найденного элемента с классом header__menuBtn-span */
+    .header__menuBtn-span:nth-child(1){
+        top: 11px;
+    } 
+      
+    .header__menuBtn-span:nth-child(2){
+        top: 21px;
+    }
+       
+    .header__menuBtn-span:nth-child(3){
+        top: 21px;
+    } 
+      
+    .header__menuBtn-span:nth-child(4){
+        top: 31px;
+    }   
+
+    .header__menuBtn-spanActive1{
+        transform: scaleX(0);
+    }
+
+    .header__menuBtn-spanActive2{
+        transform: rotate(45deg);
+    }
+
+    .header__menuBtn-spanActive3{
+        transform: rotate(-45deg);
+    }
+
+    .header__menuList-link{
+        color: #fff;
+        font-size: 18px;
+    }
+
+    .header__menuList-link--active{
+        color: #3C4242;
+    }
+
+}
+
+@media (max-width:420px) {
+    .header__menuMobile-itemBoxes{
+        left: 10px;
+        gap: 10px;
+        top: 27px;
+    }
+
+    .header__menuList-linkBox{
+        padding: 10px;
+    }
+
+    .header__linkCart-span{
+        top: 4px;
+        right: 3px;
+    }
 }
