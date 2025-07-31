@@ -282,6 +282,7 @@ a {
     box-shadow: 5px 5px 10px 0 rgba(0, 0, 0, 0.4);
     /* картинки лучше экспортировать из фигмы без border-radius(в appearance в фигме) и box-shadow,а потом отдельно в css указывать этот border-radius и box-shadow,чтобы было удобнее и лучше смотрелось,если при использовании box-shadow у картинок белые границы,то нужно уменьшить padding */
     border-radius: 9px;
+    background-position: right;
 }
 
 .sectionPresents__item-highCoziness {
@@ -2933,6 +2934,86 @@ a {
     color: #808080;
 }
 
+@media (max-width:1075px) {
+
+    .sectionCategories__topBlock{
+        margin-bottom: 40px;
+    }
+
+    .sectionPresents{
+        margin: 80px 0;
+    }
+
+    .sectionCategories{
+        margin-bottom: 80px;
+    }
+
+}
+
+@media (max-width:920px) {
+
+    .sectionTop{
+        padding: 80px 0 80px 60px;
+    }
+
+    .sectionPresents{
+        margin: 50px 0;
+    }
+
+    .sectionCategories{
+        margin-bottom: 50px;
+    }
+
+    .sectionCategories__topBlock{
+        margin-bottom: 30px;
+    }
+
+    .sectionCategories__items{
+        gap:20px;
+    }
+
+    .sectionSavingZone__item-hawai{
+        background-position: right;
+    }
+
+}
+
+@media (max-width:850px) {
+
+    .sectionPresents__item{
+        padding: 30px 0 30px 28px;
+    }
+
+    .sectionPresents__item-title{
+        font-size: 28px;
+    }
+
+    .sectionPresents__inner{
+        gap: 20px;
+    }
+
+    .sectionCategories__items{
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .sectionCategoires__item-img{
+        margin-bottom: 15px;
+    }
+
+    .sectionSavingZone__items{
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .sectionSavingZone__item-cargo{
+        grid-column: 1/3;
+    }
+
+    .sectionSavingZone__itemsBottom{
+        grid-template-columns:1fr;
+    }
+
+}
+
 
 /* когда ширина экрана будет 620px и меньше,то тогда будут работать эти стили,делаем так адаптив сайта */
 @media (max-width:620px) {
@@ -3012,6 +3093,28 @@ a {
         color: #3C4242;
     }
 
+    .sectionTop{
+        padding: 50px 0 50px 40px;
+    }
+
+    .sectionTop__title{
+        font-size: 48px;
+        line-height: normal;
+
+    }
+
+    .sectionPresents__inner{
+        grid-template-columns: 1fr;
+    }
+
+    .sectionSavingZone__items{
+        grid-template-columns: 1fr;
+    }
+
+    .sectionSavingZone__item-cargo{
+        grid-column: auto;
+    }
+
 }
 
 @media (max-width:420px) {
@@ -3028,5 +3131,23 @@ a {
     .header__linkCart-span{
         top: 4px;
         right: 3px;
+    }
+
+    .sectionTop{
+        padding: 50px 0 50px;
+    }
+
+    .sectionTop__subtitle,
+    .sectionTop__title {
+        margin-bottom: 20px;
+    }
+
+    .sectionTop__link{
+        max-width: 195px;
+        padding: 14px;
+    }
+
+    .sectionCategories__items{
+        grid-template-columns:1fr;
     }
 }
