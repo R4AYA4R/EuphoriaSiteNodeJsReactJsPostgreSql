@@ -583,11 +583,13 @@ a {
 }
 
 .sectionFashion__itemInfo {
-    padding: 183px 0 0 74px;
+    padding: 120px 40px 0 74px;
     background-image: url('/public/images/sectionFashion/backImg.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    border-bottom-left-radius: 12px;
+    border-top-left-radius: 12px;
 }
 
 .sectionFashion__itemInfo-title {
@@ -615,6 +617,11 @@ a {
 
 .sectionFashion__link .sectionTop__link-text {
     font-size: 18px;
+}
+
+.sectionFashion__img{
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
 }
 
 .sectionTopBrands {
@@ -2948,6 +2955,14 @@ a {
         margin-bottom: 80px;
     }
 
+    .sectionFashion__itemInfo{
+        padding: 50px 10px 0 20px;
+    }
+
+    .sectionFashion__img{
+        width: 100%;
+    }
+
 }
 
 @media (max-width:920px) {
@@ -2974,6 +2989,20 @@ a {
 
     .sectionSavingZone__item-hawai{
         background-position: right;
+    }
+
+    .sectionFashion__itemInfo{
+        padding: 20px 10px 0 20px;
+    }
+
+    .sectionFashion__itemInfo-title{
+        font-size: 28px;
+        line-height: normal;
+        margin-bottom: 20px;
+    }
+
+    .sectionFashion__itemInfo-text{
+        margin-bottom: 25px;
     }
 
 }
@@ -3014,6 +3043,26 @@ a {
 
 }
 
+@media (max-width:750px) {
+
+    .sectionFashion__inner{
+        grid-template-columns: 1fr;
+    }
+
+    .sectionFashion__itemInfo{
+        border-bottom-left-radius: 0px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        padding: 50px 10px;
+    }
+
+    .sectionFashion__img{
+        border-top-right-radius: 0px;
+        border-bottom-left-radius: 12px;
+        max-height: 650px;
+    }
+
+}
 
 /* когда ширина экрана будет 620px и меньше,то тогда будут работать эти стили,делаем так адаптив сайта */
 @media (max-width:620px) {
@@ -3149,5 +3198,9 @@ a {
 
     .sectionCategories__items{
         grid-template-columns:1fr;
+    }
+
+    .sectionCategories__topBlock-title{
+        font-size: 28px;
     }
 }

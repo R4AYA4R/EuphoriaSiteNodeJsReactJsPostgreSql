@@ -20,7 +20,7 @@ const SectionFashion = () => {
                             <img src="/images/sectionTop/arrow.png" alt="" className="sectionTop__link-img" />
                         </Link>
                     </div>
-                    <img src="/images/sectionFashion/Rectangle 13.png" alt="" className="sectionFashion__img" />
+                    <img src="/images/sectionFashion/Rectangle 13.jpg" alt="" className="sectionFashion__img" />
                 </div>
             </div>
         </section>
