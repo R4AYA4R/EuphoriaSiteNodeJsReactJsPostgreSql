@@ -662,6 +662,7 @@ a {
 
 .sectionTopBrands__img {
     border-radius: 12px;
+    width: 100%;
 }
 
 .sectionNewArrivals {
@@ -2963,6 +2964,10 @@ a {
         width: 100%;
     }
 
+    .sectionTopBrands__inner{
+        padding: 44px 73px 60px;
+    }
+
 }
 
 @media (max-width:920px) {
@@ -3060,6 +3065,27 @@ a {
         border-top-right-radius: 0px;
         border-bottom-left-radius: 12px;
         max-height: 650px;
+    }
+
+    .sectionFashion__itemInfo-title{
+        text-align: center;
+    }
+
+    .sectionFashion__itemInfo-text{
+        text-align: center;
+        margin: 0 auto 25px;
+    }
+
+    .sectionFashion__link{
+        margin: 0 auto;
+    }
+
+    .sectionTopBrands__text{
+        margin-bottom: 37px;
+    }
+
+    .sectionTopBrands__inner{
+        padding: 45px 20px;
     }
 
 }
@@ -3164,6 +3190,26 @@ a {
         grid-column: auto;
     }
 
+    .sectionTopBrands__title{
+        font-size: 42px;
+        margin-bottom: 15px;
+    }
+
+    .sectionTopBrands__text{
+        margin-bottom: 25px;
+    }
+
+    .sectionTopBrands__items{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .sectionTopBrands__img{
+        max-width: 120px;
+    }
+
 }
 
 @media (max-width:420px) {
@@ -3202,5 +3248,13 @@ a {
 
     .sectionCategories__topBlock-title{
         font-size: 28px;
+    }
+
+    .sectionTopBrands__title{
+        font-size: 36px;
+    }
+
+    .sectionTopBrands__inner{
+        padding: 30px 20px;
     }
 }
