@@ -731,6 +731,11 @@ a {
     max-height: 21px;
     overflow: hidden;
     /* указываем в данном случае это свойство,чтобы если текст названия не влезает по высоте,то его было видно */
+    display: -webkit-box; /* указываем это свойство,чтобы работало автоматическое троеточие для строки */
+    -webkit-line-clamp: 1; /* свойство для ограничения количества строк в этом элементе,если количество строк в этом элементе будет больше,то они будут убираться и вместо этого будет подставлено троеточие после последней буквы строки */
+    line-clamp: 1; /* указываем это свойство(оно такое же как и -webkit-line-clamp),так как в данном случае vs code подсвечивает -webkit-line-clamp,что для -webkit-line-clamp нужно еще определить свойство line-clamp,хотя без line-clamp тоже работает троеточие */
+    -webkit-box-orient: vertical; /* свойство для определения расположения элементов внутри этого элемента,это нужно тоже,чтобы работало это автоматическое троеточие */
+    text-overflow: ellipsis; /* свойство для отображения троеточия в конце строки,если текст не помещается в заданную область,в данном случае троеточие работает и без этого свойства(в данном случае достаточно свойств перед этим для троеточия),но оставим так */
 }
 
 .sectionNewArrivals__item-title:hover {
@@ -2968,6 +2973,10 @@ a {
         padding: 44px 73px 60px;
     }
 
+    .sectionNewArrivals__items{
+        gap: 15px;
+    }
+
 }
 
 @media (max-width:920px) {
@@ -3008,6 +3017,14 @@ a {
 
     .sectionFashion__itemInfo-text{
         margin-bottom: 25px;
+    }
+
+    .footer__item-title{
+        text-wrap: nowrap;
+    }
+
+    .footer__topBlock{
+        gap: 20px;
     }
 
 }
@@ -3086,6 +3103,22 @@ a {
 
     .sectionTopBrands__inner{
         padding: 45px 20px;
+    }
+
+    .sectionNewArrivals__item-img{
+        margin-bottom: 15px;
+    }
+
+    .sectionNewArrivals__items{
+        gap: 10px;
+    }
+
+    .footer{
+        padding: 40px 0;
+    }
+
+    .footer__topBlock{
+        grid-template-columns: repeat(2,1fr);
     }
 
 }
@@ -3210,6 +3243,11 @@ a {
         max-width: 120px;
     }
 
+    .sectionNewArrivals__items{
+        grid-template-columns: repeat(2,1fr);
+        row-gap: 30px;
+    }
+
 }
 
 @media (max-width:420px) {
@@ -3256,5 +3294,13 @@ a {
 
     .sectionTopBrands__inner{
         padding: 30px 20px;
+    }
+
+    .footer__topBlock{
+        grid-template-columns: 1fr;
+    }
+
+    .footer__bottomBlock{
+        margin-top: 15px;
     }
 }
