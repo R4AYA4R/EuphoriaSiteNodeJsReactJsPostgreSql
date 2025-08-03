@@ -13,6 +13,8 @@ import { useActions } from "../hooks/useActions";
 
 const Catalog = () => {
 
+    const [activeFilterBarMenu, setActiveFilterBarMenu] = useState(false);
+
     const { catalogCategory } = useTypedSelector(state => state.catalogSlice); // указываем наш слайс(редьюсер) под названием catalogSlice и деструктуризируем у него поле состояния catalogCategory,используя наш типизированный хук для useSelector
 
     const { setCategoryCatalog } = useActions(); // берем action для изменения состояния категории каталога у слайса(редьюсера) catalogSlice у нашего хука useActions уже обернутый в диспатч,так как мы оборачивали это в самом хуке useActions
@@ -23,7 +25,7 @@ const Catalog = () => {
 
     const onScreen = useIsOnScreen(sectionCatalog as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
 
-    const [limit, setLimit] = useState(1); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
+    const [limit, setLimit] = useState(4); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
 
     const [page, setPage] = useState(1); // указываем состояние текущей страницы
 
@@ -142,7 +144,7 @@ const Catalog = () => {
     })
 
     // указываем такой же queryKey как и в секции sectionNewArrivals и на странице ProductItemPage для получения всех комментариев,чтобы при изменении комментариев у товара на странице ProductItemPage переобновлять массив комментариев в секции sectionNewArrivals и на странице Catalog
-    const { data:dataComments,refetch:refetchComments } = useQuery({
+    const { data: dataComments, refetch: refetchComments } = useQuery({
         queryKey: ['commentsForProduct'], // указываем название
         queryFn: async () => {
 
@@ -371,10 +373,10 @@ const Catalog = () => {
     }, [searchValue])
 
     // при рендеринге(запуске) этого компонента и при изменении catalogCategory отработает код в этом useEffect
-    useEffect(()=>{
+    useEffect(() => {
 
         // если catalogCategory не равно пустой строке,то изменяем filterCategories на catalogCategory и делаем повторный запрос для получения товаров каталога,делаем эту проверку,чтобы не шел лишний повторный запрос на сервер для получения товаров каталога,если состояние catalogCategory равно пустой строке,то есть пользователь не выбрал категорию товаров на странице Home.tsx,а просто перешел на страницу каталога
-        if(catalogCategory !== ''){
+        if (catalogCategory !== '') {
 
             setFilterCategories(catalogCategory); // изменяем состояние filterCategories на catalogCategory(категорию,которую выбрал пользователь на странице HomePage)
 
@@ -388,14 +390,14 @@ const Catalog = () => {
 
         }
 
-    },[catalogCategory])
+    }, [catalogCategory])
 
     // при изменении pathname(то есть при изменении url страницы) изменяем состояние categoryCatalog на пустую строку,чтобы после перехода на другую страницу со страницы каталога категория фильтра товаров убиралась,иначе,если так не сделать,то если состояние categoryCatalog не равно пустой строке,то категория фильтра товаров будет выбрана,и даже после перехода на другую страницу и возвращении на страницу каталога,эта категория фильтра товаров все равно будет выбрана,и надо будет нажимать на крестик вручную,чтобы ее убрать
-    useEffect(()=>{
+    useEffect(() => {
 
         setCategoryCatalog('');
 
-    },[pathname])
+    }, [pathname])
 
     // при изменении фильтров и состояния сортировки(sortBlockValue в данном случае) изменяем состояние текущей страницы пагинации на первую
     useEffect(() => {
@@ -403,6 +405,13 @@ const Catalog = () => {
         setPage(1);
 
     }, [filterPrice, filterCategories, sortBlockValue, typeFilter, sizes])
+
+    // при рендеринге этого компонента(то есть при запуске страницы в данном случае) и при изменении page(страницы пагинации) будет отработан этот useEffect
+    useEffect(()=>{
+
+        window.scrollTo(0,0); // перемещаем курсор(то есть прокручиваем страницу) до определенных значений в пикселях по осям x и y(первый параметр для оси x, а второй для оси y),в данном случае делаем так,чтобы при изменении страницы страница прокручивалась вверх к началу страницы,чтобы пользователю не надо было каждый раз прокручивать опять вверх страницу к началу товаров при изменении страницы пагинации товаров
+
+    },[page])
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
 
@@ -431,7 +440,7 @@ const Catalog = () => {
     return (
         <main className="main">
             <SectionUnderTop subtext="Shop" /> {/* указываем пропс(параметр) subtext(в данном случае со значением Shop,чтобы отобразить в этой секции текст Shop,так как это для страницы каталога),чтобы использовать этот компонент на разных страницах,а отличаться он будет только этим параметром subtext */}
-            <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionCatalog__active " : "sectionCatalog"} ref={sectionCatalog}>
+            <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionCatalog__active sectionCatalogPage" : "sectionCatalog sectionCatalogPage"} ref={sectionCatalog}>
                 <div className="container">
                     <div className="sectionCatalog__inner">
                         <div className="sectionCatalog__filterBar">
@@ -577,12 +586,177 @@ const Catalog = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* если activeFilterBarMenu true (то есть сейчас открыто мобильное меню фильтров),то показываем блок див и в onClick указываем,что изменяем состояние activeFilterBarMenu на false,то есть будем закрывать мобильное меню по клику на другую область,кроме этого меню,чтобы оно закрылось не только по кнопке,но и по области вокруг,в другом случае этот блок показан не будет */}
+                        {activeFilterBarMenu && 
+                            <div className="sectionCatalog__closeFilterBarMobileBlock" onClick={()=>setActiveFilterBarMenu(false)}></div>
+                        }
+
+                        {/* если activeFilterBarMenu true,то показываем активные классы для мобильного меню фильтров,в другом случае другие */}
+                        <div className={activeFilterBarMenu ? "sectionCatalog__filterBarMobile sectionCatalog__filterBarMobile--active" : "sectionCatalog__filterBarMobile"}>
+
+                            <div className="sectionCatalog__filterBar-filterItem">
+
+                                <div className="sectionCatalog__filterBarMobile-topBlock">
+                                    <h2 className="filterBar__filterItem-title filterBar__filterItem-title--categories">Type</h2>
+                                    <button className="filterBarMobile__topBlock-closeBtn" onClick={()=>setActiveFilterBarMenu(false)}>
+                                        <img src="/images/sectionCatalog/CloseCircle.png" alt="" className="filterBarMobile__closeBtn-img" />
+                                    </button>
+                                </div>
+
+                                <div className="filterBar__filterItem-labels">
+                                    <label className="filterBar__filterItem-categoriesLabel" onClick={() => setTypeFilter('Men')}>
+                                        <input type="radio" name="radio" className="categoriesLabel__input" />
+                                        <span className={typeFilter === 'Men' ? "categoriesLabel-radioStyle categoriesLabel-radioStyle--active" : "categoriesLabel-radioStyle"}>
+                                            <span className={typeFilter === 'Men' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={typeFilter === 'Men' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Men</p>
+
+                                        {/* если typeFilter !== '',то есть какая-либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определенном типе(type) показывалось только если никакой другой тип(type) не выбран),указываем значение этому тексту для количества товаров категории, в данном случае как filteredTypeMen.length(массив объектов товаров,отфильтрованный по полю typeId и значению 1(то есть в данном случае для типа 'Men'),лучше фильтровать массивы товаров для показа количества товаров в категориях запросами на сервер,добавляя туда параметры фильтров,если они выбраны,но тогда может много запросов идти на сервер и сейчас уже сделали так */}
+                                        <p className={typeFilter !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredTypeMen.length})</p>
+                                    </label>
+                                    <label className="filterBar__filterItem-categoriesLabel" onClick={() => setTypeFilter('Women')}>
+                                        <input type="radio" name="radio" className="categoriesLabel__input" />
+                                        <span className={typeFilter === 'Women' ? "categoriesLabel-radioStyle categoriesLabel-radioStyle--active" : "categoriesLabel-radioStyle"}>
+                                            <span className={typeFilter === 'Women' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={typeFilter === 'Women' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Women</p>
+                                        <p className={typeFilter !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredTypeWomen.length})</p>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="sectionCatalog__filterBar-filterItem">
+                                <h2 className="filterBar__filterItem-title">Categories</h2>
+                                <div className="filterBar__filterItem-labels">
+                                    <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('Long Sleeves')}>
+                                        <input type="radio" name="radio" className="categoriesLabel__input" />
+                                        <span className={filterCategories === 'Long Sleeves' ? "categoriesLabel-radioStyle categoriesLabel-radioStyle--active" : "categoriesLabel-radioStyle"}>
+                                            <span className={filterCategories === 'Long Sleeves' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={filterCategories === 'Long Sleeves' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Long Sleeves</p>
+
+                                        {/* если filterCategories !== '',то есть какая-либо категория выбрана,то не показываем число товаров в этой категории(в данном случае сделали так,чтобы число товаров в определнной категории показывалось только если никакие фильтры не выбраны,кроме поиска и цены),указываем значение этому тексту для количества товаров категории, в данном случае как filteredCategoryFruitsAndVegetables?.length(массив объектов товаров,отфильтрованный по полю category и значению 'Long Sleeves',то есть категория Long Sleeves),лучше фильтровать массивы товаров для показа количества товаров в категориях запросами на сервер,добавляя туда параметры фильтров,если они выбраны,но сейчас уже сделали так */}
+                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredLongSleeves.length})</p>
+                                    </label>
+                                    <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('Joggers')}>
+                                        <input type="radio" name="radio" className="categoriesLabel__input" />
+                                        <span className={filterCategories === 'Joggers' ? "categoriesLabel-radioStyle categoriesLabel-radioStyle--active" : "categoriesLabel-radioStyle"}>
+                                            <span className={filterCategories === 'Joggers' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={filterCategories === 'Joggers' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Joggers</p>
+                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredJoggers.length})</p>
+                                    </label>
+                                    <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('T-Shirts')}>
+                                        <input type="radio" name="radio" className="categoriesLabel__input" />
+                                        <span className={filterCategories === 'T-Shirts' ? "categoriesLabel-radioStyle categoriesLabel-radioStyle--active" : "categoriesLabel-radioStyle"}>
+                                            <span className={filterCategories === 'T-Shirts' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={filterCategories === 'T-Shirts' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>T-Shirts</p>
+                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredTShirts.length})</p>
+                                    </label>
+                                    <label className="filterBar__filterItem-categoriesLabel" onClick={() => setFilterCategories('Shorts')}>
+                                        <input type="radio" name="radio" className="categoriesLabel__input" />
+                                        <span className={filterCategories === 'Shorts' ? "categoriesLabel-radioStyle categoriesLabel-radioStyle--active" : "categoriesLabel-radioStyle"}>
+                                            <span className={filterCategories === 'Shorts' ? "categoriesLabel__radioStyle-before categoriesLabel__radioStyle-before--active" : "categoriesLabel__radioStyle-before"}></span>
+                                        </span>
+                                        <p className={filterCategories === 'Shorts' ? "categoriesLabel__text categoriesLabel__text--active" : "categoriesLabel__text"}>Shorts</p>
+                                        <p className={filterCategories !== '' ? "categoriesLabel__amount categoriesLabel__amountDisable" : "categoriesLabel__amount"}>({filteredShorts.length})</p>
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="sectionCatalog__filterBar-filterItem">
+                                <h2 className="filterBar__filterItem-title">Price</h2>
+                                <div className="filterBar__filterItem-labels">
+
+                                    <ReactSlider
+
+                                        // указываем классы для этого инпута range и для его кнопок и тд, и в файле index.css их стилизуем 
+                                        className="filterItem__inputRangeSlider"
+
+                                        thumbClassName="inputRangeSlider__thumb"
+
+                                        trackClassName="inputRangeSlider__track"
+
+                                        defaultValue={filterPrice}  // поле для дефолтного значения минимального(первый элемент массива) и максимального(второй элемент массива),указываем этому полю значение как наш массив filterPrice(массив чисел для минимального(первый элемент массива) и максимального(второй элемент массива) значения)
+
+                                        max={data?.maxPriceAllProducts} // поле для максимального значения
+
+                                        min={0} // поле для минимального значения
+
+                                        minDistance={5} // минимальная дистанция между ползунками этого слайдера(input range),указывается типа в пикселях,лучше ее указать,иначе,если они потом будут друг на друге стоять и пытаться переместить их нажатием на другую сторону,то сможет переместиться только в одну сторону,прежде чем сможет нормально работать,а также при этих многочисленных попыток может показать ошибку,поэтому указываем эту минимальную дистанцию(в 5 пикселей в данном случае)
+
+                                        value={filterPrice}  // указываем поле value как наше состояние filterPrice(массив из 2 элементов для минимального и максимального значения фильтра цены),указываем это,чтобы при изменении состояния filterPrice, менялось и значение этого инпута range,то есть этого react slider(его ползунки и значения их),в данном случае это для того,чтобы при удалении фильтра цены,менялись значения ползунков этого react slider(инпут range)
+
+                                        // вместо этого сами деструктуризируем дополнительные параметры из props в коде ниже,иначе выдает ошибку в версии react 19,так как библиотека react-slider давно не обновлялась,а сам react обновился
+                                        // renderThumb={(props,state) => <div {...props}>{state.valueNow}</div>}
+
+                                        // деструктуризируем поле key и ...restProps из props(параметр у этой функции callback),чтобы потом отдельно передать в div,так как выдает ошибку в версии react 19,если сделать как код выше
+                                        renderThumb={(props, state) => {
+                                            const { key, ...restProps } = props; // деструктуризируем отдельно поле key из props,и остальные параметры,которые есть у props,разворачиваем в этот объект и указываем им название restProps(...restProps),потом отдельно указываем этому div поле key и остальные параметры у props(restProps),разворачиваем restProps в объект,таким образом передаем их этому div {...restProps}
+
+                                            return (
+                                                <div key={key} {...restProps}>{state.valueNow}</div>
+                                            );
+
+                                        }}
+
+                                        onChange={(value, index) => setFilterPrice(value)} // при изменении изменяем значение состояния массива filterPrice(в параметрах функция callback принимает value(массив текущих значений этого инпута) и index(индекс кнопки элемента массива,то есть за какую кнопку сейчас дергали))
+
+                                        // onAfterChange срабатывает,когда отпустили ползунок у инпута React Slider,в данном случае делаем повторный запрос на сервер(refetch()),когда отпустили ползунок у инпута,чтобы переобновить данные товаров уже с новым фильтром цены
+                                        onAfterChange={() => {
+
+                                            refetch();
+
+                                        }}
+
+                                        // onSliderClick срабатывает,когда нажали на инпут React Slider,в данном случае делаем повторный запрос на сервер(refetch()),когда нажимаем на React Slider,чтобы переобновить данные товаров уже с новым фильтром цены(если не указать это,то при клике на инпут React Slider значение будет изменяться правильно,а при запросе на сервер будут неправильные значения)
+                                        onSliderClick={() => {
+
+                                            refetch();
+
+                                        }}
+
+
+                                    />
+
+                                    {/* выводим минимальное текущее значение инпута range (наш ReactSlider) по индексу 0 из нашего массива filterPrice (filterPrice[0]) и выводим максимальное текущее значение по индексу 1 из нашего массива filterPrice (filterPrice[1]),используем toFixed(0),чтобы после запятой у этого числа было 0 чисел,иначе могут показываться значения с несколькими числами после запятой */}
+                                    <p className="filterItem__inputRangeSliderPrice">${filterPrice[0]} - ${filterPrice[1].toFixed(0)}</p>
+
+                                </div>
+                            </div>
+                            <div className="sectionCatalog__filterBar-filterItem">
+                                <h2 className="filterBar__filterItem-title">Size</h2>
+                                <div className="filterBar__filterItem-labels">
+
+                                    <div className="filterItem__labels-sizes">
+                                        {/* в onClick этой кнопке изменяем состояние sizes,возвращая новый объект,в который разворачиваем все поля предыдущего(текущего(prev)) объекта и изменяем только поле sizeS на true,чтобы добавить фильтр по размеру,и для класса делаем проверку,если поле sizeS у состояния sizes true,то показываем активный класс кнопке,в другом случае обычный */}
+                                        <button className={sizes.sizeS ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={addFilterSizeS}>S</button>
+
+                                        <button className={sizes.sizeM ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={addFilterSizeM}>M</button>
+
+                                        <button className={sizes.sizeL ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={addFilterSizeL}>L</button>
+
+                                        <button className={sizes.sizeXL ? "filterBar__filterItem-sizeBtn filterBar__filterItem-sizeBtn--active" : "filterBar__filterItem-sizeBtn"} onClick={addFilterSizeXL}>XL</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div className="sectionCatalog__productsBlock">
                             <div className="sectionCatalog__productsBlock-searchBlock">
-                                <div className="sectionCatalog__searchBlock-inputBlock">
-                                    <input type="text" className="searchBlock__inputBlock-input" placeholder="Search" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
-                                    <img src="/images/sectionCatalog/Icon (1).png" alt="" className="searchBlock__inputBlock-img" />
+
+                                <div className="sectionCatalog__searchBlock-searchAndFilterBlock">
+                                    <button className="sectionCatalog__searchAndFilterBlock-settingsBtn" onClick={() => setActiveFilterBarMenu(true)}>
+                                        <img src="/images/sectionCatalog/SettingsFilter.png" alt="" className="sectionCatalog__settingsBtn-img" />
+                                    </button>
+                                    <div className="sectionCatalog__searchBlock-inputBlock">
+                                        <input type="text" className="searchBlock__inputBlock-input" placeholder="Search" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+                                        <img src="/images/sectionCatalog/Icon (1).png" alt="" className="searchBlock__inputBlock-img" />
+                                    </div>
                                 </div>
+
                                 <div className="searchBlock__sortBlock">
                                     <p className="sortBlock__text">Sort By:</p>
                                     <div className="sortBlock__inner">
@@ -737,7 +911,7 @@ const Catalog = () => {
                                     {data?.products.rows.map((product) =>
 
                                         // передаем этому компоненту функцию setPage в пропсах(параметрах),чтобы в этом компоненте указывать текущую страницу пагинации на 1 при удалении товара каталога
-                                        <ProductItemCatalog key={product.id} product={product} comments={dataComments?.allComments} dataProductsCart={dataProductsCart} refetchProductsCart={refetchProductsCart} setPage={setPage}/>
+                                        <ProductItemCatalog key={product.id} product={product} comments={dataComments?.allComments} dataProductsCart={dataProductsCart} refetchProductsCart={refetchProductsCart} setPage={setPage} />
 
                                     )}
 

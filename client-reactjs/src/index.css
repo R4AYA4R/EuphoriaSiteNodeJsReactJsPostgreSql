@@ -1158,6 +1158,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap:20px;
 }
 
 .sectionCatalog__searchBlock-inputBlock {
@@ -1372,6 +1373,74 @@ a {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
+}
+
+
+.sectionCatalog__searchAndFilterBlock-settingsBtn{
+    background-color: #fff;
+    border:1px solid #E5E7EB;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:opacity .5s ease;
+    padding: 7px 9px;
+    display: none;
+}
+
+.sectionCatalog__searchAndFilterBlock-settingsBtn:hover{
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.sectionCatalog__filterBarMobile{
+    padding: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 70%;
+    z-index: 5;
+    transform: translateX(-130%);
+    transition: all 1s ease;
+    /* background-color: rgb(248, 243, 255); */
+    background-color: rgb(247, 244, 253);
+    border-bottom-right-radius:8px;
+    border-top-right-radius:8px;
+}
+
+.sectionCatalog__filterBarMobile-topBlock{
+    position: relative;
+}
+
+.filterBarMobile__topBlock-closeBtn{
+    position: absolute;
+    top: 20px;
+    right: -4px;
+    background-color: transparent;
+    border:none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:opacity .5s ease;
+}
+
+.filterBarMobile__topBlock-closeBtn:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.sectionCatalogPage{
+    min-height: 700px; /* указываем минимальную высоту для секции каталога на странице каталога,чтобы при адаптиве не было отступа снизу футера,так как мобильное меню фильтров может быть выше,чем высота main и footer,даже если делали wrapper и указывали ему высоту 100vh(viewport height) и для main flex-grow:1 */
+}
+
+.sectionCatalog__closeFilterBarMobileBlock{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 967px; /* указываем высоту этому блоку,который будет закрывать мобильное меню фильтров каталога,со значением как высота у этого мобильного меню фильтров,так как если просто указать bottom:0,то в данном случае блок main будет меньше по высоте,чем это мобильное меню фильтров,и меню фильтров будет выходить за рамки этого закрывающего блока */ 
+    background-color: transparent;
+    z-index: 2;
 }
 
 .innerForLoader {
@@ -2977,6 +3046,18 @@ a {
         gap: 15px;
     }
 
+    .sectionCategories.sectionUnderTop{
+        margin-bottom: 0;
+    }
+
+    .sectionCatalog__inner {
+        gap: 20px;
+    }
+
+    .sectionCatalog__productsBlock-productsItems{
+        gap: 14px;
+    }
+
 }
 
 @media (max-width:920px) {
@@ -3027,6 +3108,33 @@ a {
         gap: 20px;
     }
 
+    .sectionCatalog__searchBlock-searchAndFilterBlock{
+        display: flex;
+        align-items: center;
+        gap:10px;
+    }
+
+    .sectionCatalog__searchAndFilterBlock-settingsBtn{
+        display: block;
+    }
+
+    .sectionCatalog__filterBar{
+        display: none;
+    }
+
+    .sectionCatalog__inner{
+        grid-template-columns: 1fr;
+    }
+
+    .sectionCatalog__filterBarMobile--active{
+        opacity: 1;
+        transform:translateX(0);
+    }
+
+    .productsBlock__pagination{
+        margin: 30px 0;
+    }
+
 }
 
 @media (max-width:850px) {
@@ -3061,6 +3169,20 @@ a {
 
     .sectionSavingZone__itemsBottom{
         grid-template-columns:1fr;
+    }
+
+    .productsBlock__filtersBlock{
+        gap: 15px;
+    }
+
+    .filtersBlock__amountBlock-text{
+        text-wrap: nowrap;
+    }
+
+    .productsBlock__filtersBlock-leftBlock{
+        gap: 15px;
+        row-gap: 10px;
+        flex-wrap: wrap;
     }
 
 }
@@ -3119,6 +3241,17 @@ a {
 
     .footer__topBlock{
         grid-template-columns: repeat(2,1fr);
+    }
+
+    .sectionCatalog__productsBlock-searchBlock{
+        flex-wrap: wrap;
+    }
+
+    .sectionCatalog__searchBlock-searchAndFilterBlock,
+    .sectionCatalog__searchBlock-inputBlock,
+    .searchBlock__inputBlock-input
+    {
+        width: 100%;
     }
 
 }
@@ -3246,6 +3379,22 @@ a {
     .sectionNewArrivals__items{
         grid-template-columns: repeat(2,1fr);
         row-gap: 30px;
+    }
+
+    .sectionCatalog__productsBlock-productsItems{
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .sectionCatalog__filterBarMobile{
+        padding: 15px;
+    }
+
+    .filterBar__filterItem-labels{
+        padding: 20px 10px;
+    }
+
+    .productsBlock__filtersBlock{
+        align-items: start;
     }
 
 }
