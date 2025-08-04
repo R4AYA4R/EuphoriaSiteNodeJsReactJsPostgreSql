@@ -82,7 +82,7 @@ a {
     gap: 20px;
 }
 
-.header__menuMobile-itemBoxes{
+.header__menuMobile-itemBoxes {
     position: absolute;
     top: 25px;
     left: 15px;
@@ -141,15 +141,15 @@ a {
     font-weight: 600;
 }
 
-.header__menuMobile{
+.header__menuMobile {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background-color: rgba(138, 51, 253, 0.5);
-    transform:translateX(100%);
-    transition:all 1s ease;
-    gap:35px;
+    transform: translateX(100%);
+    transition: all 1s ease;
+    gap: 35px;
     position: absolute;
     top: 0;
     right: 0;
@@ -160,11 +160,11 @@ a {
     border-bottom-left-radius: 8px;
 }
 
-.header__menuBtn{
+.header__menuBtn {
     display: none;
 }
 
-.header__menuMobileCloseBlock{
+.header__menuMobileCloseBlock {
     position: absolute;
     top: 0;
     right: 0;
@@ -619,7 +619,7 @@ a {
     font-size: 18px;
 }
 
-.sectionFashion__img{
+.sectionFashion__img {
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
 }
@@ -715,7 +715,8 @@ a {
     transition: all .5s ease;
     width: 100%;
     height: 367px;
-    object-fit: cover; /* указываем это свойство,чтобы картинки правильно растягивались и нормально смотрелись,если они изначально не очень подходят под такой размер */
+    object-fit: cover;
+    /* указываем это свойство,чтобы картинки правильно растягивались и нормально смотрелись,если они изначально не очень подходят под такой размер */
 }
 
 .sectionNewArrivals__item-img:hover {
@@ -731,11 +732,16 @@ a {
     max-height: 21px;
     overflow: hidden;
     /* указываем в данном случае это свойство,чтобы если текст названия не влезает по высоте,то его было видно */
-    display: -webkit-box; /* указываем это свойство,чтобы работало автоматическое троеточие для строки */
-    -webkit-line-clamp: 1; /* свойство для ограничения количества строк в этом элементе,если количество строк в этом элементе будет больше,то они будут убираться и вместо этого будет подставлено троеточие после последней буквы строки */
-    line-clamp: 1; /* указываем это свойство(оно такое же как и -webkit-line-clamp),так как в данном случае vs code подсвечивает -webkit-line-clamp,что для -webkit-line-clamp нужно еще определить свойство line-clamp,хотя без line-clamp тоже работает троеточие */
-    -webkit-box-orient: vertical; /* свойство для определения расположения элементов внутри этого элемента,это нужно тоже,чтобы работало это автоматическое троеточие */
-    text-overflow: ellipsis; /* свойство для отображения троеточия в конце строки,если текст не помещается в заданную область,в данном случае троеточие работает и без этого свойства(в данном случае достаточно свойств перед этим для троеточия),но оставим так */
+    display: -webkit-box;
+    /* указываем это свойство,чтобы работало автоматическое троеточие для строки */
+    -webkit-line-clamp: 1;
+    /* свойство для ограничения количества строк в этом элементе,если количество строк в этом элементе будет больше,то они будут убираться и вместо этого будет подставлено троеточие после последней буквы строки */
+    line-clamp: 1;
+    /* указываем это свойство(оно такое же как и -webkit-line-clamp),так как в данном случае vs code подсвечивает -webkit-line-clamp,что для -webkit-line-clamp нужно еще определить свойство line-clamp,хотя без line-clamp тоже работает троеточие */
+    -webkit-box-orient: vertical;
+    /* свойство для определения расположения элементов внутри этого элемента,это нужно тоже,чтобы работало это автоматическое троеточие */
+    text-overflow: ellipsis;
+    /* свойство для отображения троеточия в конце строки,если текст не помещается в заданную область,в данном случае троеточие работает и без этого свойства(в данном случае достаточно свойств перед этим для троеточия),но оставим так */
 }
 
 .sectionNewArrivals__item-title:hover {
@@ -876,7 +882,7 @@ a {
     margin-bottom: 20px;
 }
 
-.footer__list-itemEmail{
+.footer__list-itemEmail {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -1158,14 +1164,14 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap:20px;
+    gap: 20px;
 }
 
 .sectionCatalog__searchBlock-inputBlock {
     position: relative;
 }
 
-.sectionCatalog__item-textAlreadyInCart{
+.sectionCatalog__item-textAlreadyInCart {
     margin-bottom: 10px;
 }
 
@@ -1376,24 +1382,24 @@ a {
 }
 
 
-.sectionCatalog__searchAndFilterBlock-settingsBtn{
+.sectionCatalog__searchAndFilterBlock-settingsBtn {
     background-color: #fff;
-    border:1px solid #E5E7EB;
+    border: 1px solid #E5E7EB;
     border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition:opacity .5s ease;
+    transition: opacity .5s ease;
     padding: 7px 9px;
     display: none;
 }
 
-.sectionCatalog__searchAndFilterBlock-settingsBtn:hover{
+.sectionCatalog__searchAndFilterBlock-settingsBtn:hover {
     cursor: pointer;
     opacity: 0.7;
 }
 
-.sectionCatalog__filterBarMobile{
+.sectionCatalog__filterBarMobile {
     padding: 20px;
     position: absolute;
     top: 0;
@@ -1404,41 +1410,43 @@ a {
     transition: all 1s ease;
     /* background-color: rgb(248, 243, 255); */
     background-color: rgb(247, 244, 253);
-    border-bottom-right-radius:8px;
-    border-top-right-radius:8px;
+    border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
-.sectionCatalog__filterBarMobile-topBlock{
+.sectionCatalog__filterBarMobile-topBlock {
     position: relative;
 }
 
-.filterBarMobile__topBlock-closeBtn{
+.filterBarMobile__topBlock-closeBtn {
     position: absolute;
     top: 20px;
     right: -4px;
     background-color: transparent;
-    border:none;
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition:opacity .5s ease;
+    transition: opacity .5s ease;
 }
 
-.filterBarMobile__topBlock-closeBtn:hover{
+.filterBarMobile__topBlock-closeBtn:hover {
     cursor: pointer;
     opacity: 0.5;
 }
 
-.sectionCatalogPage{
-    min-height: 700px; /* указываем минимальную высоту для секции каталога на странице каталога,чтобы при адаптиве не было отступа снизу футера,так как мобильное меню фильтров может быть выше,чем высота main и footer,даже если делали wrapper и указывали ему высоту 100vh(viewport height) и для main flex-grow:1 */
+.sectionCatalogPage {
+    min-height: 700px;
+    /* указываем минимальную высоту для секции каталога на странице каталога,чтобы при адаптиве не было отступа снизу футера,так как мобильное меню фильтров может быть выше,чем высота main и footer,даже если делали wrapper и указывали ему высоту 100vh(viewport height) и для main flex-grow:1 */
 }
 
-.sectionCatalog__closeFilterBarMobileBlock{
+.sectionCatalog__closeFilterBarMobileBlock {
     position: absolute;
     top: 0;
     right: 0;
     left: 0;
-    height: 967px; /* указываем высоту этому блоку,который будет закрывать мобильное меню фильтров каталога,со значением как высота у этого мобильного меню фильтров,так как если просто указать bottom:0,то в данном случае блок main будет меньше по высоте,чем это мобильное меню фильтров,и меню фильтров будет выходить за рамки этого закрывающего блока */ 
+    height: 967px;
+    /* указываем высоту этому блоку,который будет закрывать мобильное меню фильтров каталога,со значением как высота у этого мобильного меню фильтров,так как если просто указать bottom:0,то в данном случае блок main будет меньше по высоте,чем это мобильное меню фильтров,и меню фильтров будет выходить за рамки этого закрывающего блока */
     background-color: transparent;
     z-index: 2;
 }
@@ -1617,8 +1625,9 @@ a {
     border: 1px solid transparent;
 }
 
-.sizeBlock__sizes-itemDisabled{
-    pointer-events: none; /* указываем это свойство,чтобы этот элемент не реагировал на события мыши типа наведения,клика и тд,то есть делаем его типа выключенным,также события мыши будут передаваться на элементы,находящиеся под этим элементом */
+.sizeBlock__sizes-itemDisabled {
+    pointer-events: none;
+    /* указываем это свойство,чтобы этот элемент не реагировал на события мыши типа наведения,клика и тд,то есть делаем его типа выключенным,также события мыши будут передаваться на элементы,находящиеся под этим элементом */
     background-color: #BEBCBD;
     color: #3C4242;
 }
@@ -1627,7 +1636,7 @@ a {
     margin-top: 10px;
 }
 
-.sectionNewArrivals__item-textAlreadyInCart{
+.sectionNewArrivals__item-textAlreadyInCart {
     margin-top: 10px;
     display: inline-block;
 }
@@ -1920,6 +1929,7 @@ a {
 .desc__table-text {
     font-size: 16px;
     font-weight: 500;
+    text-wrap: nowrap;
 }
 
 .descBlock__desc-inner {
@@ -1932,13 +1942,13 @@ a {
     animation: appear 1s ease forwards;
 }
 
-.sectionProductItemPage__sizeBlock-sizesItemBlock{
+.sectionProductItemPage__sizeBlock-sizesItemBlock {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.sizeBlock-sizesItemBlock-textInCart{
+.sizeBlock-sizesItemBlock-textInCart {
     font-size: 14px;
     font-weight: 500;
     margin-top: 5px;
@@ -2016,28 +2026,31 @@ a {
 
 .reviews__form {
     opacity: 0;
-    pointer-events: none; /* указываем это свойство,чтобы убрать возможность наведения и всех событий мыши для взаимодействия с этим элементом,чтобы если этот элемент будет скрыт(opacity:0),то нельзя было навести и на этот элемент,нажать и тд,иначе,если в данном случае форма скрыта,но она не за границами экрана,то на нее можно навестись,и например,если навестись на textarea,то курсор будет изменен,типа как текстовый и тд */
+    pointer-events: none;
+    /* указываем это свойство,чтобы убрать возможность наведения и всех событий мыши для взаимодействия с этим элементом,чтобы если этот элемент будет скрыт(opacity:0),то нельзя было навести и на этот элемент,нажать и тд,иначе,если в данном случае форма скрыта,но она не за границами экрана,то на нее можно навестись,и например,если навестись на textarea,то курсор будет изменен,типа как текстовый и тд */
     transform: translateX(100%);
     transition: all 1s ease;
 }
 
 .reviews__form--active {
     opacity: 1;
-    pointer-events: auto; /* указываем этому свойству дефолтное значение,чтобы вернуть все взаимодействия мыши с этим элементом */
+    pointer-events: auto;
+    /* указываем этому свойству дефолтное значение,чтобы вернуть все взаимодействия мыши с этим элементом */
     transform: translateX(0);
 }
 
-.reviews__formAnswer{
-    display: none; /* указываем в данном случае форме display:none,чтобы она не показывалась,если кнопку добавления ответа от админа не нажали,иначе,будет просто прозрачный блок с размером этой формы */
+.reviews__formAnswer {
+    display: none;
+    /* указываем в данном случае форме display:none,чтобы она не показывалась,если кнопку добавления ответа от админа не нажали,иначе,будет просто прозрачный блок с размером этой формы */
 }
 
-.reviews__formAnswer--active{
+.reviews__formAnswer--active {
     display: block;
     animation: appear 1s ease forwards;
 }
 
 .form__topBlockInfo-img,
-.reviews__item-img{
+.reviews__item-img {
     -webkit-user-drag: none;
     /* указываем это свойстов,чтобы нельзя было перетащить этот элемент и не срабатывал курсор типа запрещающий перетаскивание,при зажатии курсора и ведении его в другое место,в данном случае чтобы когда форма скрыта(но она в пределах экрана),то чтобы нельзя было тыкать в то место,где она скрытая стоит и чтобы не срабатывал этот запрещающий курсор перетаскивания этой картинки,также можно для других браузеров указать такое же свойство,но для других движков браузера,типа -moz-user-drag:none(для браузера firefox) и тд,но в данном случае это не критично,и можно было это вообще не указывать,поэтому оставим так */
 }
@@ -2101,6 +2114,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 5px;
 }
 
 .reviews__form-cancelBtn {
@@ -2132,23 +2146,23 @@ a {
     margin-bottom: 10px;
 }
 
-.reviews__item-btnAnswer{
+.reviews__item-btnAnswer {
     color: #828282;
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 10px;
     background-color: #fff;
-    border:none;
-    font-family: 'Inter',sans-serif;
-    transition:opacity .5s ease;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    transition: opacity .5s ease;
 }
 
-.reviews__item-btnAnswer:hover{
+.reviews__item-btnAnswer:hover {
     cursor: pointer;
     opacity: 0.5;
 }
 
-.reviews__item-btnAnswer--disabled{
+.reviews__item-btnAnswer--disabled {
     display: none;
 }
 
@@ -2274,7 +2288,7 @@ a {
     color: #fff;
     font-size: 18px;
     font-weight: 400;
-    font-family: 'Inter',sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: #8A33FD;
     border-radius: 8px;
     border: none;
@@ -2299,7 +2313,8 @@ a {
     font-size: 28px;
     font-weight: 700;
     max-width: 205px;
-    word-wrap: break-word; /* указываем это свойство для текста,который должен быть для имени пользователя,которое он может изменить,чтобы текст не выходил за рамки родительского div елемента,и чтобы применялась максимальная ширина для этого элемента и переносились строки слова правильно */
+    word-wrap: break-word;
+    /* указываем это свойство для текста,который должен быть для имени пользователя,которое он может изменить,чтобы текст не выходил за рамки родительского div елемента,и чтобы применялась максимальная ширина для этого элемента и переносились строки слова правильно */
 }
 
 .sectionUserPage__leftBar-subtitle {
@@ -2362,7 +2377,7 @@ a {
     padding: 40px;
 }
 
-.sectionUserPage__dashboard-img{
+.sectionUserPage__dashboard-img {
     min-width: 65px;
 }
 
@@ -2428,11 +2443,11 @@ a {
     text-align: center;
 }
 
-.sectionCart__table-name:nth-child(1){
+.sectionCart__table-name:nth-child(1) {
     text-align: start;
 }
 
-.sectionCart__table-productsBlock{
+.sectionCart__table-productsBlock {
     min-height: 515px;
 }
 
@@ -2442,7 +2457,7 @@ a {
     grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
     gap: 20px;
     align-items: center;
-    border-top:1px solid #BEBCBD;
+    border-top: 1px solid #BEBCBD;
 }
 
 .sectionCart__product-detailsBlock {
@@ -2451,23 +2466,23 @@ a {
     position: relative;
 }
 
-.sectionCart__product-saleBlock{
+.sectionCart__product-saleBlock {
     left: 7px;
     padding: 3px 6px;
 }
 
-.sectionCart__product-saleBlockHot{
+.sectionCart__product-saleBlockHot {
     left: 7px;
     top: 42px;
     padding: 3px 6px;
 }
 
-.sectionCart__product-priceBlock{
+.sectionCart__product-priceBlock {
     justify-content: center;
     min-width: 140px;
 }
 
-.sectionCart__product-priceSale{
+.sectionCart__product-priceSale {
     font-size: 19px;
     font-weight: 700;
 }
@@ -2478,383 +2493,385 @@ a {
     min-width: 105px;
     object-fit: cover;
     border-radius: 12px;
-    transition:opacity .5s ease;
+    transition: opacity .5s ease;
 }
 
-.sectionCart__product-img:hover{
+.sectionCart__product-img:hover {
     cursor: pointer;
     opacity: 0.7;
 }
 
-.sectionCart__product-name{
+.sectionCart__product-name {
     font-size: 16px;
     font-weight: 700;
     margin-bottom: 10px;
-    transition:all .5s ease;
+    transition: all .5s ease;
 }
 
-.sectionCart__product-name:hover{
+.sectionCart__product-name:hover {
     cursor: pointer;
     color: #8A33FD;
 }
 
-.sectionCart__product-size{
+.sectionCart__product-size {
     font-size: 14px;
     font-weight: 500;
     color: #807D7E;
 }
 
-.sectionCart__product-price{
+.sectionCart__product-price {
     font-size: 18px;
     font-weight: 600;
     text-align: center;
 }
 
-.sectionCart__product-deleteBtn{
+.sectionCart__product-deleteBtn {
     background-color: #fff;
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition:opacity .5s ease;
+    transition: opacity .5s ease;
 }
 
-.sectionCart__product-deleteBtn:hover{
+.sectionCart__product-deleteBtn:hover {
     cursor: pointer;
     opacity: 0.5;
 }
 
-.sectionCart__table-bottomBlock{
+.sectionCart__table-bottomBlock {
     padding: 26px 0;
-    border-top:1px solid #BEBCBD;
+    border-top: 1px solid #BEBCBD;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.sectionCart__table-bottomBlockClearBtn{
+.sectionCart__table-bottomBlockClearBtn {
     padding: 8px 16px;
     border-radius: 6px;
     color: #fff;
     background-color: #3c4242;
-    border:none;
-    font-family: 'Inter',sans-serif;
+    border: none;
+    font-family: 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 600;
-    transition:all .5s ease;
+    transition: all .5s ease;
 }
 
-.sectionCart__table-bottomBlockClearBtn:hover{
+.sectionCart__table-bottomBlockClearBtn:hover {
     cursor: pointer;
     background-color: #ebebeb;
     color: #3c4242;
 }
 
-.sectionCart__table-bottomBlockUpdateBtn{
+.sectionCart__table-bottomBlockUpdateBtn {
     padding: 8px 16px;
     border-radius: 6px;
     color: #3c4242;
-    background-color:#ebebeb;
-    border:none;
-    font-family: 'Inter',sans-serif;
+    background-color: #ebebeb;
+    border: none;
+    font-family: 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 600;
-    transition:all .5s ease;
+    transition: all .5s ease;
 }
 
-.sectionCart__table-bottomBlockUpdateBtn:hover{
+.sectionCart__table-bottomBlockUpdateBtn:hover {
     cursor: pointer;
     background-color: #3c4242;
     color: #ebebeb;
 }
 
-.sectionCart__bill{
+.sectionCart__bill {
     border-radius: 8px;
     background-color: #F3F3F3;
 }
 
-.sectionCart__bill-topBlock{
+.sectionCart__bill-topBlock {
     padding: 40px;
     border-bottom: 1px solid #BEBCBD;
 }
 
-.sectionCart__bill-topBlockItem{
+.sectionCart__bill-topBlockItem {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 15px;
 }
 
-.bill__topBlockItem-text{
+.bill__topBlockItem-text {
     font-size: 16px;
     font-weight: 500;
 }
 
-.bill__topBlockItem-subtext{
+.bill__topBlockItem-subtext {
     font-weight: 500;
     font-size: 14px;
 }
 
-.bill__bottomBlockItem-text{
+.bill__bottomBlockItem-text {
     font-size: 18px;
     font-weight: 600;
 }
 
-.bill__bottomBlockItem-subtext{
+.bill__bottomBlockItem-subtext {
     font-weight: 600;
     font-size: 16px;
 }
 
-.sectionCart__bill-bottomBlock{
+.sectionCart__bill-bottomBlock {
     padding: 40px;
 }
 
-.sectionCart__bill-btn{
+.sectionCart__bill-btn {
     padding: 15px 0;
     background-color: #8A33FD;
     border: none;
     color: #fff;
     border-radius: 8px;
-    font-family: 'Inter',sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 16px;
     font-weight: 500;
     width: 100%;
-    transition:all .5s ease;
+    transition: all .5s ease;
     margin-top: 15px;
 }
 
-.sectionCart__bill-btn:hover{
+.sectionCart__bill-btn:hover {
     cursor: pointer;
     opacity: 0.8;
 }
 
-.sectionProductItemPage__errorCartText{
+.sectionProductItemPage__errorCartText {
     margin-top: 15px;
     font-weight: 500;
 }
 
-.textEmptyCart{
+.textEmptyCart {
     border-top: 1px solid #BEBCBD;
     padding-top: 15px;
     font-size: 16px;
     font-weight: 700;
 }
 
-.sectionUserPage__formInfo-title{
+.sectionUserPage__formInfo-title {
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 20px;
 }
 
-.sectionUserPage__formInfo-item{
+.sectionUserPage__formInfo-item {
     margin-bottom: 15px;
     position: relative;
 }
 
-.sectionUserPage__formInfo-itemText{
+.sectionUserPage__formInfo-itemText {
     font-size: 16px;
     font-weight: 500;
     margin-bottom: 10px;
 }
 
-.sectionUserPage__formInfo-btn{
-    padding: 12px 24px;
+.sectionUserPage__formInfo-btn {
+    padding: 12px 22px;
     width: auto;
     font-weight: 500;
     font-size: 16px;
 }
 
-.sectionUserPage__formInfo-itemInput{
+.sectionUserPage__formInfo-itemInput {
     padding: 16px 36px 16px 16px;
     background-color: #F6F6F6;
-    border:none;
+    border: none;
     color: #807D7E;
 }
 
-.sectionUserPage__formChangePrice-bottomBlock{
+.sectionUserPage__formChangePrice-bottomBlock {
     max-width: 240px;
 }
 
-.sectionUserPage__mainBlock-formChangePass{
+.sectionUserPage__mainBlock-formChangePass {
     margin-top: 30px;
 }
 
-.formChangePass__item-hideBtn{
+.formChangePass__item-hideBtn {
     top: 46px;
     background-color: transparent;
 }
 
-.adminForm__textarea{
+.adminForm__textarea {
     background-color: #F6F6F6;
-    border:none;
+    border: none;
     color: #807D7E;
     border-radius: 8px;
     font-family: 'Inter', sans-serif;
     margin-bottom: 0;
 }
 
-.sortBlockAdminPanel__optionsBlock--active{
+.sortBlockAdminPanel__optionsBlock--active {
     max-height: 175px;
 }
 
-.sectionUserPage__adminFormInfo-itemCategory{
+.sectionUserPage__adminFormInfo-itemCategory {
     display: flex;
     align-items: center;
-    gap:30px;
+    gap: 30px;
 }
 
-.adminForm__filterItem-sizes{
+.adminForm__filterItem-sizes {
     display: grid;
-    grid-template-columns: repeat(4,1fr);
+    grid-template-columns: repeat(4, 1fr);
     max-width: 270px;
 }
 
-.sectionUserPage__adminForm-itemPrice{
+.sectionUserPage__adminForm-itemPrice {
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
-.sectionUserPage__adminForm-inputBlockDiscount{
+.sectionUserPage__adminForm-inputBlockDiscount {
     max-width: 114px;
 }
 
-.adminForm__item-imageBlockImg{
+.adminForm__item-imageBlockImg {
     max-width: 177px;
 }
 
-.adminForm__imageBlock-mainImageBlcok{
+.adminForm__imageBlock-mainImageBlcok {
     max-width: 177px;
     position: relative;
 }
 
-.adminForm__item-imageBlockLabel{
-    display: inline-block; /* ставим display inline-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
+.adminForm__item-imageBlockLabel {
+    display: inline-block;
+    /* ставим display inline-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
     background-color: #fff;
-    border:2px dashed #D5EDFD;
+    border: 2px dashed #D5EDFD;
     text-transform: uppercase;
     color: #2DA5F3;
     font-weight: 600;
     font-size: 14px;
-    font-family: 'Inter',sans-serif;
+    font-family: 'Inter', sans-serif;
     padding: 16px 24px;
-    transition:opacity .5s ease;
+    transition: opacity .5s ease;
 }
 
-.adminForm__item-imageBlockLabel:hover{
+.adminForm__item-imageBlockLabel:hover {
     cursor: pointer;
     opacity: 0.5;
 }
 
 /* скрываем инпут с типом file,чтобы его не было видно,и стилизуем label который привязан к этому инпуту,этот label будет иметь такую же функцию,как и этот инпут */
-.adminForm__imageBlockLabel-inputImage{
+.adminForm__imageBlockLabel-inputImage {
     display: none;
 }
 
-.adminForm__item-imageBlock{
+.adminForm__item-imageBlock {
     margin-bottom: 15px;
 }
 
-.sectionUserPage__adminFormInfo-item{
+.sectionUserPage__adminFormInfo-item {
     margin-bottom: 20px;
 }
 
-.adminForm__item-imageBlockBtn{
+.adminForm__item-imageBlockBtn {
     position: absolute;
     top: 10px;
     right: 10px;
     background-color: transparent;
-    border:1px solid #b1b1b1; /* указываем границу этой кнопке изначально прозрачную (transparent),а потом при hover(наведении курсором мыши на нее) изменяем цвет этой границы,делаем так,иначе,если не указать границу по дефолту прозрачную,то при наведении будет добавляться новая граница и сдвигать другие элементы на 1 пиксель(размер границы),а также эта граница не будет анимироваться */
+    border: 1px solid #b1b1b1;
+    /* указываем границу этой кнопке изначально прозрачную (transparent),а потом при hover(наведении курсором мыши на нее) изменяем цвет этой границы,делаем так,иначе,если не указать границу по дефолту прозрачную,то при наведении будет добавляться новая граница и сдвигать другие элементы на 1 пиксель(размер границы),а также эта граница не будет анимироваться */
     z-index: 5;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition:border-color .5s ease;
+    transition: border-color .5s ease;
     padding: 5px;
 }
 
-.adminForm__item-imageBlockBtn:hover{
+.adminForm__item-imageBlockBtn:hover {
     cursor: pointer;
     border-color: #d80101;
 }
 
-.adminForm__descImagesBlock{
+.adminForm__descImagesBlock {
     display: flex;
     align-items: center;
-    gap:20px;
+    gap: 20px;
 }
 
-.adminForm__imageBlockBtn-img{
+.adminForm__imageBlockBtn-img {
     max-width: 12px;
 }
 
-.sectionUserPage__item-priceBlockChangeBtn{
+.sectionUserPage__item-priceBlockChangeBtn {
     position: relative;
-    top:auto;
+    top: auto;
     right: auto;
 }
 
-.reviews__item-adminCommentBlockDeleteBtn{
+.reviews__item-adminCommentBlockDeleteBtn {
     top: 0;
     right: 0;
 }
 
-.reviews__item-topBlockDeleteBtn{
+.reviews__item-topBlockDeleteBtn {
     right: 80px;
     top: 8px;
 }
 
-.footer__changeEmailBtn{
+.footer__changeEmailBtn {
     background-color: #BEBCBD;
 }
 
-.footer__changeEmailForm-cancelBtn{
+.footer__changeEmailForm-cancelBtn {
     background-color: transparent;
     color: #BEBCBD;
 }
 
-.formChangeEmail__item-text{
+.formChangeEmail__item-text {
     font-size: 16px;
     font-weight: 500;
     margin-bottom: 10px;
     color: #fff;
 }
 
-.footer__formChangeEmail-inputEmail{
+.footer__formChangeEmail-inputEmail {
     padding: 12px;
     margin-bottom: 10px;
 }
 
-.footer__formChangeEmail{
+.footer__formChangeEmail {
     width: 100%;
 }
 
-.sectionAboutUsTop{
+.sectionAboutUsTop {
     padding-top: 80px
 }
 
-.sectionAboutUsTop__inner{
+.sectionAboutUsTop__inner {
     display: grid;
-    grid-template-columns: repeat(2,1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 60px;
     align-items: center;
 }
 
-.sectionAboutUsTop__infoBlock-title{
+.sectionAboutUsTop__infoBlock-title {
     font-size: 56px;
     font-weight: 600;
     margin-bottom: 15px;
     max-width: 480px;
 }
 
-.sectionAboutUsTop__infoBlock-text{
+.sectionAboutUsTop__infoBlock-text {
     font-size: 18px;
     font-weight: 400;
     color: #808080;
 }
 
-.sectionAboutUsTop__img{
+.sectionAboutUsTop__img {
     background-image: url('/public/images/sectionAboutUs/fashionImg.jpg');
     background-repeat: no-repeat;
     background-size: cover;
@@ -2863,100 +2880,100 @@ a {
     border-radius: 8px;
 }
 
-.sectionAboutUsTrusted{
+.sectionAboutUsTrusted {
     margin: 50px 0;
 }
 
-.sectionAboutUsTrusted__img{
+.sectionAboutUsTrusted__img {
     background-image: url('/public/images/sectionAboutUs/trustedImg.jpg');
     background-repeat: no-repeat;
     background-size: cover;
-    background-position:top;
+    background-position: top;
     min-height: 520px;
     border-radius: 8px;
 }
 
-.sectionAboutUsTrusted__infoBlock-items{
+.sectionAboutUsTrusted__infoBlock-items {
     margin-top: 24px;
-    display:grid;
-    grid-template-columns: repeat(2,1fr);
-    gap:24px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
 }
 
-.sectionAboutUsTrusted__items-item{
+.sectionAboutUsTrusted__items-item {
     display: flex;
     align-items: center;
-    gap:16px;
+    gap: 16px;
 }
 
-.sectionAboutUsTrusted__item-name{
+.sectionAboutUsTrusted__item-name {
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 8px;
 }
 
-.sectionAboutUsTrusted__item-subtext{
+.sectionAboutUsTrusted__item-subtext {
     font-size: 14px;
     font-weight: 400;
     color: #808080;
 }
 
-.sectionAboutUsDelivery__img{
+.sectionAboutUsDelivery__img {
     background-image: url('/public/images/sectionAboutUs/deliveryImg.jpg');
     background-repeat: no-repeat;
     background-size: cover;
-    background-position:top;
+    background-position: top;
     min-height: 520px;
     border-radius: 8px;
 }
 
-.sectionAboutUsDelivery__itemsBlock{
+.sectionAboutUsDelivery__itemsBlock {
     margin: 20px 0 24px;
 }
 
-.sectionAboutUsDelivery__itemsBlock-item{
+.sectionAboutUsDelivery__itemsBlock-item {
     display: flex;
     align-items: center;
-    gap:8px;
+    gap: 8px;
     margin-bottom: 16px;
 }
 
-.sectionAboutUsDelivery__item-text{
+.sectionAboutUsDelivery__item-text {
     font-size: 14px;
     font-weight: 400;
     color: #808080;
 }
 
-.sectionAboutUsDelivery__link{
-    border:1px solid #3C4242;
+.sectionAboutUsDelivery__link {
+    border: 1px solid #3C4242;
     max-width: 200px;
 }
 
-.sectionAboutUsDelivery__link-text{
+.sectionAboutUsDelivery__link-text {
     font-weight: 600;
     font-size: 18px;
 }
 
-.sectionAboutUsDelivery__link:hover{
+.sectionAboutUsDelivery__link:hover {
     background-color: #fff;
     opacity: 0.7;
 }
 
-.sectionAboutUsTeam{
+.sectionAboutUsTeam {
     padding-top: 80px;
     margin-bottom: 80px;
-    background-image: linear-gradient(to bottom, #F2F2F2,#FFFFFF);
+    background-image: linear-gradient(to bottom, #F2F2F2, #FFFFFF);
 }
 
-.sectionAboutUsTeam__title{
+.sectionAboutUsTeam__title {
     font-size: 48px;
     font-weight: 600;
     text-align: center;
     margin-bottom: 12px;
 }
 
-.sectionAboutUsTeam__subtitle{
-    font-size: 16px;    
+.sectionAboutUsTeam__subtitle {
+    font-size: 16px;
     font-weight: 400;
     text-align: center;
     color: #808080;
@@ -2964,53 +2981,53 @@ a {
     margin: 0 auto 50px;
 }
 
-.sectionAboutUsTeam__items{
+.sectionAboutUsTeam__items {
     display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap:24px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
 }
 
-.sectionAboutUsTeam__item-img{
+.sectionAboutUsTeam__item-img {
     max-width: 312px;
     min-height: 280px;
     background-repeat: no-repeat;
     background-size: cover;
-    background-position:top;
+    background-position: top;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
 
-.sectionAboutUsTeam__item-img1{
+.sectionAboutUsTeam__item-img1 {
     background-image: url('/public/images/sectionAboutUs/image (3).jpg');
 }
 
-.sectionAboutUsTeam__item-img2{
+.sectionAboutUsTeam__item-img2 {
     background-image: url('/public/images/sectionAboutUs/image (1).jpg');
 }
 
-.sectionAboutUsTeam__item-img3{
+.sectionAboutUsTeam__item-img3 {
     background-image: url('/public/images/sectionAboutUs/image (2).jpg');
 }
 
-.sectionAboutUsTeam__item-img4{
+.sectionAboutUsTeam__item-img4 {
     background-image: url('/public/images/sectionAboutUs/image.jpg');
 }
 
-.sectionAboutUsTeam__item-bottomBlock{
+.sectionAboutUsTeam__item-bottomBlock {
     padding: 16px 20px 20px 20px;
-    border:1px solid #E6E6E6;
-    border-top:none;
+    border: 1px solid #E6E6E6;
+    border-top: none;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
 }
 
-.sectionAboutUsTeam__item-name{
+.sectionAboutUsTeam__item-name {
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 5px;
 }
 
-.sectionAboutUsTeam__item-text{
+.sectionAboutUsTeam__item-text {
     font-size: 14px;
     font-weight: 400;
     color: #808080;
@@ -3018,35 +3035,35 @@ a {
 
 @media (max-width:1075px) {
 
-    .sectionCategories__topBlock{
+    .sectionCategories__topBlock {
         margin-bottom: 40px;
     }
 
-    .sectionPresents{
+    .sectionPresents {
         margin: 80px 0;
     }
 
-    .sectionCategories{
+    .sectionCategories {
         margin-bottom: 80px;
     }
 
-    .sectionFashion__itemInfo{
+    .sectionFashion__itemInfo {
         padding: 50px 10px 0 20px;
     }
 
-    .sectionFashion__img{
+    .sectionFashion__img {
         width: 100%;
     }
 
-    .sectionTopBrands__inner{
+    .sectionTopBrands__inner {
         padding: 44px 73px 60px;
     }
 
-    .sectionNewArrivals__items{
+    .sectionNewArrivals__items {
         gap: 15px;
     }
 
-    .sectionCategories.sectionUnderTop{
+    .sectionCategories.sectionUnderTop {
         margin-bottom: 0;
     }
 
@@ -3054,204 +3071,280 @@ a {
         gap: 20px;
     }
 
-    .sectionCatalog__productsBlock-productsItems{
+    .sectionCatalog__productsBlock-productsItems {
         gap: 14px;
+    }
+
+    .footer__topBlock {
+        gap: 10px;
+    }
+
+    .sectionUserPage__formInfo-btn {
+        text-wrap: nowrap;
+    }
+
+    .sectionProductItemPage__rightBlock-bottomBlock {
+        column-gap: 15px;
+    }
+
+    .sectionProductItemPage__bottomBlock-itemText {
+        text-wrap: nowrap;
+    }
+
+    .sectionProductItemPage__leftBlock-sliderBlock {
+        padding: 20px;
+    }
+
+    .sectionProductItemPage__rightBlock-title {
+        margin-top: 0;
+    }
+
+    .descBlock__desc-inner{
+        gap: 20px;
+    }
+
+    .desc__table-column{
+        padding: 20px 25px;
+    }
+
+    .descBlock__desc-innerReviews{
+        gap: 20px;
+    }
+
+    .reviews__leftBlock-comments{
+        max-width: 500px;
     }
 
 }
 
 @media (max-width:920px) {
 
-    .sectionTop{
+    .sectionTop {
         padding: 80px 0 80px 60px;
     }
 
-    .sectionPresents{
+    .sectionPresents {
         margin: 50px 0;
     }
 
-    .sectionCategories{
+    .sectionCategories {
         margin-bottom: 50px;
     }
 
-    .sectionCategories__topBlock{
+    .sectionCategories__topBlock {
         margin-bottom: 30px;
     }
 
-    .sectionCategories__items{
-        gap:20px;
+    .sectionCategories__items {
+        gap: 20px;
     }
 
-    .sectionSavingZone__item-hawai{
+    .sectionSavingZone__item-hawai {
         background-position: right;
     }
 
-    .sectionFashion__itemInfo{
+    .sectionFashion__itemInfo {
         padding: 20px 10px 0 20px;
     }
 
-    .sectionFashion__itemInfo-title{
+    .sectionFashion__itemInfo-title {
         font-size: 28px;
         line-height: normal;
         margin-bottom: 20px;
     }
 
-    .sectionFashion__itemInfo-text{
+    .sectionFashion__itemInfo-text {
         margin-bottom: 25px;
     }
 
-    .footer__item-title{
+    .footer__item-title {
         text-wrap: nowrap;
     }
 
-    .footer__topBlock{
-        gap: 20px;
-    }
-
-    .sectionCatalog__searchBlock-searchAndFilterBlock{
+    .sectionCatalog__searchBlock-searchAndFilterBlock {
         display: flex;
         align-items: center;
-        gap:10px;
+        gap: 10px;
     }
 
-    .sectionCatalog__searchAndFilterBlock-settingsBtn{
+    .sectionCatalog__searchAndFilterBlock-settingsBtn {
         display: block;
     }
 
-    .sectionCatalog__filterBar{
+    .sectionCatalog__filterBar {
         display: none;
     }
 
-    .sectionCatalog__inner{
+    .sectionCatalog__inner {
         grid-template-columns: 1fr;
     }
 
-    .sectionCatalog__filterBarMobile--active{
+    .sectionCatalog__filterBarMobile--active {
         opacity: 1;
-        transform:translateX(0);
+        transform: translateX(0);
     }
 
-    .productsBlock__pagination{
+    .productsBlock__pagination {
         margin: 30px 0;
+    }
+
+    .sectionUserPage__formInfo-btn {
+        padding: 12px;
+    }
+
+    .sectionProductItemPage__itemBlock-inner {
+        gap: 15px;
+    }
+
+    .sectionProductItemPage__sliderBlock-sliderImg {
+        height: 100% !important;
+    }
+
+    .sectionProductItemPage__itemBlock-inner,
+    .sectionProductItemPage__descBlock {
+        margin-bottom: 50px;
+    }
+
+    .reviews__leftBlock-comments{
+        max-width: 400px;
     }
 
 }
 
 @media (max-width:850px) {
 
-    .sectionPresents__item{
+    .sectionPresents__item {
         padding: 30px 0 30px 28px;
     }
 
-    .sectionPresents__item-title{
+    .sectionPresents__item-title {
         font-size: 28px;
     }
 
-    .sectionPresents__inner{
+    .sectionPresents__inner {
         gap: 20px;
     }
 
-    .sectionCategories__items{
-        grid-template-columns: repeat(2,1fr);
+    .sectionCategories__items {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .sectionCategoires__item-img{
+    .sectionCategoires__item-img {
         margin-bottom: 15px;
     }
 
-    .sectionSavingZone__items{
-        grid-template-columns: repeat(2,1fr);
+    .sectionSavingZone__items {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .sectionSavingZone__item-cargo{
+    .sectionSavingZone__item-cargo {
         grid-column: 1/3;
     }
 
-    .sectionSavingZone__itemsBottom{
-        grid-template-columns:1fr;
+    .sectionSavingZone__itemsBottom {
+        grid-template-columns: 1fr;
     }
 
-    .productsBlock__filtersBlock{
+    .productsBlock__filtersBlock {
         gap: 15px;
     }
 
-    .filtersBlock__amountBlock-text{
+    .filtersBlock__amountBlock-text {
         text-wrap: nowrap;
     }
 
-    .productsBlock__filtersBlock-leftBlock{
+    .productsBlock__filtersBlock-leftBlock {
         gap: 15px;
         row-gap: 10px;
         flex-wrap: wrap;
+    }
+
+    .descBlock__desc-inner{
+        flex-direction: column;
     }
 
 }
 
 @media (max-width:750px) {
 
-    .sectionFashion__inner{
+    .sectionFashion__inner {
         grid-template-columns: 1fr;
     }
 
-    .sectionFashion__itemInfo{
+    .sectionFashion__itemInfo {
         border-bottom-left-radius: 0px;
         border-top-left-radius: 12px;
         border-top-right-radius: 12px;
         padding: 50px 10px;
     }
 
-    .sectionFashion__img{
+    .sectionFashion__img {
         border-top-right-radius: 0px;
         border-bottom-left-radius: 12px;
         max-height: 650px;
     }
 
-    .sectionFashion__itemInfo-title{
+    .sectionFashion__itemInfo-title {
         text-align: center;
     }
 
-    .sectionFashion__itemInfo-text{
+    .sectionFashion__itemInfo-text {
         text-align: center;
         margin: 0 auto 25px;
     }
 
-    .sectionFashion__link{
+    .sectionFashion__link {
         margin: 0 auto;
     }
 
-    .sectionTopBrands__text{
+    .sectionTopBrands__text {
         margin-bottom: 37px;
     }
 
-    .sectionTopBrands__inner{
+    .sectionTopBrands__inner {
         padding: 45px 20px;
     }
 
-    .sectionNewArrivals__item-img{
+    .sectionNewArrivals__item-img {
         margin-bottom: 15px;
     }
 
-    .sectionNewArrivals__items{
+    .sectionNewArrivals__items {
         gap: 10px;
     }
 
-    .footer{
+    .footer {
         padding: 40px 0;
     }
 
-    .footer__topBlock{
-        grid-template-columns: repeat(2,1fr);
+    .footer__topBlock {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .sectionCatalog__productsBlock-searchBlock{
+    .sectionCatalog__productsBlock-searchBlock {
         flex-wrap: wrap;
     }
 
     .sectionCatalog__searchBlock-searchAndFilterBlock,
     .sectionCatalog__searchBlock-inputBlock,
-    .searchBlock__inputBlock-input
-    {
+    .searchBlock__inputBlock-input {
         width: 100%;
+    }
+
+    .sectionProductItemPage__itemBlock-inner {
+        grid-template-columns: 1fr;
+        row-gap: 20px;
+    }
+
+    .sectionProductItemPage__leftBlock {
+        display: flex;
+        align-items: center;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .reviews__leftBlock-comments{
+        max-width: 300px;
     }
 
 }
@@ -3259,163 +3352,221 @@ a {
 /* когда ширина экрана будет 620px и меньше,то тогда будут работать эти стили,делаем так адаптив сайта */
 @media (max-width:620px) {
 
-    .header{
+    .header {
         padding: 20px 0;
     }
-    
-    .header__menuList{
+
+    .header__menuList {
         display: none;
     }
 
-    .header__menuMobile--active{
+    .header__menuMobile--active {
         transform: translateX(0);
         opacity: 1;
     }
 
-    .header__menuBtn{
+    .header__menuBtn {
         display: block;
         width: 35px;
         height: 40px;
         background-color: transparent;
-        border:none;
+        border: none;
         position: relative;
         z-index: 5;
     }
 
-    .header__menuBtn:hover{
+    .header__menuBtn:hover {
         cursor: pointer;
     }
 
-    .header__menuBtn-span{
-        width: 100%;    
+    .header__menuBtn-span {
+        width: 100%;
         height: 1px;
         background-color: #3C4242;
         border-radius: 20%;
         position: absolute;
         right: 0;
-        transition:all .5s ease-in-out;
+        transition: all .5s ease-in-out;
     }
 
     /* указываем стили для первого найденного элемента с классом header__menuBtn-span */
-    .header__menuBtn-span:nth-child(1){
+    .header__menuBtn-span:nth-child(1) {
         top: 11px;
-    } 
-      
-    .header__menuBtn-span:nth-child(2){
+    }
+
+    .header__menuBtn-span:nth-child(2) {
         top: 21px;
     }
-       
-    .header__menuBtn-span:nth-child(3){
-        top: 21px;
-    } 
-      
-    .header__menuBtn-span:nth-child(4){
-        top: 31px;
-    }   
 
-    .header__menuBtn-spanActive1{
+    .header__menuBtn-span:nth-child(3) {
+        top: 21px;
+    }
+
+    .header__menuBtn-span:nth-child(4) {
+        top: 31px;
+    }
+
+    .header__menuBtn-spanActive1 {
         transform: scaleX(0);
     }
 
-    .header__menuBtn-spanActive2{
+    .header__menuBtn-spanActive2 {
         transform: rotate(45deg);
     }
 
-    .header__menuBtn-spanActive3{
+    .header__menuBtn-spanActive3 {
         transform: rotate(-45deg);
     }
 
-    .header__menuList-link{
+    .header__menuList-link {
         color: #fff;
         font-size: 18px;
     }
 
-    .header__menuList-link--active{
+    .header__menuList-link--active {
         color: #3C4242;
     }
 
-    .sectionTop{
+    .sectionTop {
         padding: 50px 0 50px 40px;
     }
 
-    .sectionTop__title{
+    .sectionTop__title {
         font-size: 48px;
         line-height: normal;
 
     }
 
-    .sectionPresents__inner{
+    .sectionPresents__inner {
         grid-template-columns: 1fr;
     }
 
-    .sectionSavingZone__items{
+    .sectionSavingZone__items {
         grid-template-columns: 1fr;
     }
 
-    .sectionSavingZone__item-cargo{
+    .sectionSavingZone__item-cargo {
         grid-column: auto;
     }
 
-    .sectionTopBrands__title{
+    .sectionTopBrands__title {
         font-size: 42px;
         margin-bottom: 15px;
     }
 
-    .sectionTopBrands__text{
+    .sectionTopBrands__text {
         margin-bottom: 25px;
     }
 
-    .sectionTopBrands__items{
+    .sectionTopBrands__items {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 15px;
     }
 
-    .sectionTopBrands__img{
+    .sectionTopBrands__img {
         max-width: 120px;
     }
 
-    .sectionNewArrivals__items{
-        grid-template-columns: repeat(2,1fr);
+    .sectionNewArrivals__items {
+        grid-template-columns: repeat(2, 1fr);
         row-gap: 30px;
     }
 
-    .sectionCatalog__productsBlock-productsItems{
-        grid-template-columns: repeat(2,1fr);
+    .sectionCatalog__productsBlock-productsItems {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .sectionCatalog__filterBarMobile{
+    .sectionCatalog__filterBarMobile {
         padding: 15px;
     }
 
-    .filterBar__filterItem-labels{
+    .filterBar__filterItem-labels {
         padding: 20px 10px;
     }
 
-    .productsBlock__filtersBlock{
+    .productsBlock__filtersBlock {
         align-items: start;
+    }
+
+    .footer__topBlock {
+        gap: 7px;
+    }
+
+    .footer__list-itemEmail {
+        gap: 3px;
+    }
+
+    .sectionProductItemPage__leftBlock-sliderBlock{
+        grid-template-columns: .5fr 2fr;
+    }
+
+    .sectionUnderTop__inner{
+        flex-wrap: wrap;
+    }
+
+    .desc__table-column{
+        padding: 15px;
+    }
+
+    .sectionProductItemPage{
+        padding-top: 30px;
+    }
+
+    .sectionProductItemPage__itemBlock-inner,
+    .sectionProductItemPage__descBlock{
+        margin-bottom: 30px;
+    }
+
+    .descBlock__desc-innerReviews{
+        grid-template-columns: 1fr;
+    }
+
+    .reviews__rightBlock{
+        order:-1;
+    }
+
+    .sectionProductItemPage__descBlock-tabs{
+        margin-bottom: 20px;
+    }
+
+    .reviews__form{
+        display: none;
+    }
+
+    .reviews__form--active{
+        display: block;
+        animation:appear 1s ease forwards;
+    }
+
+    .reviews__leftBlock-comments{
+        max-width: 90vw;
+    }
+
+    .sectionProductItemPage__paginationComments{
+        margin: 15px 0;
     }
 
 }
 
 @media (max-width:420px) {
-    .header__menuMobile-itemBoxes{
+    .header__menuMobile-itemBoxes {
         left: 10px;
         gap: 10px;
         top: 27px;
     }
 
-    .header__menuList-linkBox{
+    .header__menuList-linkBox {
         padding: 10px;
     }
 
-    .header__linkCart-span{
+    .header__linkCart-span {
         top: 4px;
         right: 3px;
     }
 
-    .sectionTop{
+    .sectionTop {
         padding: 50px 0 50px;
     }
 
@@ -3424,32 +3575,74 @@ a {
         margin-bottom: 20px;
     }
 
-    .sectionTop__link{
+    .sectionTop__link {
         max-width: 195px;
         padding: 14px;
     }
 
-    .sectionCategories__items{
-        grid-template-columns:1fr;
-    }
-
-    .sectionCategories__topBlock-title{
-        font-size: 28px;
-    }
-
-    .sectionTopBrands__title{
-        font-size: 36px;
-    }
-
-    .sectionTopBrands__inner{
-        padding: 30px 20px;
-    }
-
-    .footer__topBlock{
+    .sectionCategories__items {
         grid-template-columns: 1fr;
     }
 
-    .footer__bottomBlock{
+    .sectionCategories__topBlock-title {
+        font-size: 28px;
+    }
+
+    .sectionTopBrands__title {
+        font-size: 36px;
+    }
+
+    .sectionTopBrands__inner {
+        padding: 30px 20px;
+    }
+
+    .footer__topBlock {
+        grid-template-columns: 1fr;
+    }
+
+    .footer__bottomBlock {
         margin-top: 15px;
+    }
+
+    .sectionProductItemPage__leftBlock-sliderBlock{
+        padding: 10px;
+    }
+
+    .sectionProductItemPage__leftBlock-sliderBlock{
+        gap: 5px;
+    }
+
+    .sliderBlock__previewSlider-slide{
+        min-width: 55px;
+    }
+
+    .sectionProductItemPage__previewSlider-sliderImg{
+        max-height: 65px !important;
+    }
+
+    .sectionProductItemPage__rightBlock-bottomBlock{
+        margin-top: 20px;
+        padding-top: 20px;
+    }
+
+    .sectionProductItemPage__rightBlock-bottomBlock{
+        grid-template-columns: 1fr;
+    }
+
+    .sectionProductItemPage__rightBlock-btnCart{
+        padding: 12px 14px;
+    }
+
+    .sectionProductItemPage__rightBlock-title{
+        font-size: 28px;
+    }
+
+    .desc__table-row{
+        display: flex;
+        align-items: start;
+    }
+
+    .desc__table-text{
+        text-wrap: auto;
     }
 }

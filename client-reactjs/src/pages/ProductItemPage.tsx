@@ -17,6 +17,8 @@ import { getPagesArray } from "../utils/getPagesArray";
 
 const ProductItemPage = () => {
 
+    const tabsRef = useRef<HTMLDivElement>(null);
+
     const [limit, setLimit] = useState(3); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
 
     const [page, setPage] = useState(1); // указываем состояние текущей страницы
@@ -380,6 +382,8 @@ const ProductItemPage = () => {
 
             setPage((prev) => prev - 1); // изменяем состояние текущей страницы на - 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и отнимаем 1)
 
+            scrollToTabs(); // вызываем нашу функцию scrollToTabs(она прокручивает страницу до элемента tabs в данном случае)
+
         }
 
     }
@@ -391,7 +395,24 @@ const ProductItemPage = () => {
 
             setPage((prev) => prev + 1); // изменяем состояние текущей страницы на + 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и прибавляем 1)
 
+            scrollToTabs(); // вызываем нашу функцию scrollToTabs(она прокручивает страницу до элемента tabs в данном случае)
+
         }
+
+    }
+
+    // функция для прокрутки страницы до элемента tabs(где на данной странице есть табы Description и Reviews(то есть примерно к началу комментариев))
+    const scrollToTabs = () => {
+
+        tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); // вызываем scrollIntoView() у ссылки на этот элемент tabs(tabsRef),указываем параметры behavior(анимация поведения прокрутки страницы,типа плавное и тд,в данном случае указываем smooth,чтобы было плавно) и block(указываем ему значение start в данном случае,чтобы прокручивать до элемента так,чтобы его верхняя часть была видна в верхней части области прокрутки,можно указывать еще center, end,nearest,чтобы выравнивать прокрутку по центру этого элемента,его нижней границе или до того момента,пока этот элемент не будет виден,но без привязки к определенному краю(nearest))
+
+    }
+
+    const setPageBtn = (p:number) => {
+
+        setPage(p); // изменяем состояние страницы на p(параметр этой функции setPageBtn,то есть текущая итерируемая страница в массиве pagesArray)
+
+        scrollToTabs(); // вызываем нашу функцию scrollToTabs(она прокручивает страницу до элемента tabs в данном случае)
 
     }
 
@@ -428,7 +449,7 @@ const ProductItemPage = () => {
                             <h1 className="sectionCategories__topBlock-title">Product Description</h1>
                         </div>
 
-                        <div className="sectionProductItemPage__descBlock-tabs">
+                        <div className="sectionProductItemPage__descBlock-tabs" ref={tabsRef}>
                             <button className={tab === 'Desc' ? "descBlock__tabs-btn descBlock__tabs-btn--active" : "descBlock__tabs-btn"} onClick={() => setTab('Desc')}>Description</button>
                             <button className={tab === 'Reviews' ? "descBlock__tabs-btn descBlock__tabs-btnReviews descBlock__tabs-btn--active" : "descBlock__tabs-btn descBlock__tabs-btnReviews"} onClick={() => setTab('Reviews')}>
                                 <p className="tabs__btnReviews-text">Reviews</p>
@@ -478,7 +499,7 @@ const ProductItemPage = () => {
 
                                                     {dataComments.commentsForPagination.rows.map(comment =>
 
-                                                        <ProductItemPageReviewItem key={comment.id} comment={comment} user={user} refetchComments={refetchComments} refetchCommentsArrivals={refetchCommentsArrivals}/>
+                                                        <ProductItemPageReviewItem key={comment.id} comment={comment} user={user} refetchComments={refetchComments} refetchCommentsArrivals={refetchCommentsArrivals} />
 
                                                     )}
 
@@ -500,7 +521,7 @@ const ProductItemPage = () => {
 
                                                                 key={p}
 
-                                                                onClick={() => setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
+                                                                onClick={()=>setPageBtn(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь), в данном случае указываем нашу функцию setPageBtn(в нее передаем p),которая будет изменять состояние page и также там будет вызвана наша функция scrollToTabs(она прокручивает страницу до элемента tabs в данном случае)
 
                                                             >{p}</button>
 
