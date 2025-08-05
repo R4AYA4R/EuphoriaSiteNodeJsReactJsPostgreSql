@@ -171,86 +171,191 @@ const ProductItemCart = ({ productCart, comments, refetchProductsCart }: IProduc
     }, [updateProductsCart])
 
     return (
-        <div className="sectionCart__productsBlock-product">
-            <div className="sectionCart__product-detailsBlock">
+        <>
+            <div className="sectionCart__productsBlock-product">
+                <div className="sectionCart__product-detailsBlock">
 
-                {/* если productCart.priceDiscount true,то есть поле priceDiscount у productCart есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае пустую строку,то есть ничего не показываем */}
-                {productCart.priceDiscount ?
-                    <>
-                        <div className="sectionNewArrivals__item-saleBlock sectionCart__product-saleBlock">{valueDiscount.toFixed(0)}%</div> {/* указываем число скидки в процентах с помощью toFixed(0),чтобы убрать все цифры после запятой,чтобы число было целым,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически */}
+                    {/* если productCart.priceDiscount true,то есть поле priceDiscount у productCart есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае пустую строку,то есть ничего не показываем */}
+                    {productCart.priceDiscount ?
+                        <>
+                            <div className="sectionNewArrivals__item-saleBlock sectionCart__product-saleBlock">{valueDiscount.toFixed(0)}%</div> {/* указываем число скидки в процентах с помощью toFixed(0),чтобы убрать все цифры после запятой,чтобы число было целым,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически */}
 
-                        {/* если valueDiscount больше 30,то есть скидка товара больше 30 процентов,то указываем этот блок с текстом HOT,типа большая скидка */}
-                        {valueDiscount > 30 &&
-                            <div className="sectionNewArrivals__item-saleBlockHot sectionCart__product-saleBlockHot">HOT</div>
+                            {/* если valueDiscount больше 30,то есть скидка товара больше 30 процентов,то указываем этот блок с текстом HOT,типа большая скидка */}
+                            {valueDiscount > 30 &&
+                                <div className="sectionNewArrivals__item-saleBlockHot sectionCart__product-saleBlockHot">HOT</div>
+                            }
+
+                        </>
+                        : ''
+                    }
+
+                    {/* указываем в src этой картинке путь до папки,где хранятся картинки и само название картинки указываем как значение mainImage у объекта product(пропс(параметр) этого компонента),в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем переменную(REACT_APP_BACKEND_URL в данном случае,REACT_APP_ обязательная приставка для переменных в .env файле для react js,иначе не находит эти переменные,и после изменения этих переменных в файле .env,нужно заново запустить сайт,то есть закрыть терминал(консоль) с текущим открытым сайтом(если это на localhost запускается,то есть на локальном компьютере),и заново в новом терминале запустить его командой npm start)) в файле .env для нашего url до бэкэнда и значение поля mainImage у product(объекта товара),указываем в router url,куда перекинуть пользователя,в данном случае перекидываем его на страницу ProductItemPage,и в этом url указываем productCart.usualProductId(то есть id обычного товара,чтобы перейти на страницу об этом обычном товаре) */}
+                    <img src={`${process.env.REACT_APP_BACKEND_URL}/${productCart.mainImage}`} alt="" className="sectionCart__product-img" onClick={() => router(`/catalog/${productCart.usualProductId}`)} />
+                    <div className="sectionCart__product-detailsBlockInfo">
+
+                        {/* если productCart.name.length > 29,то есть длина названия по количеству символов больше 29(это значение посчитали в зависимости от дизайна,сколько символов в названии нормально влазит в максимальную ширину и высоту текста названия),то показываем такой блок текста названия товара,с помощью substring() вырезаем из строки названия товара опеределенное количество символов(передаем первым параметром в substring с какого символа по индексу начинать вырезать,вторым параметром передаем до какого символа по индексу вырезать,в данном случае подобрали значение до 29 символа по индексу вырезать,так как еще нужно место на троеточие),и в конце добавляем троеточие,чтобы красиво смотрелось,в другом случае показываем обычное название товара(product.name) */}
+                        {productCart.name.length > 29 ?
+
+                            <h1 className="sectionCart__product-name" onClick={() => router(`/catalog/${productCart.usualProductId}`)}>{(productCart.name).substring(0, 29)}...</h1>
+                            :
+                            <h1 className="sectionCart__product-name" onClick={() => router(`/catalog/${productCart.usualProductId}`)}>{productCart.name}</h1>
+
                         }
 
-                    </>
-                    : ''
+                        <div className="sectionNewArrivals__item-starsBlock">
+                            <div className="sectionNewArrivals__item-stars">
+
+                                {/* если product.rating равно 0,то показываем пустую звезду,в другом случае если product.rating больше или равно 0.5 и меньше или равно 0.9,то показываем половину звезды,в другом случае показываем целую звезду */}
+                                <img src={productCart.rating === 0 ? "/images/sectionNewArrivals/Vector (2).png" : productCart.rating >= 0.5 && productCart.rating < 1 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={productCart.rating >= 2 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 1.5 && productCart.rating < 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={productCart.rating >= 3 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 2.5 && productCart.rating < 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={productCart.rating >= 4 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 3.5 && productCart.rating < 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                <img src={productCart.rating >= 5 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 4.5 && productCart.rating < 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                            </div>
+                            <p className="sectionNewArrivals__item-starsAmount">({commentsForProduct?.length})</p>
+                        </div>
+
+
+                        <p className="sectionCart__product-size">Size: {productCart.size}</p>
+                    </div>
+                </div>
+
+                {/* если product.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
+                {productCart.priceDiscount ?
+
+                    <div className="sectionNewArrivals__item-priceBlock sectionCart__product-priceBlock">
+                        {/* указываем цену товара с помощью toFixed(2),чтобы было 2 цифры после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически,но в данном случае для цены товара это просто чтобы красивее смотрелось с двумя нулями или просто с двумя цифрами после запятой  */}
+                        <p className="item__priceBlock-priceSale sectionCart__product-priceSale">${(productCart.priceDiscount).toFixed(2)}</p>
+                        <p className="item__priceBlock-priceUsual sectionCart__product-price">${(productCart.price).toFixed(2)}</p>
+                    </div>
+                    :
+                    <div className="sectionNewArrivals__item-priceBlock sectionCart__product-priceBlock">
+                        <p className="item__priceBlock-priceUsualDefault sectionCart__product-price">${(productCart.price).toFixed(2)}</p>
+                    </div>
+
                 }
 
-                {/* указываем в src этой картинке путь до папки,где хранятся картинки и само название картинки указываем как значение mainImage у объекта product(пропс(параметр) этого компонента),в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем переменную(REACT_APP_BACKEND_URL в данном случае,REACT_APP_ обязательная приставка для переменных в .env файле для react js,иначе не находит эти переменные,и после изменения этих переменных в файле .env,нужно заново запустить сайт,то есть закрыть терминал(консоль) с текущим открытым сайтом(если это на localhost запускается,то есть на локальном компьютере),и заново в новом терминале запустить его командой npm start)) в файле .env для нашего url до бэкэнда и значение поля mainImage у product(объекта товара),указываем в router url,куда перекинуть пользователя,в данном случае перекидываем его на страницу ProductItemPage,и в этом url указываем productCart.usualProductId(то есть id обычного товара,чтобы перейти на страницу об этом обычном товаре) */}
-                <img src={`${process.env.REACT_APP_BACKEND_URL}/${productCart.mainImage}`} alt="" className="sectionCart__product-img" onClick={() => router(`/catalog/${productCart.usualProductId}`)} />
-                <div className="sectionCart__product-detailsBlockInfo">
+                <div className="sectionProductItemPage__cartBlock-inputBlock">
+                    <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
+                        <img src="/images/sectionProductItemPage/Minus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                    </button>
+                    <input type="number" className="cartBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
+                    <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
+                        <img src="/images/sectionProductItemPage/Plus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                    </button>
+                </div>
+                {/* указываем цену с помощью toFixed(2),чтобы было 2 цифры после запятой,иначе,при изменении количества товара,может быть число с большим количеством цифр после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически  */}
+                <p className="sectionCart__product-price">${subtotalPriceProduct.toFixed(2)}</p>
 
-                    {/* если productCart.name.length > 29,то есть длина названия по количеству символов больше 29(это значение посчитали в зависимости от дизайна,сколько символов в названии нормально влазит в максимальную ширину и высоту текста названия),то показываем такой блок текста названия товара,с помощью substring() вырезаем из строки названия товара опеределенное количество символов(передаем первым параметром в substring с какого символа по индексу начинать вырезать,вторым параметром передаем до какого символа по индексу вырезать,в данном случае подобрали значение до 29 символа по индексу вырезать,так как еще нужно место на троеточие),и в конце добавляем троеточие,чтобы красиво смотрелось,в другом случае показываем обычное название товара(product.name) */}
-                    {productCart.name.length > 29 ?
+                {/* в onClick этой кнопке указываем нашу функцию для удаления товара из корзины и передаем туда productCart(объект товара корзины)(то есть в данном случае удаляем его из базы данных у сущности(модели) корзины) */}
+                <button className="sectionCart__product-deleteBtn" onClick={() => mutateDeleteProductCart(productCart)}>
+                    <img src="/images/sectionCart/deletecon.png" alt="" className="sectionCart__product-deleteBtnImg" />
+                </button>
+            </div>
 
-                        <h1 className="sectionCart__product-name" onClick={() => router(`/catalog/${productCart.usualProductId}`)}>{(productCart.name).substring(0, 29)}...</h1>
+            <div className="sectionCart__productsBlock-product sectionCart__productsBlock-mobileProduct">
+                <div className="sectionCart__mobileProduct-topBlock">
+                    <div className="sectionCart__product-detailsBlock">
+
+                        {/* если productCart.priceDiscount true,то есть поле priceDiscount у productCart есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае пустую строку,то есть ничего не показываем */}
+                        {productCart.priceDiscount ?
+                            <>
+                                <div className="sectionNewArrivals__item-saleBlock sectionCart__product-saleBlock">{valueDiscount.toFixed(0)}%</div> {/* указываем число скидки в процентах с помощью toFixed(0),чтобы убрать все цифры после запятой,чтобы число было целым,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически */}
+
+                                {/* если valueDiscount больше 30,то есть скидка товара больше 30 процентов,то указываем этот блок с текстом HOT,типа большая скидка */}
+                                {valueDiscount > 30 &&
+                                    <div className="sectionNewArrivals__item-saleBlockHot sectionCart__product-saleBlockHot">HOT</div>
+                                }
+
+                            </>
+                            : ''
+                        }
+
+                        {/* указываем в src этой картинке путь до папки,где хранятся картинки и само название картинки указываем как значение mainImage у объекта product(пропс(параметр) этого компонента),в пути для картинки(src) указываем url до картинки на сервере,так как сделали так,чтобы наш сервер раздавал статику(то есть можно было отображать картинки,которые загружены на сервер, в браузере),в данном случае указываем переменную(REACT_APP_BACKEND_URL в данном случае,REACT_APP_ обязательная приставка для переменных в .env файле для react js,иначе не находит эти переменные,и после изменения этих переменных в файле .env,нужно заново запустить сайт,то есть закрыть терминал(консоль) с текущим открытым сайтом(если это на localhost запускается,то есть на локальном компьютере),и заново в новом терминале запустить его командой npm start)) в файле .env для нашего url до бэкэнда и значение поля mainImage у product(объекта товара),указываем в router url,куда перекинуть пользователя,в данном случае перекидываем его на страницу ProductItemPage,и в этом url указываем productCart.usualProductId(то есть id обычного товара,чтобы перейти на страницу об этом обычном товаре) */}
+                        <img src={`${process.env.REACT_APP_BACKEND_URL}/${productCart.mainImage}`} alt="" className="sectionCart__product-img" onClick={() => router(`/catalog/${productCart.usualProductId}`)} />
+                        <div className="sectionCart__product-detailsBlockInfo">
+
+                            {/* если productCart.name.length > 29,то есть длина названия по количеству символов больше 29(это значение посчитали в зависимости от дизайна,сколько символов в названии нормально влазит в максимальную ширину и высоту текста названия),то показываем такой блок текста названия товара,с помощью substring() вырезаем из строки названия товара опеределенное количество символов(передаем первым параметром в substring с какого символа по индексу начинать вырезать,вторым параметром передаем до какого символа по индексу вырезать,в данном случае подобрали значение до 29 символа по индексу вырезать,так как еще нужно место на троеточие),и в конце добавляем троеточие,чтобы красиво смотрелось,в другом случае показываем обычное название товара(product.name) */}
+                            {productCart.name.length > 29 ?
+
+                                <h1 className="sectionCart__product-name" onClick={() => router(`/catalog/${productCart.usualProductId}`)}>{(productCart.name).substring(0, 29)}...</h1>
+                                :
+                                <h1 className="sectionCart__product-name" onClick={() => router(`/catalog/${productCart.usualProductId}`)}>{productCart.name}</h1>
+
+                            }
+
+                            <div className="sectionNewArrivals__item-starsBlock">
+                                <div className="sectionNewArrivals__item-stars">
+
+                                    {/* если product.rating равно 0,то показываем пустую звезду,в другом случае если product.rating больше или равно 0.5 и меньше или равно 0.9,то показываем половину звезды,в другом случае показываем целую звезду */}
+                                    <img src={productCart.rating === 0 ? "/images/sectionNewArrivals/Vector (2).png" : productCart.rating >= 0.5 && productCart.rating < 1 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={productCart.rating >= 2 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 1.5 && productCart.rating < 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={productCart.rating >= 3 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 2.5 && productCart.rating < 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={productCart.rating >= 4 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 3.5 && productCart.rating < 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                    <img src={productCart.rating >= 5 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 4.5 && productCart.rating < 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                                </div>
+                                <p className="sectionNewArrivals__item-starsAmount">({commentsForProduct?.length})</p>
+                            </div>
+
+
+                            <p className="sectionCart__product-size">Size: {productCart.size}</p>
+                        </div>
+                    </div>
+
+                    {/* в onClick этой кнопке указываем нашу функцию для удаления товара из корзины и передаем туда productCart(объект товара корзины)(то есть в данном случае удаляем его из базы данных у сущности(модели) корзины) */}
+                    <button className="sectionCart__product-deleteBtn" onClick={() => mutateDeleteProductCart(productCart)}>
+                        <img src="/images/sectionCart/deletecon.png" alt="" className="sectionCart__product-deleteBtnImg" />
+                    </button>
+
+                </div>
+
+                <div className="sectionCart__mobileProduct-bottomBlock">
+                    {/* если product.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
+                    {productCart.priceDiscount ?
+
+                        <div className="sectionCart__mobileProduct-priceBlockItem">
+                            <p className="sectionCart__table-name">Price</p>
+                            <div className="sectionNewArrivals__item-priceBlock sectionCart__product-priceBlock">
+                                {/* указываем цену товара с помощью toFixed(2),чтобы было 2 цифры после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически,но в данном случае для цены товара это просто чтобы красивее смотрелось с двумя нулями или просто с двумя цифрами после запятой  */}
+                                <p className="item__priceBlock-priceSale sectionCart__product-priceSale">${(productCart.priceDiscount).toFixed(2)}</p>
+                                <p className="item__priceBlock-priceUsual sectionCart__product-price">${(productCart.price).toFixed(2)}</p>
+                            </div>
+                        </div>
                         :
-                        <h1 className="sectionCart__product-name" onClick={() => router(`/catalog/${productCart.usualProductId}`)}>{productCart.name}</h1>
+                        <div className="sectionCart__mobileProduct-priceBlockItem">
+                            <p className="sectionCart__table-name">Price</p>
+                            <div className="sectionNewArrivals__item-priceBlock sectionCart__product-priceBlock">
+                                <p className="item__priceBlock-priceUsualDefault sectionCart__product-price">${(productCart.price).toFixed(2)}</p>
+                            </div>
+                        </div>
 
                     }
 
-                    <div className="sectionNewArrivals__item-starsBlock">
-                        <div className="sectionNewArrivals__item-stars">
-
-                            {/* если product.rating равно 0,то показываем пустую звезду,в другом случае если product.rating больше или равно 0.5 и меньше или равно 0.9,то показываем половину звезды,в другом случае показываем целую звезду */}
-                            <img src={productCart.rating === 0 ? "/images/sectionNewArrivals/Vector (2).png" : productCart.rating >= 0.5 && productCart.rating < 1 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (1).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src={productCart.rating >= 2 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 1.5 && productCart.rating < 2 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src={productCart.rating >= 3 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 2.5 && productCart.rating < 3 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src={productCart.rating >= 4 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 3.5 && productCart.rating < 4 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
-                            <img src={productCart.rating >= 5 ? "/images/sectionNewArrivals/Vector (1).png" : productCart.rating >= 4.5 && productCart.rating < 5 ? "/images/sectionNewArrivals/Vector.png" : "/images/sectionNewArrivals/Vector (2).png"} alt="" className="sectionNewArrivals__item-starsImg" />
+                    <div className="sectionCart__mobileProduct-priceBlockItem">
+                        <p className="sectionCart__table-name">Quantity</p>
+                        <div className="sectionProductItemPage__cartBlock-inputBlock">
+                            <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
+                                <img src="/images/sectionProductItemPage/Minus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                            </button>
+                            <input type="number" className="cartBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
+                            <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
+                                <img src="/images/sectionProductItemPage/Plus.png" alt="" className="cartBlock__inputBlock-btnImg" />
+                            </button>
                         </div>
-                        <p className="sectionNewArrivals__item-starsAmount">({commentsForProduct?.length})</p>
                     </div>
 
+                    <div className="sectionCart__mobileProduct-priceBlockItem">
+                        <p className="sectionCart__table-name">Subtotal</p>
+                        {/* указываем цену с помощью toFixed(2),чтобы было 2 цифры после запятой,иначе,при изменении количества товара,может быть число с большим количеством цифр после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически  */}
+                        <p className="sectionCart__product-price">${subtotalPriceProduct.toFixed(2)}</p>
+                    </div>
 
-                    <p className="sectionCart__product-size">Size: {productCart.size}</p>
                 </div>
+
+
             </div>
 
-            {/* если product.priceDiscount true,то есть поле priceDiscount у product есть и в нем есть какое-то значение,то есть у этого товара есть цена со скидкой,то показываем такой блок,в другом случае другой */}
-            {productCart.priceDiscount ?
-
-                <div className="sectionNewArrivals__item-priceBlock sectionCart__product-priceBlock">
-                    {/* указываем цену товара с помощью toFixed(2),чтобы было 2 цифры после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически,но в данном случае для цены товара это просто чтобы красивее смотрелось с двумя нулями или просто с двумя цифрами после запятой  */}
-                    <p className="item__priceBlock-priceSale sectionCart__product-priceSale">${(productCart.priceDiscount).toFixed(2)}</p>
-                    <p className="item__priceBlock-priceUsual sectionCart__product-price">${(productCart.price).toFixed(2)}</p>
-                </div>
-                :
-                <div className="sectionNewArrivals__item-priceBlock sectionCart__product-priceBlock">
-                    <p className="item__priceBlock-priceUsualDefault sectionCart__product-price">${(productCart.price).toFixed(2)}</p>
-                </div>
-
-            }
-
-            <div className="sectionProductItemPage__cartBlock-inputBlock">
-                <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--minus" onClick={handlerMinusAmountBtn}>
-                    <img src="/images/sectionProductItemPage/Minus.png" alt="" className="cartBlock__inputBlock-btnImg" />
-                </button>
-                <input type="number" className="cartBlock__inputBlock-input" value={inputAmountValue} onChange={changeInputAmountValue} />
-                <button className="cartBlock__inputBlock-btn cartBlock__inputBlock-btn--plus" onClick={handlerPlusAmountBtn}>
-                    <img src="/images/sectionProductItemPage/Plus.png" alt="" className="cartBlock__inputBlock-btnImg" />
-                </button>
-            </div>
-            {/* указываем цену с помощью toFixed(2),чтобы было 2 цифры после запятой,иначе,при изменении количества товара,может быть число с большим количеством цифр после запятой,toFixed() указывает,сколько можно оставить цифр после запятой,а также округляет число в правильную сторону автоматически  */}
-            <p className="sectionCart__product-price">${subtotalPriceProduct.toFixed(2)}</p>
-
-            {/* в onClick этой кнопке указываем нашу функцию для удаления товара из корзины и передаем туда productCart(объект товара корзины)(то есть в данном случае удаляем его из базы данных у сущности(модели) корзины) */}
-            <button className="sectionCart__product-deleteBtn" onClick={() => mutateDeleteProductCart(productCart)}>
-                <img src="/images/sectionCart/deletecon.png" alt="" className="sectionCart__product-deleteBtnImg" />
-            </button>
-        </div>
+        </>
     )
 
 }

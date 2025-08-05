@@ -12,6 +12,8 @@ import { useActions } from "../hooks/useActions";
 
 const Cart = () => {
 
+    const sectionInnerRef = useRef<HTMLDivElement>(null);
+
     const sectionCatalog = useRef<HTMLElement>(null); // создаем ссылку на html элемент и помещаем ее в переменную sectionTopRef,указываем тип в generic этому useRef как HTMLElement(иначе выдает ошибку),указываем в useRef null,так как используем typeScript
 
     const onScreen = useIsOnScreen(sectionCatalog as RefObject<HTMLElement>); // вызываем наш хук useIsOnScreen(),куда передаем ссылку на html элемент(в данном случае на sectionTop),указываем тип этой ссылке на html элемент как RefObject<HTMLElement> (иначе выдает ошибку),и этот хук возвращает объект состояний,который мы помещаем в переменную onScreen
@@ -141,6 +143,9 @@ const Cart = () => {
 
             setPage((prev) => prev - 1); // изменяем состояние текущей страницы на - 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и отнимаем 1)
 
+            scrollToProductsTop(); // вызываем нашу функцию scrollToProductsTop(она прокручивает страницу до элемента tabs в данном случае)
+
+
         }
 
     }
@@ -152,17 +157,35 @@ const Cart = () => {
 
             setPage((prev) => prev + 1); // изменяем состояние текущей страницы на + 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и прибавляем 1)
 
+            scrollToProductsTop(); // вызываем нашу функцию scrollToProductsTop(она прокручивает страницу до элемента tabs в данном случае)
+
+
         }
+
+    }
+
+    // функция для прокрутки страницы до элемента div с классом sectionCart__inner(где на данной странице есть начало товаров корзины)
+    const scrollToProductsTop = () => {
+
+        sectionInnerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); // вызываем scrollIntoView() у ссылки на этот элемент tabs(tabsRef),указываем параметры behavior(анимация поведения прокрутки страницы,типа плавное и тд,в данном случае указываем smooth,чтобы было плавно) и block(указываем ему значение start в данном случае,чтобы прокручивать до элемента так,чтобы его верхняя часть была видна в верхней части области прокрутки,можно указывать еще center, end,nearest,чтобы выравнивать прокрутку по центру этого элемента,его нижней границе или до того момента,пока этот элемент не будет виден,но без привязки к определенному краю(nearest))
+
+    }
+
+    const setPageBtn = (p:number) => {
+
+        setPage(p); // изменяем состояние страницы на p(параметр этой функции setPageBtn,то есть текущая итерируемая страница в массиве pagesArray)
+
+        scrollToProductsTop(); // вызываем нашу функцию scrollToProductsTop(она прокручивает страницу до элемента div с классом sectionCart__inner,то есть до начала товаров корзины в данном случае)
 
     }
 
 
     return (
         <main className="main">
-            <SectionUnderTop subtext="Cart" />
+            <SectionUnderTop subtext="Cart"/>
             <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionCatalog__active sectionCart" : "sectionCatalog sectionCart"} ref={sectionCatalog}>
                 <div className="container">
-                    <div className="sectionCart__inner">
+                    <div className="sectionCart__inner" ref={sectionInnerRef}>
                         <div className="sectionCart__table">
                             <div className="sectionCart__table-names">
                                 <p className="sectionCart__table-name">Product Details</p>
@@ -203,7 +226,7 @@ const Cart = () => {
 
                                                         key={p}
 
-                                                        onClick={() => setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
+                                                        onClick={() => setPageBtn(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь),в данном случае указываем нашу функцию setPageBtn(в нее передаем p),которая будет изменять состояние page и также там будет вызвана наша функция scrollToProductsTop(она прокручивает страницу до элемента div с классом sectionCart__inner,то есть до начала товаров корзины в данном случае)
 
                                                     >{p}</button>
 
