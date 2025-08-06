@@ -103,6 +103,13 @@ const Footer = () => {
 
     }
 
+    // при рендеринге этого компонента и при изменении user.role(роль пользователя) будет отработан этот useEffect
+    useEffect(() => {
+
+        setTabChangeEmail(false); // изменяем значение tabChangeEmail на false,то есть убираем таб для изменения почты на сайте,если этот тут не сделать,то если админ откроет этот таб и не закроет,а потом сразу зайдет за аккаунт пользователя без обновления страницы,то этот таб для изменения почты будет открыт уже у обычного пользователя и он сможет изменить ее
+
+    }, [user.role])
+
     return (
         <footer className="footer">
             <div className="container">
@@ -156,7 +163,7 @@ const Footer = () => {
 
                                     <>
                                         {/* указываем в href этой ссылке mailto: и название почты(чтобы по этой ссылке открывалась почта,чтобы сразу можно было писать,но в данном случае при нажатии на эту ссылку будет всплывающее окно,с вопросом о том,какое приложение использовать для открытия этой ссылки,и если выбрать просто браузер,то он просто откроется с пустой вкладкой в новом окне приложения,лучше выбирать приложение outlook(оно вроде поддерживает почту),но там надо сначала зарегестрироваться) */}
-                                        <a href={`mailto:${dataAdminFields?.data.email}`}className="footer__item-link">{dataAdminFields?.data.email}</a>
+                                        <a href={`mailto:${dataAdminFields?.data.email}`} className="footer__item-link">{dataAdminFields?.data.email}</a>
 
                                         {/* делаем проверку если user.role === 'ADMIN' (если роль у пользователя сейчас админ),то показываем кнопку изменения почты */}
                                         {user.role === 'ADMIN' &&
@@ -170,8 +177,8 @@ const Footer = () => {
 
                                 }
 
-                                {/* если tabChangeEmail true,то показываем этот блок */}
-                                {tabChangeEmail &&
+                                {/* если tabChangeEmail true и user.role равно 'ADMIN'(то есть роль у пользователя сейчас админ,делаем эту проверку,чтобы если роль у пользователя сейчас не 'ADMIN',то этот блок не показывался),то показываем этот блок */}
+                                {tabChangeEmail && user.role === 'ADMIN' &&
 
                                     <form className="footer__formChangeEmail" onSubmit={submitFormChangeEmail}>
 

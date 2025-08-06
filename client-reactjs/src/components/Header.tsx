@@ -121,8 +121,8 @@ const Header = () => {
                         </li>
                     </ul>
 
-                    {/* если activeMobileMenu true (то есть сейчас открыто мобильное меню),то показываем блок див и в onClick указываем,что изменяем состояние activeMobileMenu на false,то есть будем закрывать мобильное меню по клику на другую область,кроме этого меню,чтобы оно закрылось не только по кнопке,но и по области вокруг,в другом случае этот блок показан не будет */}
-                    {activeMobileMenu && <div className="header__menuMobileCloseBlock" onClick={()=>setActiveMobileMenu(false)}></div>}
+                    {/* если activeMobileMenu true (то есть сейчас открыто мобильное меню),то показываем блок див и в onClick указываем,что изменяем состояние activeMobileMenu на false,то есть будем закрывать мобильное меню по клику на другую область,кроме этого меню,чтобы оно закрылось не только по кнопке,но и по области вокруг,в другом случае этот блок показан не будет, указываем событие onWheel(срабатывает при прокрутке колеса мыши) и событие onTouchStart(для свайпов на телефоне,то есть onTouchStart сработает,когда пользователь коснется экрана,если это не указать,а указать только событие onClick,то свайп на телефоне не будет работать,а будет работать только если один раз нажать на экран) и передаем туда функцию callback и внутри нее изменяем состояние activeMobileMenu на false,то есть убираем это меню */}
+                    {activeMobileMenu && <div className="header__menuMobileCloseBlock" onClick={()=>setActiveMobileMenu(false)} onWheel={()=>setActiveMobileMenu(false)} onTouchStart={()=>setActiveMobileMenu(false)}></div>}
 
                     <ul className={activeMobileMenu ? "header__menuMobile header__menuMobile--active" : "header__menuMobile"}>
                         <li className="header__menuList-item">

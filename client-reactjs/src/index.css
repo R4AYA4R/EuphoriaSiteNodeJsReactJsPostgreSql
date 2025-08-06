@@ -14,6 +14,11 @@
     /* указываем это свойство,чтобы при нажатии кнопок на телефоне задний фон кнопок не изменялся на секунду на синий*/
 }
 
+/* указываем это для элемента(тега) html,чтобы не работала горизонтальная прокрутка,если это не указать,то даже если у body указан overflow-x: hidden,то на телефоне все равно может быть горизонтальная прокрутка даже без видимой полоски нижнего скрола */
+html{
+    overflow-x: hidden;
+}
+
 body {
     font-size: 16px;
     font-weight: 400;
@@ -21,6 +26,7 @@ body {
     color: #3C4242;
     overflow-x: hidden;
     /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
+    position: relative; /* обязательно указываем это свойство,чтобы убрать горизонтальную прокрутку на телефоне,если это не указать,то даже просто с overflow-x: hidden на телефоне все равно может быть горизонтальная прокрутка,даже без видимой полоски нижнего скрола */
 }
 
 .container {
@@ -3169,6 +3175,24 @@ a {
         margin-bottom: 50px;
     }
 
+    .adminForm__itemPrice-inputBlock .cartBlock__inputBlock-input,
+    .sectionProductItemPage__rightBlock .cartBlock__inputBlock-input{
+        max-width: 114px;
+    }
+
+    .sectionSignUp .sectionCategories,
+    .sectionSignUp .sectionPresents{
+        margin-bottom: 0;
+    }
+
+    .sectionSignUp__signUpBlock-inner{
+        padding: 70px;
+    }
+
+    .sectionSignUp__leftImgBlock{
+        min-height: 680px;
+    }
+
 }
 
 @media (max-width:920px) {
@@ -3273,6 +3297,14 @@ a {
 
     .sectionCart__table-mainBlock .productsBlock__pagination{
         margin-top:10px;
+    }
+
+    .sectionSignUp__signUpBlock-inner{
+        padding: 20px;
+    }
+
+    .sectionSignUp__leftImgBlock{
+        min-height: 580px;
     }
 
 }
@@ -3470,6 +3502,14 @@ a {
 
     .textEmptyCart{
         border-top:none;
+    }
+
+    .sectionSignUp__leftImgBlock{
+        min-height: 530px;
+    }
+
+    .sectionSignUp__signUpBlock-inner{
+        padding: 10px;
     }
 
 }
@@ -3681,6 +3721,19 @@ a {
         padding: 25px 0;
     }
 
+    .sectionCart__product-priceBlock{
+        min-width: auto;
+    }
+
+    .sectionSignUp__inner{
+        grid-template-columns:1fr;
+        row-gap: 40px;
+    }
+
+    .sectionSignUp__signUpBlock{
+        order:-1;
+    }
+
 }
 
 @media (max-width:420px) {
@@ -3799,11 +3852,11 @@ a {
         font-size: 16px;
     }
 
-    .sectionCart__mobileProduct-bottomBlock{
-        gap: 7px;
-    }
-
     .sectionCart__mobileProduct-topBlock{
         gap: 20px;
+    }
+
+    .sectionSignUp__signUpBlock-inner{
+        padding: 0;
     }
 }
