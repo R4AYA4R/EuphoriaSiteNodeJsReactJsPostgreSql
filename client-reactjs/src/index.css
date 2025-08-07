@@ -15,7 +15,7 @@
 }
 
 /* указываем это для элемента(тега) html,чтобы не работала горизонтальная прокрутка,если это не указать,то даже если у body указан overflow-x: hidden,то на телефоне все равно может быть горизонтальная прокрутка даже без видимой полоски нижнего скрола */
-html{
+html {
     overflow-x: hidden;
 }
 
@@ -26,7 +26,8 @@ body {
     color: #3C4242;
     overflow-x: hidden;
     /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
-    position: relative; /* обязательно указываем это свойство,чтобы убрать горизонтальную прокрутку на телефоне,если это не указать,то даже просто с overflow-x: hidden на телефоне все равно может быть горизонтальная прокрутка,даже без видимой полоски нижнего скрола */
+    position: relative;
+    /* обязательно указываем это свойство,чтобы убрать горизонтальную прокрутку на телефоне,если это не указать,то даже просто с overflow-x: hidden на телефоне все равно может быть горизонтальная прокрутка,даже без видимой полоски нижнего скрола */
 }
 
 .container {
@@ -2341,7 +2342,7 @@ a {
     display: flex;
     align-items: center;
     gap: 17px;
-    padding: 12px 0 12px 37px;
+    padding: 12px 12px 12px 37px;
     width: 100%;
     background-color: #fff;
     border: none;
@@ -3039,34 +3040,46 @@ a {
     color: #808080;
 }
 
-.sectionCart__productsBlock-mobileProduct{
+.sectionCart__productsBlock-mobileProduct {
     display: none;
 }
 
 @media (max-width:1225px) {
 
-    .sectionCart__table-names{
+    .sectionCart__table-names {
         gap: 5px;
     }
 
     .sectionCart__bill-topBlock,
-    .sectionCart__bill-bottomBlock{
+    .sectionCart__bill-bottomBlock {
         padding: 25px;
     }
 
-    .sectionCart__table-names{
+    .sectionCart__table-names {
         min-width: 730px;
+    }
+
+    .sectionUserPage__inner {
+        gap: 15px;
+    }
+
+    .sectionUserPage__mainBlock-dashboard {
+        padding: 40px 20px;
+    }
+
+    .sectionUserPage__menu-btnText {
+        text-wrap: nowrap;
     }
 
 }
 
 @media (max-width:1120px) {
 
-    .sectionCart__inner{
+    .sectionCart__inner {
         gap: 15px;
     }
 
-    .sectionCart__productsBlock-product{
+    .sectionCart__productsBlock-product {
         gap: 15px;
     }
 
@@ -3138,32 +3151,32 @@ a {
         margin-top: 0;
     }
 
-    .descBlock__desc-inner{
+    .descBlock__desc-inner {
         gap: 20px;
     }
 
-    .desc__table-column{
+    .desc__table-column {
         padding: 20px 25px;
     }
 
-    .descBlock__desc-innerReviews{
+    .descBlock__desc-innerReviews {
         gap: 20px;
     }
 
-    .reviews__leftBlock-comments{
+    .reviews__leftBlock-comments {
         max-width: 500px;
     }
 
-    .sectionCart__inner{
+    .sectionCart__inner {
         grid-template-columns: 1fr;
     }
 
-    .cartBlock__inputBlock-input{
+    .cartBlock__inputBlock-input {
         max-width: 100%;
         width: 100%;
     }
 
-    .sectionCart__bill-btn{
+    .sectionCart__bill-btn {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -3171,26 +3184,30 @@ a {
         max-width: 30%;
     }
 
-    .textEmptyCart{
+    .textEmptyCart {
         margin-bottom: 50px;
     }
 
     .adminForm__itemPrice-inputBlock .cartBlock__inputBlock-input,
-    .sectionProductItemPage__rightBlock .cartBlock__inputBlock-input{
+    .sectionProductItemPage__rightBlock .cartBlock__inputBlock-input {
         max-width: 114px;
     }
 
     .sectionSignUp .sectionCategories,
-    .sectionSignUp .sectionPresents{
+    .sectionSignUp .sectionPresents {
         margin-bottom: 0;
     }
 
-    .sectionSignUp__signUpBlock-inner{
+    .sectionSignUp__signUpBlock-inner {
         padding: 70px;
     }
 
-    .sectionSignUp__leftImgBlock{
+    .sectionSignUp__leftImgBlock {
         min-height: 680px;
+    }
+
+    .sectionUserPage__leftBar .sectionUserPage__leftBar-topBlock {
+        margin-bottom: 10px;
     }
 
 }
@@ -3283,28 +3300,40 @@ a {
         margin-bottom: 50px;
     }
 
-    .reviews__leftBlock-comments{
+    .reviews__leftBlock-comments {
         max-width: 400px;
     }
 
-    .sectionCart{
+    .sectionCart {
         padding: 15px 0 50px;
     }
 
-    .sectionCart__productsBlock-product{
+    .sectionCart__productsBlock-product {
         padding: 30px 0;
     }
 
-    .sectionCart__table-mainBlock .productsBlock__pagination{
-        margin-top:10px;
+    .sectionCart__table-mainBlock .productsBlock__pagination {
+        margin-top: 10px;
     }
 
-    .sectionSignUp__signUpBlock-inner{
+    .sectionSignUp__signUpBlock-inner {
         padding: 20px;
     }
 
-    .sectionSignUp__leftImgBlock{
+    .sectionSignUp__leftImgBlock {
         min-height: 580px;
+    }
+
+    .sectionUserPage {
+        padding: 25px 0 50px;
+    }
+
+    .sectionUserPage__leftBar-subtitle {
+        margin-bottom: 20px;
+    }
+
+    .sectionUserPage__adminFormInfo-itemCategory {
+        gap: 15px;
     }
 
 }
@@ -3357,13 +3386,20 @@ a {
         flex-wrap: wrap;
     }
 
-    .descBlock__desc-inner{
+    .descBlock__desc-inner {
         flex-direction: column;
     }
 
-    .sectionCart__table-names{
+    .sectionCart__table-names {
         min-width: 0;
     }
+
+    .sectionUserPage__adminFormInfo-itemCategory {
+        flex-direction: column;
+        align-items: start;
+        row-gap: 20px;
+    }
+
 
 }
 
@@ -3445,34 +3481,34 @@ a {
         border-bottom-right-radius: 0;
     }
 
-    .reviews__leftBlock-comments{
+    .reviews__leftBlock-comments {
         max-width: 300px;
     }
 
     .sectionCart__bill-topBlock,
-    .sectionCart__bill-bottomBlock{
+    .sectionCart__bill-bottomBlock {
         padding: 20px;
     }
 
-    .sectionCart__bill-btn{
+    .sectionCart__bill-btn {
         max-width: 100%;
     }
 
-    .sectionCart__table-names{
+    .sectionCart__table-names {
         display: none;
     }
 
-    .sectionCart__productsBlock-product{
+    .sectionCart__productsBlock-product {
         display: none;
     }
 
-    .sectionCart__productsBlock-mobileProduct{
+    .sectionCart__productsBlock-mobileProduct {
         display: flex;
         flex-direction: column;
         align-items: start;
     }
 
-    .sectionCart__mobileProduct-topBlock{
+    .sectionCart__mobileProduct-topBlock {
         display: grid;
         grid-template-columns: 2fr .5fr;
         align-items: center;
@@ -3480,35 +3516,36 @@ a {
         justify-items: center;
     }
 
-    .sectionCart__mobileProduct-bottomBlock{
+    .sectionCart__mobileProduct-bottomBlock {
         display: grid;
-        grid-template-columns: repeat(3,1fr);
+        grid-template-columns: repeat(3, 1fr);
         width: 100%;
         gap: 50px;
     }
 
-    .sectionCart__table-name{
+    .sectionCart__table-name {
         margin-bottom: 10px;
-        text-align: center !important; /* указываем !important,чтобы перебить предыдущие стили */
+        text-align: center !important;
+        /* указываем !important,чтобы перебить предыдущие стили */
     }
 
-    .sectionCart__productsBlock-product{
+    .sectionCart__productsBlock-product {
         gap: 25px;
     }
 
-    .sectionCart__productsBlock-mobileProduct:nth-child(2){
+    .sectionCart__productsBlock-mobileProduct:nth-child(2) {
         border-top: none;
     }
 
-    .textEmptyCart{
-        border-top:none;
+    .textEmptyCart {
+        border-top: none;
     }
 
-    .sectionSignUp__leftImgBlock{
+    .sectionSignUp__leftImgBlock {
         min-height: 530px;
     }
 
-    .sectionSignUp__signUpBlock-inner{
+    .sectionSignUp__signUpBlock-inner {
         padding: 10px;
     }
 
@@ -3663,75 +3700,108 @@ a {
         gap: 3px;
     }
 
-    .sectionProductItemPage__leftBlock-sliderBlock{
+    .sectionProductItemPage__leftBlock-sliderBlock {
         grid-template-columns: .5fr 2fr;
     }
 
-    .sectionUnderTop__inner{
+    .sectionUnderTop__inner {
         flex-wrap: wrap;
     }
 
-    .desc__table-column{
+    .desc__table-column {
         padding: 15px;
     }
 
-    .sectionProductItemPage{
+    .sectionProductItemPage {
         padding-top: 30px;
     }
 
     .sectionProductItemPage__itemBlock-inner,
-    .sectionProductItemPage__descBlock{
+    .sectionProductItemPage__descBlock {
         margin-bottom: 30px;
     }
 
-    .descBlock__desc-innerReviews{
+    .descBlock__desc-innerReviews {
         grid-template-columns: 1fr;
     }
 
-    .reviews__rightBlock{
-        order:-1;
+    .reviews__rightBlock {
+        order: -1;
     }
 
-    .sectionProductItemPage__descBlock-tabs{
+    .sectionProductItemPage__descBlock-tabs {
         margin-bottom: 20px;
     }
 
-    .reviews__form{
+    .reviews__form {
         display: none;
     }
 
-    .reviews__form--active{
+    .reviews__form--active {
         display: block;
-        animation:appear 1s ease forwards;
+        animation: appear 1s ease forwards;
     }
 
-    .reviews__leftBlock-comments{
+    .reviews__leftBlock-comments {
         max-width: 90vw;
     }
 
-    .sectionProductItemPage__paginationComments{
+    .sectionProductItemPage__paginationComments {
         margin: 15px 0;
     }
 
-    .sectionCart__mobileProduct-bottomBlock{
+    .sectionCart__mobileProduct-bottomBlock {
         gap: 20px;
     }
 
-    .sectionCart__productsBlock-product{
+    .sectionCart__productsBlock-product {
         padding: 25px 0;
     }
 
-    .sectionCart__product-priceBlock{
+    .sectionCart__product-priceBlock {
         min-width: auto;
     }
 
-    .sectionSignUp__inner{
-        grid-template-columns:1fr;
+    .sectionSignUp__inner {
+        grid-template-columns: 1fr;
         row-gap: 40px;
     }
 
-    .sectionSignUp__signUpBlock{
-        order:-1;
+    .sectionSignUp__signUpBlock {
+        order: -1;
+    }
+
+    .sectionUserPage__leftBar .sectionCategories__topBlock.sectionUserPage__leftBar-topBlock,
+    .sectionUserPage__leftBar .sectionUserPage__leftBar-subtitle {
+        display: none;
+    }
+
+    .sectionUserPage__menu-btnText {
+        display: none;
+    }
+
+    .sectionUserPage__menu-btn {
+        padding: 12px;
+    }
+
+    .sectionUserPage__leftBar {
+        max-width: 46px;
+    }
+
+    .sectionUserPage__inner {
+        grid-template-columns: .3fr 4fr;
+    }
+
+    .sectionUserPage__formInfo-title {
+        margin: 10px 0 10px;
+    }
+
+    .sectionUserPage__mainBlock-formChangePass {
+        margin-top: 20px;
+    }
+
+    .sectionUserPage__mainBlock-formInfo.sectionUserPage__mainBlock-formChangePass {
+        margin-top: 15px;
     }
 
 }
@@ -3790,73 +3860,88 @@ a {
         margin-top: 15px;
     }
 
-    .sectionProductItemPage__leftBlock-sliderBlock{
+    .sectionProductItemPage__leftBlock-sliderBlock {
         padding: 10px;
     }
 
-    .sectionProductItemPage__leftBlock-sliderBlock{
+    .sectionProductItemPage__leftBlock-sliderBlock {
         gap: 5px;
     }
 
-    .sliderBlock__previewSlider-slide{
+    .sliderBlock__previewSlider-slide {
         min-width: 55px;
     }
 
-    .sectionProductItemPage__previewSlider-sliderImg{
+    .sectionProductItemPage__previewSlider-sliderImg {
         max-height: 65px !important;
     }
 
-    .sectionProductItemPage__rightBlock-bottomBlock{
+    .sectionProductItemPage__rightBlock-bottomBlock {
         margin-top: 20px;
         padding-top: 20px;
     }
 
-    .sectionProductItemPage__rightBlock-bottomBlock{
+    .sectionProductItemPage__rightBlock-bottomBlock {
         grid-template-columns: 1fr;
     }
 
-    .sectionProductItemPage__rightBlock-btnCart{
+    .sectionProductItemPage__rightBlock-btnCart {
         padding: 12px 14px;
     }
 
-    .sectionProductItemPage__rightBlock-title{
+    .sectionProductItemPage__rightBlock-title {
         font-size: 28px;
     }
 
-    .desc__table-row{
+    .desc__table-row {
         display: flex;
         align-items: start;
     }
 
-    .desc__table-text{
+    .desc__table-text {
         text-wrap: auto;
     }
 
-    .sectionCart__mobileProduct-bottomBlock{
+    .sectionCart__mobileProduct-bottomBlock {
         gap: 10px;
     }
 
-    .sectionCart__productsBlock-product{
+    .sectionCart__productsBlock-product {
         gap: 15px;
     }
 
-    .cartBlock__inputBlock-input{
+    .cartBlock__inputBlock-input {
         padding: 13.5px 28px;
     }
 
-    .sectionCart__product-priceSale{
+    .sectionCart__product-priceSale {
         font-size: 17px;
     }
 
-    .sectionCart__product-price{
+    .sectionCart__product-price {
         font-size: 16px;
     }
 
-    .sectionCart__mobileProduct-topBlock{
+    .sectionCart__mobileProduct-topBlock {
         gap: 20px;
     }
 
     .sectionSignUp__signUpBlock-inner{
         padding: 0;
+    }
+
+    .searchBlock__sortBlock{
+        flex-direction: column;
+        align-items: start;
+        gap: 10px;
+    }
+
+    .sectionUserPage__adminForm-itemPrice{
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .filterItem__labels-sizes{
+        gap: 7px;
     }
 }
