@@ -2917,6 +2917,7 @@ a {
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 8px;
+    text-wrap: nowrap;
 }
 
 .sectionAboutUsTrusted__item-subtext {
@@ -3210,6 +3211,18 @@ a {
         margin-bottom: 10px;
     }
 
+    .sectionAboutUsTrusted{
+        margin: 40px 0 50px;
+    }
+
+    .sectionAboutUsTop__inner{
+        gap: 20px;
+    }
+
+    .sectionAboutUsTrusted__infoBlock-items{
+        gap: 12px;
+    }
+
 }
 
 @media (max-width:920px) {
@@ -3336,6 +3349,14 @@ a {
         gap: 15px;
     }
 
+    .sectionAboutUsTrusted__inner{
+        grid-template-columns: 1fr;
+    }
+
+    .sectionAboutUsTrusted{
+        margin: 20px 0;
+    }
+
 }
 
 @media (max-width:850px) {
@@ -3400,6 +3421,13 @@ a {
         row-gap: 20px;
     }
 
+    .sectionAboutUsTop{
+        padding-top: 50px;
+    }
+
+    .sectionAboutUsTop__inner{
+        gap: 10px;
+    }
 
 }
 
@@ -3547,6 +3575,16 @@ a {
 
     .sectionSignUp__signUpBlock-inner {
         padding: 10px;
+    }
+
+    .sectionAboutUsTop__inner{
+        grid-template-columns: 1fr;
+        row-gap:30px;
+    }
+
+    .sectionAboutUsTop__infoBlock-title{
+        font-size: 48px;
+        max-width: none;
     }
 
 }
@@ -3804,6 +3842,18 @@ a {
         margin-top: 15px;
     }
 
+    .sectionAboutUsTop{
+        padding: 30px 0 0;
+    }
+
+    .sectionAboutUsTrusted{
+        margin-top: 50px;
+    }
+
+    .sectionAboutUsTrusted__infoBlock-items{
+        grid-template-columns: 1fr;
+    }
+
 }
 
 @media (max-width:420px) {
@@ -3943,5 +3993,13 @@ a {
 
     .filterItem__labels-sizes{
         gap: 7px;
+    }
+
+    .sectionAboutUsTop__infoBlock-title{
+        font-size: 38px;
+    }
+
+    .sectionAboutUsTop__inner{
+        row-gap: 20px;
     }
 }
