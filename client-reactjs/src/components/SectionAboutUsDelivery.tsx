@@ -12,7 +12,7 @@ const SectionAboutUsDelivery = () => {
 
 
     return (
-        <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionCatalog__active " : "sectionCatalog"} ref={sectionCatalog}>
+        <section id="sectionCatalog" className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionCatalog__active sectionAboutUsDelivery" : "sectionCatalog sectionAboutUsDelivery"} ref={sectionCatalog}>
             <div className="container">
                 <div className="sectionAboutUsTop__inner">
                     <div className="sectionAboutUsTop__infoBlock">

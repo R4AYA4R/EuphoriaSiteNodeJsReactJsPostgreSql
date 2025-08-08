@@ -3587,6 +3587,14 @@ a {
         max-width: none;
     }
 
+    .sectionAboutUsDelivery__img{
+        order:-1;
+    }
+
+    .sectionAboutUsDelivery{
+        padding-bottom: 30px;
+    }
+
 }
 
 /* когда ширина экрана будет 620px и меньше,то тогда будут работать эти стили,делаем так адаптив сайта */
@@ -3852,6 +3860,10 @@ a {
 
     .sectionAboutUsTrusted__infoBlock-items{
         grid-template-columns: 1fr;
+    }
+
+    .sectionAboutUsDelivery{
+        padding-bottom: 0;
     }
 
 }
