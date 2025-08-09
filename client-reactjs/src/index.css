@@ -3161,7 +3161,7 @@ a {
     }
 
     .descBlock__desc-innerReviews {
-        gap: 20px;
+        gap: 15px;
     }
 
     .reviews__leftBlock-comments {
@@ -3357,6 +3357,23 @@ a {
         margin: 20px 0;
     }
 
+    .sectionAboutUsTeam{
+        margin-bottom: 50px;
+        padding-top: 50px;
+    }
+
+    .sectionAboutUsTeam__item-bottomBlock{
+        padding: 16px 12px 12px 12px;
+    }
+
+    .sectionAboutUsTeam__items{
+        gap: 10px;
+    }
+
+    .sectionAboutUsTeam__subtitle{
+        margin-bottom: 30px;
+    }
+
 }
 
 @media (max-width:850px) {
@@ -3427,6 +3444,14 @@ a {
 
     .sectionAboutUsTop__inner{
         gap: 10px;
+    }
+
+    .sectionAboutUsTeam__items{
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .sectionAboutUsTeam__item-img{
+        max-width: none;
     }
 
 }
@@ -3775,6 +3800,10 @@ a {
         order: -1;
     }
 
+    .reviews__rightBlockOrder{
+        order:1;
+    }
+
     .sectionProductItemPage__descBlock-tabs {
         margin-bottom: 20px;
     }
@@ -3864,6 +3893,14 @@ a {
 
     .sectionAboutUsDelivery{
         padding-bottom: 0;
+    }
+
+    .sectionAboutUsTeam__title{
+        font-size: 38px;
+    }
+
+    .sectionAboutUsTeam__subtitle{
+        margin-bottom: 20px;
     }
 
 }
@@ -4013,5 +4050,18 @@ a {
 
     .sectionAboutUsTop__inner{
         row-gap: 20px;
+    }
+
+    .sectionAboutUsTeam__items{
+        grid-template-columns: 1fr;
+    }
+
+    .sectionAboutUsTeam{
+        padding-top: 30px;
+    }
+
+    .sectionUserPage__formInfo-item.sectionUserPage__adminForm-itemPrice{
+        flex-direction: row;
+        align-items: center;
     }
 }

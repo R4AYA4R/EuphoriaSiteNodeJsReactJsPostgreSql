@@ -555,7 +555,9 @@ const ProductItemPage = () => {
 
 
                                     </div>
-                                    <div className="reviews__rightBlock">
+
+                                    {/* если dataComments?.commentsForPagination.count true(то есть есть какое-то количество объектов комментариев),то указываем обычный класс,в другом случае другой */}
+                                    <div className={dataComments?.commentsForPagination.count ? "reviews__rightBlock" : "reviews__rightBlock reviews__rightBlockOrder"}>
 
                                         <div className={activeForm ? "reviews__rightBlock-btnBlock reviews__rightBlock-btnBlock--disabled" : "reviews__rightBlock-btnBlock"}>
                                             <button className="reviews__btnBlock-btn" onClick={addReviewsBtn}>Add Review</button>
