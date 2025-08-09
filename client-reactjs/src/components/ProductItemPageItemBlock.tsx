@@ -788,7 +788,7 @@ const ProductItemPageItemBlock = ({ product, pathname, comments, refetchProduct 
 
                         <form className="sectionUserPage__changePriceForm" onSubmit={onSubmitChangePriceForm}>
 
-                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminForm-itemPrice">
+                            <div className="sectionUserPage__formInfo-item sectionUserPage__adminForm-itemPrice sectionUserPage__adminForm-priceBlock">
                                 <div className="adminForm__itemPrice-inputBlock">
                                     <p className="sectionUserPage__formInfo-itemText">Price</p>
                                     <div className="sectionProductItemPage__cartBlock-inputBlock">

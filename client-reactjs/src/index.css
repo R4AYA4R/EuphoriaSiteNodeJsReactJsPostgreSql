@@ -4060,7 +4060,7 @@ a {
         padding-top: 30px;
     }
 
-    .sectionUserPage__formInfo-item.sectionUserPage__adminForm-itemPrice{
+    .sectionUserPage__adminForm-priceBlock{
         flex-direction: row;
         align-items: center;
     }
